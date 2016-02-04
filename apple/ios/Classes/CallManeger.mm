@@ -26,6 +26,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #import "CallManeger.h"
 #import "CallCell.h"
 #import "AppDelegate.h"
@@ -352,13 +353,13 @@ CTCMA cm_calls;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-   return cm_calls.getH(indexPath.row);
+   return cm_calls.getH((int)indexPath.row);
 }
 
 
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
    
-   int v = indexPath.row;
+   int v = (int)indexPath.row;
    CTCall *c = cm_calls.getCall(v);
    if(!c){/*puts("!c");*/return;}
    /*
@@ -406,7 +407,7 @@ CTCMA cm_calls;
    static NSString *CellIdentifierCC = @"CallCellId";
    static NSString *CellIdentifierCDescr = @"CellDescr";
    
-   int v=indexPath.row;
+   int v=(int)indexPath.row;
    UITableViewCell *cell = NULL;// = [tableView dequeueReusableCellWithIdentifier:CellIdentifierSP];
    
    NSString *ns=NULL;
@@ -627,7 +628,7 @@ CTCMA cm_calls;
 }
 -(IBAction)onAnswerPress:(id)sender{
    UIButton *b=(UIButton *)sender;
-   CTCall *c=cm_calls.getCall(b.tag);
+   CTCall *c=cm_calls.getCall((int)b.tag);
    
    if(!c || !c->cell || c->cell.cTCall!=c)return;
    
@@ -650,7 +651,7 @@ CTCMA cm_calls;
 }
 -(IBAction)onEndCallPress:(id)sender{
    UIButton *b=(UIButton *)sender;
-   CTCall *c=cm_calls.getCall(b.tag);
+   CTCall *c=cm_calls.getCall((int)b.tag);
    if(!c || !c->cell || c->cell.cTCall!=c)return;
    
    
@@ -688,10 +689,10 @@ CTCMA cm_calls;
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
    if(fromIndexPath.row==toIndexPath.row){[self redraw];return;}
-   CTCall *c=cm_calls.getCall(fromIndexPath.row);
+   CTCall *c=cm_calls.getCall((int)fromIndexPath.row);
    
 
-   cm_calls.move(fromIndexPath.row, toIndexPath.row);
+   cm_calls.move((int)fromIndexPath.row, (int)toIndexPath.row);
    
    int iPrevV=c->iIsInConferece;
 
@@ -708,12 +709,12 @@ CTCMA cm_calls;
 
 - (NSIndexPath *)tableView:(UITableView *)tableView targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath toProposedIndexPath:(NSIndexPath *)proposedDestinationIndexPath{
    
-   CTCall *c=cm_calls.getCall(sourceIndexPath.row);
+   CTCall *c=cm_calls.getCall((int)sourceIndexPath.row);
    if(!c)return sourceIndexPath;
    
   // return proposedDestinationIndexPath;//
    
-   int s=proposedDestinationIndexPath.section;
+   int s=(int)proposedDestinationIndexPath.section;
    
    int sc=iCallsOffset[CTCalls::eStartupCall];
    int sp=iCallsOffset[CTCalls::ePrivateCall];
@@ -755,8 +756,8 @@ CTCMA cm_calls;
 // Override to support conditional rearranging of the table view.
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
 {
-   int v=indexPath.row;
-   return v<iCallsOffset[CTCalls::eStartupCall] && cm_calls.getCall(indexPath.row)?YES:NO;
+   int v=(int)indexPath.row;
+   return v<iCallsOffset[CTCalls::eStartupCall] && cm_calls.getCall((int)indexPath.row)?YES:NO;
 }
 
 
@@ -765,7 +766,7 @@ CTCMA cm_calls;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
    
-   CTCall *c=cm_calls.getCall(indexPath.row);//[self findCallByIDX:indexPath.row];
+   CTCall *c=cm_calls.getCall((int)indexPath.row);//[self findCallByIDX:indexPath.row];
    if(!c){
       
       return ;

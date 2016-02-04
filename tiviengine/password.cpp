@@ -69,6 +69,29 @@ int isAESKeySet(){
    return iPasswordWasSet;
 }
 
+unsigned char bufAxoKey[32];
+
+unsigned char *get32ByteAxoKey(){
+   return bufAxoKey;
+}
+
+static void initAxoKey(const unsigned char *p, int iLen){
+   void sha256(unsigned char *data,
+               unsigned int data_length,
+               unsigned char *digest);
+   
+   const char *salt =  "axo_key_salt";
+   const int salt_len = strlen(salt);
+   
+   unsigned char buf[128];
+   memset(buf, 0, sizeof(buf));
+   if(iLen + salt_len > sizeof(buf)) iLen = sizeof(buf) - salt_len;
+   
+   memcpy(buf, salt, salt_len);
+   memcpy(&buf[salt_len], p, iLen);
+   
+   sha256(buf, sizeof(buf), bufAxoKey);
+}
 
 void setPWDKey(unsigned char *k, int iLen){
 
@@ -77,6 +100,9 @@ void setPWDKey(unsigned char *k, int iLen){
    // The AES object stores the key internalliy in "ready to use" format. No need
    // to store it otherwise.. The key length is given in bits: 128 bits == 16 bytes.
    iPasswordWasSet = 1;
+   
+   initAxoKey(k, iLen);
+   
    if (iLen == 16)
       aes.key128(k);
    else if (iLen == 24)

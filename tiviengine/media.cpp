@@ -45,6 +45,8 @@ void adbg(char *p, int v);
 #include "../stun/CTStun.h"
 #include "../encrypt/md5/md5.h"
 
+#include "tivi_log.h"
+
 
 #define T_MY_CN_PT_ID   13
 #define T_MY_DTMF_PT_ID 101
@@ -277,13 +279,13 @@ void releaseMediaIDS(CSessionsBase *sb, CTMediaIDS *p, void *pThis){
          }
          else{
             //TODO log
-            puts("[err releaseMediaIDS]");
+            log_events( __FUNCTION__,"[ERR: releaseMediaIDS]");
          }
       }
    }
 }
 
-CTMediaIDS* initMediaIDS(void *pThis, CSessionsBase *sb, int iCaller){
+CTMediaIDS* initMediaIDS(void *pThis, int iCallId, CSessionsBase *sb, int iCaller){
    CTMediaIDS *p=NULL;
    CTMediaIDS *mf=&sb->mediaIDS[0];
    
@@ -316,7 +318,7 @@ CTMediaIDS* initMediaIDS(void *pThis, CSessionsBase *sb, int iCaller){
       
          p->initZRTP(sb->zrtpCB,sb->pZrtpGlob);
          if(p->pzrtp){
-            p->pzrtp->init_zrtp(iCaller,sb->p_cfg.szZID_base16,1,1);
+            p->pzrtp->init_zrtp(iCaller,sb->p_cfg.szZID_base16,iCallId,1,1);
             p->pzrtp->pSes=pThis;
          }
 
@@ -701,6 +703,20 @@ int CRTPA::getInfo(const char *key, char *p, int iMax){
          ret+=snprintf(p+ret,iMax-ret," %d",pzrtp->iAuthFailCnt);
       
       p[iMax]=0;
+      
+      unsigned int uiTCNow = getTickCount();
+      static unsigned int _uiT = 0;
+      int d = (int)(uiTCNow - _uiT);
+      
+      
+      if(d > 6000 || d<0){ //6000 = 6 seconds
+         
+         t_logf(log_audio_stats,__FUNCTION__,"%p %s",getEncryptedPtr_debug(this), p);
+         _uiT = uiTCNow;
+      }
+      
+      //p_cfg.iIndex
+      
       return ret;
    }
    else {
@@ -938,7 +954,7 @@ int CRTPA::sendPacket(CTSock *s, char *p, unsigned int uiLen, ADDR *a, int iIsVi
 
 void CRTPA::sendRtp(CtZrtpSession const *session, uint8_t* packet, size_t length, CtZrtpSession::streamName streamNm){
    
-    printf("[zrtp CRTPA send cb %d %d l=%ld]", iStarted, streamNm, (long int)length);
+    t_logf(log_zrtp,  __FUNCTION__,"zrtp CRTPA send cb %d %d l=%ld]", iStarted, streamNm, (long int)length);
   ////zrtp-error-tester
   // if(length<120 && length>60){puts("DROP");return;}
    if(!iStarted)return;
@@ -1852,8 +1868,6 @@ int trySetZRTP_encap(SDP &sdp, CTZRTP *zrtp, int iType){
    
    if (!cnt){
       log_zrtp("t_zrtp","setZrtpEncapAttribute not ok");
-
-      puts("[zrtp-encap not found]\n");
    }
    return cnt? 0: -1;
 }
@@ -1927,7 +1941,7 @@ int CRTPA::onSdp(char *pSdp, int iLen, int iIsReq, int iForceMedia)//uu CRTPX
       }
    }
 
-   puts("[SDP audio parsed]");
+   log_events( __FUNCTION__, "[SDP audio parsed]");
    iSdpParsed=1;
 
 
@@ -1983,6 +1997,7 @@ int CRTPA::onStart()
 #ifndef _WIN32
    //unsigned char tos=184;
  //  setsockopt(sockth->sock, IPPROTO_IP, IP_TOS, (char *)&tos, sizeof(tos));
+   //http://www.unix.com/man-page/freebsd/4/ip/
    int tos = 184;
    setsockopt(sockth->sock, IPPROTO_IP, IP_TOS, (const void*)&tos, sizeof(tos));
    //TODO test setsockopt(sockth->sock,SOL_SOCKET, SO_PRIORITY,&6 ,...
@@ -2101,9 +2116,9 @@ int CRTPV::onSdp(char *pSdp, int iLen, int iIsReq, int iForceMedia)
    int iInviter=!iIsReq;//TODO 200 OK, or SIP REQ,
    
    //reinvite 491 req pending
+   int iSDPSentPrev=iSdpSent;
    if(cbEng->p_cfg.iSDES_On && pzrtp && !pzrtp->isSecure(1) && !iSdpParsed && iSdpSent && iIsReq){
       iSdpSent=0;
-      puts("resetSdesContext");
       pzrtp->resetSdesContext(pzrtp->VideoStream);
       log_zrtp("t_zrtp","resetSdesContext(video)");
    }
@@ -2130,7 +2145,7 @@ int CRTPV::onSdp(char *pSdp, int iLen, int iIsReq, int iForceMedia)
       cVI.start(this);
    }
    
-   if(iSdpSent)
+   if(iSdpSent || iSDPSentPrev)
    {
        if(!cVO)cVO = mediaMngr.getVO();
        cVO->start();

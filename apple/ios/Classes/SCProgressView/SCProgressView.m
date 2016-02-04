@@ -25,6 +25,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #import <CoreFoundation/CFDate.h>
 #import <CoreGraphics/CoreGraphics.h>
 
@@ -35,6 +36,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define kDotColor [UIColor colorWithRed:84.0/255.0 green:84.0/255.0 blue:82.0/255.0 alpha:1.0]
 
 static CFTimeInterval const kDotAnimDuration = (CFTimeInterval)1.2;
+static NSTimeInterval const kInnerPulseDuration = 0.35;
+static NSTimeInterval const kInnerPulseWaitDuration = 0.5;
 
 @implementation SCProgressView
 {
@@ -120,7 +123,7 @@ static CFTimeInterval const kDotAnimDuration = (CFTimeInterval)1.2;
 
 #pragma mark - Dots Animation
 
-- (void)startDotsAnimation {
+- (void)startAnimatingDots {
     CFTimeInterval beginTime = CACurrentMediaTime();
     for (int i=0; i<innerView.subviews.count; i++) {
         CALayer *dotLayer = [(UIView*)innerView.subviews[i] layer];
@@ -141,7 +144,7 @@ static CFTimeInterval const kDotAnimDuration = (CFTimeInterval)1.2;
     }
 }
 
-- (void)stopDotsAnimation {
+- (void)stopAnimatingDots {
     for (UIView *view in innerView.subviews) {
 //        NSLog(@"  :: REMOVE all animations from dot %@", view);
         [view.layer removeAllAnimations];
@@ -150,7 +153,7 @@ static CFTimeInterval const kDotAnimDuration = (CFTimeInterval)1.2;
 
 - (void)pulseInnerView {
     CABasicAnimation *pulseAnimation = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
-    pulseAnimation.duration = 0.35;
+    pulseAnimation.duration = kInnerPulseDuration;
     pulseAnimation.toValue = @(1.5);
     pulseAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     pulseAnimation.autoreverses = YES;
@@ -158,25 +161,15 @@ static CFTimeInterval const kDotAnimDuration = (CFTimeInterval)1.2;
     [innerView.layer addAnimation:pulseAnimation forKey:@"com.silentcircle.progressInnerViewPulse"];
 }
 
-#pragma mark - Start
-
-- (void)start {
-    [self startDotsAnimation];
-}
-
-#pragma mark - Stop
-
-- (void)stop {
-    [self stopDotsAnimation];
-}
-
 - (void)successWithCompletion:(void (^)(void))completion {
-    [self stopDotsAnimation];    
+    [self stopAnimatingDots];
     [self pulseInnerView];
     if (completion) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            completion();
-        });    
+        // dispatch after inner pulse animation duration and slight pause
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kInnerPulseWaitDuration * NSEC_PER_SEC)),
+                       dispatch_get_main_queue(), ^{
+                           completion();
+                       });
     }
 }
 
@@ -188,6 +181,37 @@ static CFTimeInterval const kDotAnimDuration = (CFTimeInterval)1.2;
 
 #pragma mark - TESTING
 
+/**
+ * A test method to display a progress animation.
+ *
+ * Stops dots animation and then after a delay, starts dots animation
+ * and calls animateProgress to display progress animation. Fire this
+ * method from a button or similar event to test/tweak the progress
+ * animation during development.
+ *
+ * @param sender The UI control which fires this method, e.g. a UIButton.
+ *
+ * @see animateProgress
+ */
+- (IBAction)testAnimation:(id)sender {
+    [self stopAnimatingDots];
+    [self resetProgress];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self startAnimatingDots];
+        [self animateProgress];
+    });
+}
+
+/**
+ * A testing utility which displays a linear progression of the stroke
+ * animation over 5 seconds. The animationDidStop:finished: callback
+ * will be invoked to simulate a successful progress event.
+ *
+ * Note: this method is compiled only in a DEBUG build.
+ *
+ * @see testAnimation:
+ * @see animationDidStop:finished:
+ */
 - (void)animateProgress {
 #ifdef DEBUG    
     progressLayer.strokeEnd = 0.0;
@@ -203,18 +227,13 @@ static CFTimeInterval const kDotAnimDuration = (CFTimeInterval)1.2;
 #endif
 }
 
-- (IBAction)testAnimation:(id)sender {
-    [self stop];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self startDotsAnimation];
-        [self animateProgress];
-    });
-}
-
+/**
+ * Animation delegate callback: displays the behavior of a successfull
+ * progress completion, the same as with
+ */
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
     NSLog(@"%s animation stopped", __PRETTY_FUNCTION__);
-    [self stopDotsAnimation];
-    [self pulseInnerView];
+    [self successWithCompletion:nil];
 }
 
 @end

@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import <UIKit/UIKit.h>
 #include <CFNetwork/CFNetwork.h>
 #include "../baseclasses/CTBase.h"
+#import "STKeychain.h"
 
 #define SKIP_WS
 
@@ -138,8 +139,6 @@ int showSSLErrorMsg(void *ret, const char *p){
    exit(1);
    return 0;
 }
-
-
 
 NSString *findFilePathNS(const char *fn){
    char bufFN[256];
@@ -258,6 +257,11 @@ void relARPool(void *p){
 const char *t_getDev_name(){
    NSString *n = [[UIDevice currentDevice]model];
    return n.UTF8String;
+}
+
+const char *t_getDev_keychainId(const char *s){
+    NSString *dId = [STKeychain getEncodedDeviceIdForUsername:[NSString stringWithUTF8String:s]];
+    return dId.UTF8String;
 }
 
 

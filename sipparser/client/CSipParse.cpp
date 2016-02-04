@@ -120,10 +120,12 @@ const char  CSip::proxy_author[]=  "PROXY\rAUTHORIZATION";
 const char  CSip::WWW_aut[]   =    "WWW\rAUTHENTICATE";
 const char  CSip::rec_rout[]    =  "RECORD\rROUTE";
 const char  CSip::p_asserted_id[]    =  "P\rASSERTED\rIDENTITY";//P_Asserted_Identity
+const char  CSip::p_Associated_URI[] =  "P\rASSOCIATED\rURI";//P-Associated-URI
+
 
 int CSip::tryParseHdr()
 {
-   
+   //
    switch(strList[tokensParsed].uiLen)
    {
       case 0:return UNKNOWN;
@@ -209,10 +211,18 @@ int CSip::tryParseHdr()
          return UNKNOWN;
       case 15:return UNKNOWN;
       case 16:
+
+         if  (CMP(strList[tokensParsed],p_Associated_URI,16))
+            {tokensParsed++;parseRoutes(&gspSIPMsg->hldAssociated_URI);           return 0;}
          if  (CMP(strList[tokensParsed],WWW_aut,16))
          {tokensParsed++;parseAut(&gspSIPMsg->hdrWWWAuth);           return 0;}
          //  if  (CMP(strList[tokensParsed],cont_encod,16))
          //    {tokensParsed++;parseContentEncoding();           return 0;}//TODO single params parse
+         return UNKNOWN;
+      case 17:
+         if  (CMP(strList[tokensParsed],"X\rSC\rMESSAGE\rMETA",17)){//1 + 2 + 7 + 4   + 3 =17
+            {tokensParsed++;parseXSCMessageMeta();           return 0;}
+         }
          return UNKNOWN;
       case 18:
          if (CMP(strList[tokensParsed],proxy_authen,18))
@@ -355,7 +365,7 @@ int CSip::splitSIP(char *pFrom)
 
 //NEW--------->>---
 
-int CSip::parseSipUri(SIP_URI * sipUri, int j,int i)
+int CSip::parseSipUri(SIP_URI * sipUri, int j,int i, int iIsFirstLine)
 {
 
    sipUri->dstrSipAddr=strList[j]; 
@@ -381,12 +391,19 @@ int CSip::parseSipUri(SIP_URI * sipUri, int j,int i)
                if(strList[j].iLast==':'){j++;sipUri->maddr.dstrPort=strList[j];}
                
             }
+            
+            if(strList[j].iLast=='=' && strList[j].iFirst==';' && CMP(strList[j],"XSCDEVID",8) ){
+               
+               if(strList[j+1].iLast=='>' || strList[j+1].iLast==';')
+                  sipUri->dstrX_SC_DevID=strList[j+1];
+            }
+            
             if (j>=i+tokensParsed) {printError("ERROR: parseSipUri '>' not found!",DROP);return DROP;}
          }
       }
       else
       {
-         for (;strList[j+1].iFirst!=';' && strList[j].iLast>32;j++)  
+         for (;(strList[j+1].iFirst!=';' && strList[j].iLast>' ' && !iIsFirstLine) || (iIsFirstLine && strList[j].iLast>' ');j++)
          {
             if(!ok && strList[j+1].iFirst=='@')
             {
@@ -394,6 +411,15 @@ int CSip::parseSipUri(SIP_URI * sipUri, int j,int i)
                un=iHostItem;
                iHostItem=j+1;
             }
+            //TODO sipUri->atribs[sipUri->iAtribCnt++] =
+            if((ok || iIsFirstLine) && strList[j].iLast=='=' && strList[j].iFirst==';' && CMP(strList[j],"XSCDEVID",8) ){
+               
+               j++;
+               sipUri->dstrX_SC_DevID=strList[j];
+            }
+            
+            if(strList[j].iLast<=' ')break;
+  
             if (j>=i+tokensParsed) {printError("ERROR: parseSipUri!",DROP);return DROP;}
          }
       }
@@ -524,7 +550,7 @@ int CSip::parseFirstLine()
             }
             gspSIPMsg->sipHdr.iFlag|=SIP_INTERACTION_REQUEST;
             
-            j=parseSipUri(&gspSIPMsg->sipHdr.sipUri, 1, i);
+            j=parseSipUri(&gspSIPMsg->sipHdr.sipUri, 1, i, 1);
             if(j<0){printError("ERROR hdr",j);return j;}
          } 
       }
@@ -1112,8 +1138,8 @@ int CSip::parseP_Asserted_Identity(){
       gspSIPMsg->hldP_Asserted_id.uiCount++;
    }
    return res;
-   
 }
+
 
 int CSip::parsePortaBilling()
 {
@@ -1329,6 +1355,39 @@ int CSip::parseUserAgent(){ return 0; }
 
 
 int CSip::parseWarning(){ return 0; }
+
+int CSip::parseXSCMessageMeta(){
+   int i,j;
+   
+   TOKENS_IN_LINE;
+   
+   j=tokensParsed;
+   
+   gspSIPMsg->hdrXSCMsgMeta.dstrFullRow=strList[j-1];
+   gspSIPMsg->hdrXSCMsgMeta.dstrFullRow.uiLen=strList[j+i-1].strVal-strList[j-1].strVal+strList[j+i-1].uiLen;
+   
+   int tokens = 0;
+   
+   for (;j<tokensParsed+i;j++)
+   {
+      if(strList[j].iLast!='=')continue;
+      if((tokens && strList[j].iFirst!=';') || (!tokens && strList[j].iFirst!=':')){printError("Error in parseXSCMessageMeta!",DONT_DROP); break;}
+    
+      tokens++;
+      
+      if (CMP(strList[j],"ID\x16\x14",4))//ID64
+      {
+         j++;
+         gspSIPMsg->hdrXSCMsgMeta.dstr64bitID=strList[j];
+         
+         continue;
+      }
+   }
+   
+   tokensParsed+=i;
+   
+   return 0;
+}
 
 int CSip::parseUnknown()
 {

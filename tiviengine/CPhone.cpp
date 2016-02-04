@@ -793,6 +793,40 @@ CTiViPhone::~CTiViPhone()
    if(cPhoneCallback->mediaFinder)delete cPhoneCallback->mediaFinder;cPhoneCallback->mediaFinder=NULL;
 };
 
+int CTiViPhone::verifyDomainAddress(){ //we should call this when we are recreating address, and once per 1h
+   if(!hasNetworkConnect(ipBinded))return 0;
+   if(hasNetworkConnect(p_cfg.GW.ip))return 0; //if we do not have ip then checkServDomainName() will do its job.
+   
+   int d=(int)(uiGT-uiPrevCheckGWAt);
+   if(d < 2 * T_GT_SECOND)return 0;
+   
+   if (addrPx.bufAddr[0]){
+      int ip = this->cPhoneCallback->getIpByHost(addrPx.bufAddr,0);
+      if(ip != addrPx.ip){
+         //should i remember full list and if it is in the same list ignore that it is changing?
+         t_logf(log_events, __FUNCTION__,"[PX IP is changing %s %x to %x]",addrPx.bufAddr, addrPx.ip,ip);
+         if(hasNetworkConnect(ip)){
+            p_cfg.GW.ip = addrPx.ip = ip;
+            return 0;
+         }
+      }
+      uiPrevCheckGWAt = uiGT;
+   }
+   else if(p_cfg.str32GWaddr.strVal[0] && p_cfg.str32GWaddr.uiLen>0){
+      int ip = cPhoneCallback->getIpByHost(p_cfg.str32GWaddr.strVal,p_cfg.str32GWaddr.uiLen);
+      if(ip != p_cfg.GW.ip ){
+         
+         t_logf(log_events, __FUNCTION__,"[PX IP is changing %.*s %x to %x]",p_cfg.str32GWaddr.uiLen, p_cfg.str32GWaddr.strVal, p_cfg.GW.ip ,ip);
+         if(hasNetworkConnect(ip)){
+            p_cfg.GW.ip = ip;
+            return 1;
+         }
+      }
+      uiPrevCheckGWAt = uiGT;
+   }
+   return 0;
+}
+
 void CTiViPhone::checkServDomainName(int iHasNewIP, int iNow){
    
    if(!hasNetworkConnect(ipBinded))return;
@@ -821,13 +855,13 @@ void CTiViPhone::checkServDomainName(int iHasNewIP, int iNow){
       p_cfg.GW=p_cfg.str32GWaddr.strVal;
       
       unsigned int gwIP=0;
-      
+      unsigned int ts = getTickCount();
       if(!hasNetworkConnect(p_cfg.GW.ip)){
          
          if(!iWasOk){
             registrationInfo(&strings.lConnecting, cPhoneCallback->eErrorAndOffline);
          }
-         printf("[res_gw %s %u]",p_cfg.str32GWaddr.strVal, getTickCount());
+         printf("[res_gw %s ts=%u]",p_cfg.str32GWaddr.strVal, getTickCount()-ts);
          gwIP=cPhoneCallback->getIpByHost(p_cfg.str32GWaddr.strVal,p_cfg.str32GWaddr.uiLen);
       }
       
@@ -841,7 +875,7 @@ void CTiViPhone::checkServDomainName(int iHasNewIP, int iNow){
          
          if(addrPx.ip==0)
          {
-            printf("[res_px %s %u]",addrPx.bufAddr, getTickCount());
+            printf("[res_px %s ts=%u]",addrPx.bufAddr, getTickCount()-ts);
             addrPx.ip=this->cPhoneCallback->getIpByHost(addrPx.bufAddr,0);
          }
          
@@ -884,6 +918,8 @@ LOCK_MUTEX_SES
    //
 UNLOCK_MUTEX_SES
    
+   log_events(__FUNCTION__,str64BindedAddr.strVal);
+   
 
    if(!hasNetworkConnect(ip))
    {
@@ -917,6 +953,7 @@ iSockPaused=0;
 #ifndef __SYMBIAN32__
       checkServDomainName(1);//TODO  check this every 1h
 #endif
+      verifyDomainAddress();
       
       if(iPrevIp!=ipBinded)
       {
@@ -1081,7 +1118,7 @@ int CTiViPhone::cleanNumber(char *p, int iLen){
    }
    
    dst[iOutLen]=0;
-   printf("[out=%s]",dst);
+  // printf("[out=%s]",dst);
  //  log_audio("out",dst);
    
    return iOutLen;
@@ -1153,15 +1190,23 @@ int CTiViPhone::checkUri(char *pUriIn,int iInLen, char *pUriOut, int iMaxOutSize
    return parseUri(cPhoneCallback,p_cfg,pUriOut, pUri,iCheckDomain);
 }
 
-
-
 int CTiViPhone::call(char *uri, CTSesMediaBase *media, const char *contactUri, int icontactUriLen)
 {
    //TODO if  (nat==mob) {add_call_to_3sec_que(); start_send_ka(); || keepAlive.sendNow(); Sleep(2000);}
+   //make local copy
+   char bufLocalUri[256];
+   t_snprintf(bufLocalUri, sizeof(bufLocalUri), "%s", uri);
+   uri = &bufLocalUri[0];
+   
    URI sUri;
    CSesBase  *spSes=NULL;
    int useDc=0;
    trim(uri);
+   
+   char uriParams[128];
+   
+   const char *pUriParams = URI::getUriParamsAndSplit(uri, uriParams, sizeof(uriParams));
+   
    int len=strlen(uri);
    
    if(len>=127)return 0;
@@ -1226,6 +1271,8 @@ int CTiViPhone::call(char *uri, CTSesMediaBase *media, const char *contactUri, i
       return 0;//(int)spSes;
    }
    
+   log_call_marker(1, spSes->sSIPMsg.dstrCallID.strVal, spSes->sSIPMsg.dstrCallID.uiLen);
+   
    
    if(media==NULL)
       media=cPhoneCallback->tryGetMedia("audio");
@@ -1243,9 +1290,15 @@ int CTiViPhone::call(char *uri, CTSesMediaBase *media, const char *contactUri, i
    }
    //---add cc if necessary --end
 #endif
+   if(pUriParams){
+      spSes->dstSipAddr.uiLen = snprintf(spSes->dstSipAddr.strVal, spSes->dstSipAddr.getMaxSize(), "sip:%s%s;%s", bufCC, bufUri, pUriParams);
+   }
+   else{
+       spSes->dstSipAddr.uiLen = snprintf(spSes->dstSipAddr.strVal, spSes->dstSipAddr.getMaxSize(), "sip:%s%s", bufCC, bufUri);
+   }
    
-   spSes->dstSipAddr.uiLen = snprintf(spSes->dstSipAddr.strVal, spSes->dstSipAddr.getMaxSize(), "sip:%s%s", bufCC, bufUri);
-   printf("[dst=%.*s prio=%d]\n",spSes->dstSipAddr.uiLen, spSes->dstSipAddr.strVal,sUri.iPriority);
+   //     snprintf(bufDevIdAdd,sizeof(bufDevIdAdd), "xscdevid=%s", devIds[i]);
+   //printf("[dst=%.*s prio=%d]\n",spSes->dstSipAddr.uiLen, spSes->dstSipAddr.strVal,sUri.iPriority);
    
    if(contactUri)
    {
@@ -1267,10 +1320,7 @@ int CTiViPhone::call(char *uri, CTSesMediaBase *media, const char *contactUri, i
    media->onStart();
    ms.makeReq(METHOD_INVITE,&p_cfg);
    
-   if(sUri.iPriority>=2)
-      ms.addParams("Priority: emergency\r\n");
-   else if(sUri.iPriority==1)
-      ms.addParams("Priority: urgent\r\n");
+   ms.trySetPriorityHdr(sUri.iPriority);
    
    makeSDP(*this,spSes,ms);
    ms.addContent();
@@ -1414,6 +1464,7 @@ int CTiViPhone::endCall(int SesId, int iReasonCode)
       cPhoneCallback->mediaFinder->release(mb);
    }
    
+   log_call_marker(0, spSes->sSIPMsg.dstrCallID.strVal, spSes->sSIPMsg.dstrCallID.uiLen);
   
    cPhoneCallback->onEndCall(*spSes, 0);
    
@@ -1434,7 +1485,7 @@ int saveDstr(char *pToSave, unsigned int &uiOffset,DSTR *dstr,char *p,unsigned i
 
 int CTiViPhone::isDstOnline(const char *dst, int *resp, CTEditBase *retMsg){
    *resp=0;
-   int ses=sendSipMsg(0,"OPTIONS",(char*)dst,NULL,NULL);
+   int ses=sendSipMsg(0,"OPTIONS",(char*)dst,NULL, NULL,NULL);
    CSesBase *spSes=findSessionByID(ses);
    if(!spSes){
       *resp=-1;
@@ -1462,16 +1513,30 @@ void CTiViPhone::removeRetMsg(int SesId){
 
 
 
-int CTiViPhone::sendSipMsg(int ises, const char *szMeth, char *uri, const char *szCType, CTStrBase *e, char *pSipParams, int iSipParamLen)
+int CTiViPhone::sendSipMsg(int ises, const char *szMeth, char *uri, const char *uriAdd, const char *szCType, CTStrBase *e, char *pSipParams, int iSipParamLen)
 {
    URI sUri;
    CSesBase  *spSes=NULL;
    MSG_CTX *pCtx=(MSG_CTX *)ises;//TODO fix
+   
+   char bufLocalUri[256]="";
+   if(uri){
+      t_snprintf(bufLocalUri, sizeof(bufLocalUri), "%s", uri);
+   }
+   uri = &bufLocalUri[0];
 
+   char uriParams[256];
+   
+   const char *pUriParams = URI::getUriParamsAndSplit(uri, uriParams, sizeof(uriParams));
+   if(pUriParams && !pSipParams){
+      pSipParams = (char*)pUriParams;
+      iSipParamLen= (int)strlen(pUriParams);
+   }
+   
    char bufUri[128];
    int ret;
 
-   if(uri==NULL)
+   if(uri==NULL || !uri[0])
    {
       if(p_cfg.GW.ip)
       {
@@ -1479,14 +1544,15 @@ int CTiViPhone::sendSipMsg(int ises, const char *szMeth, char *uri, const char *
          sUri.clear();
          sUri.addr=p_cfg.GW;
          ret=p_cfg.str32GWaddr.uiLen;
-         strcpy((char *)&bufUri,uri);
+         strncpy((char *)&bufUri,uri, sizeof(bufUri));
+         bufUri[sizeof(bufUri)-1]=0;
       }
       else
          ret=-1;
    }
    else
    {
-      ret=checkUri(uri,strlen(uri), (char *)&bufUri[0], sizeof(bufUri)-1, &sUri ,!(pCtx && pCtx->addrRec.ip));
+      ret=checkUri(uri,(int)strlen(uri), (char *)&bufUri[0], sizeof(bufUri)-1, &sUri ,!(pCtx && pCtx->addrRec.ip));
    }
    if(ret<=0)
    {
@@ -1559,6 +1625,12 @@ int CTiViPhone::sendSipMsg(int ises, const char *szMeth, char *uri, const char *
    
    
    CMakeSip ms(sockSip,spSes);
+   ms.pSipHdrUriAdd = uriAdd;
+   
+   if(uriAdd && uriAdd[0]){
+      spSes->sipHdrAddrDstDevId.set(uriAdd);
+   }
+   
    int iMeth=METHOD_MESSAGE;
    if(szMeth)
    {
@@ -1571,7 +1643,7 @@ int CTiViPhone::sendSipMsg(int ises, const char *szMeth, char *uri, const char *
    {
       ms.addParams(pCtx->str256RouteList.strVal,(int)pCtx->str256RouteList.uiLen);
    }
-   if(iSipParamLen && pSipParams)
+   if(pSipParams)
    {
       ms.addParams(pSipParams,iSipParamLen);
    }
@@ -1826,14 +1898,34 @@ int CTiViPhone::addMsgToWin(SIP_MSG *sMsg, char *p)//pec shis fnc sMsg lietot ne
      cm.strMsg.p=p;
      cm.strMsg.iLen=sMsg->dstrContLen.uiVal;
      cm.strMsg.eType=iIsUnicode?CHAT_MSG::EUtf16:CHAT_MSG::EUtf8;
+#ifdef TEST_AXO_FAIL
+     void startThX(int (cbFnc)(void *p),void *data);
+     int test_older(void *p);
+     
+     char *d = (char*)malloc(5000);
+     memcpy(d+4, p, sMsg->dstrContLen.uiVal);
+     *(int*)d = sMsg->dstrContLen.uiVal;
+      startThX(test_older,d);
+     
+     p[15]+=1;
+#endif
+     CTAxoInterfaceBase::sharedInstance()->receiveMessage((u_int8_t *)p, sMsg->dstrContLen.uiVal);
 
-     cm.strUN.iLen=iUnLen;
-     cm.strUN.p=pp;
+     cm.strUN.iLen=ctx->str128AddrFromTo.uiLen;// iUnLen;
+     cm.strUN.p=ctx->str128AddrFromTo.strVal; //pp
 
-     cPhoneCallback->message(&cm,0,0,(char *)ctx,sizeof(MSG_CTX));
+    // cPhoneCallback->message(&cm,0,0,(char *)ctx,sizeof(MSG_CTX));
   }
   return 0;
 }
+#ifdef TEST_AXO_FAIL
+int test_older(void *p){
+   Sleep(5000);
+   CTAxoInterfaceBase::sharedInstance()->receiveMessage((u_int8_t *)p+4, *(int*)p);
+   free (p);
+   return 0;
+}
+#endif
 
 int CTiViPhone::checkAddr(ADDR *addr, int iIsRegResp)
 {
@@ -1898,7 +1990,7 @@ int CTiViPhone::sendSipKA(int iForce, int *respCode){
    if(!iForce && uiSIPKeepaliveSentAt && uiSIPKeepaliveSentAt+10*T_GT_SECOND>uiGT)return 0;
    
    uiSuspendRegistrationUntil = uiGT+8*T_GT_SECOND;//TODO if mobile network, wait longer
-   int s=sendSipMsg(0,"OPTIONS",NULL,NULL,NULL);
+   int s=sendSipMsg(0,"OPTIONS",NULL, NULL,NULL,NULL);
    //TODO find keeaplive ses
    if(s){
       iOptionsSent=1;
@@ -1933,6 +2025,7 @@ int CTiViPhone::recMsg(SIP_MSG *sMsg, int rec, ADDR &addr)//called from thread
    if(rec<0)
    {
       if(sockSip.needRecreate(1)){
+         verifyDomainAddress();
          sendSipKA();
          if(p_cfg.isOnline()){
             //TODO rereg if ext_ip!=ext_prev_ip
@@ -1967,6 +2060,8 @@ int CTiViPhone::recMsg(SIP_MSG *sMsg, int rec, ADDR &addr)//called from thread
       return 10;
    }
    
+   log_sip(__FUNCTION__, sMsg->rawDataBuffer);
+   
    if(p_cfg.iDebug){
       cPhoneCallback->dbg(sMsg->rawDataBuffer,rec);;
       DEBUG_T(rec,sMsg->rawDataBuffer);
@@ -1975,7 +2070,7 @@ int CTiViPhone::recMsg(SIP_MSG *sMsg, int rec, ADDR &addr)//called from thread
    
    if(cSip.parseSip(rec, sMsg)<0)
    {
-      DEBUG_T(0,"error: rec bad sip-----");
+      log_sip(__FUNCTION__,"error: rec bad sip-----");
       return -1;
    }
 
@@ -1985,7 +2080,7 @@ int CTiViPhone::recMsg(SIP_MSG *sMsg, int rec, ADDR &addr)//called from thread
    }
 
    if (IS_NOT_ALL_REQ_SIP_FIELDS(*sMsg))
-      {DEBUG_T(0,"Bad sip rec-drop");return -2;}
+      {log_sip(__FUNCTION__,"Bad sip rec-drop");return -2;}
 
    sMsg->addrSipMsgRec=addr;
 
@@ -2034,13 +2129,26 @@ int CTiViPhone::recMsg(SIP_MSG *sMsg, int rec, ADDR &addr)//called from thread
       if(!iCSeqOk)
       {
          UNLOCK_MUTEX_SES
-         tmp_log("auth !iCSeqOk");
+         log_sip(__FUNCTION__,"auth !iCSeqOk");
          return 0;
       }
       int res=-1;
       
+      SEND_TO *st = NULL;
+      
+      if(sMsg->hdrCSeq.uiMethodID==METHOD_MESSAGE){
+      
+         st=new SEND_TO;
+         memcpy(st,&spSes->sSendTo,sizeof(SEND_TO));
+         st->pContent-=((size_t)&spSes->sSendTo-(size_t)st);
+      }
+
+      
       p_cfg.fToTagIgnore=1;//SIP default
       CMakeSip ms(sockSip,spSes,sMsg);
+      if(spSes->sipHdrAddrDstDevId.strVal[0]){
+         ms.pSipHdrUriAdd = &spSes->sipHdrAddrDstDevId.strVal[0];
+      }
       
 // #SP-238 (spSes->cs.iCaller) received reinvite without a tag , we must have a tag if we are UAS
       if(spSes->cs.iCallStat == spSes->cs.EInit && spSes->cs.iCaller)
@@ -2048,6 +2156,11 @@ int CTiViPhone::recMsg(SIP_MSG *sMsg, int rec, ADDR &addr)//called from thread
       else ms.fToTagIgnore = 0;
       
       ms.makeReq(sMsg->hdrCSeq.uiMethodID,&p_cfg,&extAddr,&str64ExternalAddr);
+      
+      ms.trySetPriorityHdr();
+      if(spSes->sipSendAddHdr.uiLen>0){
+         ms.addParams(spSes->sipSendAddHdr.strVal, spSes->sipSendAddHdr.uiLen);
+      }
       
       if(*p_cfg.user.un && *p_cfg.user.pwd)
       {
@@ -2063,19 +2176,31 @@ int CTiViPhone::recMsg(SIP_MSG *sMsg, int rec, ADDR &addr)//called from thread
       }
       else{
          
-         char d[64];
-         snprintf(d,sizeof(d), "[WARN: addAuth-fail, un=%d pwd=%d]",!!p_cfg.user.un[0],!!p_cfg.user.pwd[0]);
-         d[63]=0;
-         tmp_log(d);
+         t_logf(&log_sip,__FUNCTION__,"[WARN: addAuth-fail, un=%d pwd=%d]",!!p_cfg.user.un[0],!!p_cfg.user.pwd[0]);
+
       }
 
       if(res>=0)
       {
+         int iWeHaveMessageContent = 0;
          if(sMsg->hdrCSeq.uiMethodID==METHOD_INVITE && spSes->isMediaSession())
          {
             makeSDP(*this,spSes,ms);
          }
-         ms.addContent();
+         else if(sMsg->hdrCSeq.uiMethodID==METHOD_MESSAGE){
+            if(st){
+               ms.addContent(st->pContentType, st->pContent, st->iContentLen);
+               delete st;
+               iWeHaveMessageContent = 1;
+               st = NULL;
+            }
+           
+         }
+         if(!iWeHaveMessageContent){
+         
+            ms.addContent();
+         }
+         
          if(spSes->sSendTo.iRetransmitAuthAdded==0)
          {
             spSes->sSendTo.iRetransmitAuthAdded=2;
@@ -2111,7 +2236,7 @@ int CTiViPhone::recMsg(SIP_MSG *sMsg, int rec, ADDR &addr)//called from thread
       switch(sMsg->sipHdr.uiMethodID)
       {
          case 0:
-            DEBUG_T(0,"Ses does not exist");
+            log_events(__FUNCTION__,"Session does not exist");
             break;
          case METHOD_INVITE:
             //TODO if call id 
@@ -2131,9 +2256,11 @@ int CTiViPhone::recMsg(SIP_MSG *sMsg, int rec, ADDR &addr)//called from thread
                   if(!iSent)
                      mm.sendResp(sockSip,486,sMsg);
                   iSent=1;
-                  DEBUG_T(0,"all ses busy");
+                  log_events(__FUNCTION__, "all ses busy");
                   break;
                }
+               log_call_marker(2, sMsg->dstrCallID.strVal, sMsg->dstrCallID.uiLen);
+               
                spSes->iCallingAccept=1;
                DSTR *dstr=&sMsg->hdrFrom.sipUri.dstrSipAddr;
                if(p_cfg.iHideIP && sMsg->hdrFrom.sipUri.dstrUserName.uiLen){
@@ -2175,8 +2302,21 @@ int CTiViPhone::recMsg(SIP_MSG *sMsg, int rec, ADDR &addr)//called from thread
                   mm.sendResp(sockSip,501,sMsg);
                   break;
                }
+               if(!CTAxoInterfaceBase::isAxolotlReady()){
+                  
+                  //this not good idea to send back something
+                  //we can wait for retransmition, or save message here
+                  //or should we send 100 Trying
+                  // mm.sendResp(sockSip, -480, sMsg);
+                  
+                  break;
+               }
                mm.sendResp(sockSip,200,sMsg);
+               UNLOCK_MUTEX_SES
+                printf("axo=[%s]\n",cSip.getContent());
                addMsgToWin(sMsg,cSip.getContent());
+               
+               return 0;
             }
             break;
          case METHOD_OPTIONS:
@@ -2193,8 +2333,21 @@ int CTiViPhone::recMsg(SIP_MSG *sMsg, int rec, ADDR &addr)//called from thread
                   if(sMsg->dstrContLen.uiVal)
                      cPhoneCallback->onContent(cSip.getContent(),sMsg->dstrContLen.uiVal,sMsg->hdrContType.dstrSubType.strVal,(int)sMsg->hdrContType.dstrSubType.uiLen,*spSes,sMsg->hdrCSeq.uiMethodID);
                }
-               else
+
+               else if(sMsg->hdrContType.uiTypeID==CONTENT_TYPE_APPLICATION &&
+                       CMP(sMsg->hdrContType.dstrSubType,"SC\rAXO\rDEVICES",14)){ //2+1+3+1+7 = 14
+                  
+                  mm.sendResp(sockSip,200,sMsg);
+                  
+                  if(sMsg->dstrContLen.uiVal>0){
+                     UNLOCK_MUTEX_SES;
+                     CTAxoInterfaceBase::sharedInstance()->notifyAxo((uint8_t*)cSip.getContent(), sMsg->dstrContLen.uiVal);
+                     return 0;
+                  }
+                  
+               }else{
                    mm.sendResp(sockSip,501,sMsg);//not impl
+               }
                break;
             }
          case METHOD_REFER:
@@ -2597,7 +2750,7 @@ int getInfo(char *buf, int iMaxLen,CTiViPhone *ph, PHONE_CFG* cfg)
    }
    
    if(ph)
-      iLen+=ph->getInfo(buf+iLen,iMaxLen-iLen);
+      iLen+=ph->getRegInfo(buf+iLen,iMaxLen-iLen);
 
    char *getBuildNr();
    iLen+=sprintf(buf+iLen,"\nBuild(%s)\n",getBuildNr());
@@ -2630,7 +2783,7 @@ int getInfoCBUni(short *pUni, int iMaxLen, void *pUserData)
 
 }
 
-int CTiViPhone::getInfo(char *buf, int iMaxLen)
+int CTiViPhone::getRegInfo(char *buf, int iMaxLen)
 {
    
    if(uiGT<T_GT_SECOND) {buf[0]=0;return 0;}
@@ -2777,7 +2930,7 @@ void CTiViPhone::onNetCheckTimer(){
             }
             
          }
-         printf("[idx=%d ping=%d nat=%x]",p_cfg.iIndex, iPingTime,st.iNatType);
+         t_logf(log_events, __FUNCTION__,"[idx=%d ping=%d nat=%x]",p_cfg.iIndex, iPingTime,st.iNatType);
          
          if(p_cfg.iNet!=st.iNatType)
          {

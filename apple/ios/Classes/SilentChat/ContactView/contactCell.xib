@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7702" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <mutableArray key="KarbonWeb-Medium.ttf">
+            <string>KarbonMedium</string>
+            <string>KarbonMedium</string>
+        </mutableArray>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="SCContactCell" rowHeight="80" id="iAt-hW-faV" customClass="ContactTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="80"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="iAt-hW-faV" id="Zqr-rq-PLs">
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view tag="6" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NPI-Nm-wY3" userLabel="BackgroundView">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="80"/>
+                        <subviews>
+                            <imageView opaque="NO" userInteractionEnabled="NO" tag="1" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="defaultContact2.png" translatesAutoresizingMaskIntoConstraints="NO" id="Q28-l5-Fjx">
+                                <rect key="frame" x="8" y="10" width="60" height="60"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" tag="2" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Name surname" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="ZTa-dD-Eyt">
+                                <rect key="frame" x="83" y="6" width="142" height="21"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" name="KarbonMedium" family="Karbon" pointSize="20"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="AB" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NAV-y2-CcU" customClass="ChatBubbleLabel">
+                                <rect key="frame" x="8" y="8" width="60" height="62"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="EmptyCircle.png" translatesAutoresizingMaskIntoConstraints="NO" id="6Sg-Ib-lCi" userLabel="contactImageSquare">
+                                <rect key="frame" x="8" y="10" width="60" height="60"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="99" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KJt-0d-UuG">
+                                <rect key="frame" x="52" y="8" width="26" height="26"/>
+                                <color key="backgroundColor" red="0.93562659439999996" green="0.1524088442" blue="0.10522542009999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" name="KarbonMedium" family="Karbon" pointSize="18"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="13"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="adjustsFontSizeToFitWidth" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="keyPath">
+                                        <integer key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </label>
+                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="failedBadgeIcon.png" translatesAutoresizingMaskIntoConstraints="NO" id="mPa-i9-gOG">
+                                <rect key="frame" x="52" y="8" width="26" height="26"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            </tableViewCellContentView>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <connections>
+                <outlet property="backgroundPlaceHoler" destination="NPI-Nm-wY3" id="i8y-wX-rUD"/>
+                <outlet property="contactImageLabel" destination="Q28-l5-Fjx" id="qII-Cf-7aI"/>
+                <outlet property="contactImageSquare" destination="6Sg-Ib-lCi" id="PqM-V7-vHm"/>
+                <outlet property="contactNameLabel" destination="ZTa-dD-Eyt" id="vef-2C-E4o"/>
+                <outlet property="failedBadgeImageView" destination="mPa-i9-gOG" id="WKb-G7-PsI"/>
+                <outlet property="initialsLabel" destination="NAV-y2-CcU" id="H4I-33-VGd"/>
+                <outlet property="messageAlertView" destination="KJt-0d-UuG" id="YDF-a9-wui"/>
+            </connections>
+            <point key="canvasLocation" x="277" y="264"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="EmptyCircle.png" width="92" height="92"/>
+        <image name="defaultContact2.png" width="91" height="91"/>
+        <image name="failedBadgeIcon.png" width="26" height="26"/>
+    </resources>
+</document>

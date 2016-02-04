@@ -26,8 +26,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#import "DialPadViewController.h"
 
+#import "DialPadViewController.h"
+#import "Utilities.h"
 @interface DialPadViewController ()
 
 @end
@@ -43,6 +44,49 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     return self;
 }
 
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:YES];
+    [[Utilities utilitiesInstance] setTabBarHidden:NO];
+    [[Utilities utilitiesInstance].appDelegateTabBar selectSeperatorWithTag:3];
+    
+    // FIX last row of dialpad buttons goes under tab bar
+    // set yoffset to last row buttons to be right under dialpadView
+    // Indexes in dialPadLastRowButtons array
+    // 0 - dialpadView
+    // 1 - actionbuttonsview
+    [self repositionLastRow];
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    [self repositionLastRow];
+}
+
+-(void) repositionLastRow
+{
+    UIView *actionButtonView = [Utilities utilitiesInstance].dialPadActionButtonView;
+    if(actionButtonView)
+    {
+        
+        // reposition actionbuttons view right above the tabbar
+        [actionButtonView setFrame:CGRectMake(0, [Utilities utilitiesInstance].screenHeight-[Utilities utilitiesInstance].appDelegateTabBar.frame.size.height - actionButtonView.frame.size.height, actionButtonView.frame.size.width, actionButtonView.frame.size.height)];
+        
+        
+		// center in window (iOS6)
+		// EA: do we need to hardcode these sizes?
+         // GO - this would not work anyway
+//		const CGFloat kHorizSpace = 18;
+//		CGRect bounds = callButton.superview.bounds;
+//		[callButton setFrame:CGRectMake((bounds.size.width-callButton.frame.size.width)/2, yOffset, 74, 74)];
+//		[addContactButton setFrame:CGRectMake(callButton.frame.origin.x-kHorizSpace-78, yOffset, 78, 78)];
+//		[backSpaceButton setFrame:CGRectMake(callButton.frame.origin.x+callButton.frame.size.width+kHorizSpace, yOffset, 78, 78)];
+   //     [addContactButton setFrame:CGRectMake(28, yOffset, 78, 78)];
+    //    [callButton setFrame:CGRectMake(123, yOffset, 74, 74)];
+     //   [backSpaceButton setFrame:CGRectMake(216, yOffset, 78, 78)];
+    }
+ 
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];

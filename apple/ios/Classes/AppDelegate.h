@@ -27,6 +27,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+
 #import <UIKit/UIKit.h>
 #import <CoreMotion/CoreMotion.h>
 #import "SettingsController.h"
@@ -35,8 +36,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #import "Prov.h"
 #import "CallScrViewController.h"
 #import "DialPadViewController.h"
+#import "SCProvisioningDelegate.h"
 
 #import <PushKit/PushKit.h>
+
+#import "TabBarWithSeperators.h"
 
 class CTList;
 
@@ -44,18 +48,19 @@ class CTList;
 @class CallManeger; 
 @class VideoViewController;
 
-@interface AppDelegate : NSObject <UIApplicationDelegate,
-UITextFieldDelegate,// UINavigationBarDelegate,
-UIAlertViewDelegate,UIActionSheetDelegate,ProvResponce,PKPushRegistryDelegate>
+@interface AppDelegate : NSObject <UIApplicationDelegate,UITextFieldDelegate,
+SCProvisioningDelegate,UITabBarControllerDelegate,
+
+UIAlertViewDelegate,UIActionSheetDelegate,PKPushRegistryDelegate>
 {
    UIWindow *window;
-   
+    
    VideoViewController *vvcToRelease;
    
    CallManeger *callMngr;
    IBOutlet UITabBarController *uiMainTabBarController;
    IBOutlet UITabBarItem *keypaditem;
-   IBOutlet UITabBar *uiTabBar;
+   IBOutlet TabBarWithSeperators *uiTabBar;
    
    IBOutlet UIButton *curService;
    IBOutlet UILabel *curServiceLB;
@@ -83,12 +88,16 @@ UIAlertViewDelegate,UIActionSheetDelegate,ProvResponce,PKPushRegistryDelegate>
    
    IBOutlet UIView *viewCSMiddle;
    
+    IBOutlet UIButton *chatBtnInCallScr;
    IBOutlet UIView *keyPadInCall;
    
    IBOutlet UIView *fPadView;
    IBOutlet UIView *zrtpPanel;
    IBOutlet UIView *infoPanel;
-   
+	
+	IBOutlet UIView *actionButtonsView;
+	
+   IBOutlet UIButton *callButton;
    IBOutlet UIButton *btCM;
    IBOutlet UIButton *pickerButton;
    IBOutlet UITextView *log;
@@ -129,7 +138,7 @@ UIAlertViewDelegate,UIActionSheetDelegate,ProvResponce,PKPushRegistryDelegate>
  //  IBOutlet UILabel *lbWarning;
    IBOutlet UIImageView *ivBubble;
    
-   int iCanShowMediaInfo;
+  // int iCanShowMediaInfo;
    int iAudioBufSizeMS;//debug only
    
    IBOutlet UIImageView *callScreenFlag;
@@ -175,7 +184,7 @@ UIAlertViewDelegate,UIActionSheetDelegate,ProvResponce,PKPushRegistryDelegate>
    
    //if(*iSASConfirmClickCount > 2)you are an expert
    int *iSASConfirmClickCount;
-   int iAudioUnderflow;
+  // int iAudioUnderflow;
    
    int iCanShowSAS_verify;
    
@@ -186,6 +195,7 @@ UIAlertViewDelegate,UIActionSheetDelegate,ProvResponce,PKPushRegistryDelegate>
    UILocalNotification *activeCallNotifaction;
    UILocalNotification *incomCallNotif;
    CMMotionManager *motionManager;
+	
    int bButtonsEnabled;
    @public int iDelayCallScreenHide;
 }
@@ -196,12 +206,11 @@ UIAlertViewDelegate,UIActionSheetDelegate,ProvResponce,PKPushRegistryDelegate>
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet UINavigationController *navigationController;
 -(int)callScrVisible;
-
-
 -(IBAction)hideKeypad:(id)sender;
 -(IBAction)switchAddCall:(id)sender;
 -(IBAction)switchMute:(id)sender;
 -(IBAction)switchSpkr:(id)sender;
+- (IBAction)chatBtnClick:(id)sender;
 
 -(IBAction)switchToVideo:(id)sender;
 
@@ -228,6 +237,10 @@ UIAlertViewDelegate,UIActionSheetDelegate,ProvResponce,PKPushRegistryDelegate>
 
 -(void)tryStartCallScrTimer;
 -(void)tryStopCallScrTimer:(int)force;
+-(void)forceFindName;
 
+-(void) sendEmailInvite:(NSString*) email;
+-(void) sendSMS:(NSString*) phoneNumber message:(NSString *)message;
+-(void) sendSMSInvite:(NSString*)phoneNumber;
 
 @end

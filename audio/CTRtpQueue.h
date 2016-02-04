@@ -195,6 +195,8 @@ class CTRtpQueue{
    int iRealDataReceived;
    
 public:
+   int iReducePlayDelayCnt;
+   
    CTRtpQueue(){iPacketsAdded=iLostCnt=0;iErrFlag=0;reset();iHWReadSamples=300;iRate=16000;dJit=0;memset(qPack,0,sizeof(qPack));}
    ~CTRtpQueue(){reset();}
    
@@ -226,7 +228,7 @@ public:
       }
       if(1)
       {
-         sprintf(b,"Max burst=%d end",iMaxBurstCall==1?0:iMaxBurstCall);
+         sprintf(b,"Max burst=%d pf=%d end",iMaxBurstCall==1?0:iMaxBurstCall,iReducePlayDelayCnt);
          log_audio(tag, b);
       }
       
@@ -239,6 +241,7 @@ public:
       
       roc.reset();
       
+      iReducePlayDelayCnt=0;
       iPrevWasOK=0;
       iRealDataReceived=0;
       iPlaySlowerFlag=0;
@@ -272,7 +275,7 @@ public:
          qPack[i].seq=-1; //must be set here else "if(q->seq == tsG){iErrFlag|=256;return 0;}" will fail
       }
       if(mem.bytesUsed())
-         printf("[rel rtpQ mem=[%d must be 0] was=%d]",mem.bytesUsed(), bu);
+         t_logf(log_events, __FUNCTION__,"[rel rtpQ mem=[%d must be 0] was=%d]",mem.bytesUsed(), bu);
       
       qPrevRecv=NULL;
       mem.reset();
@@ -423,12 +426,14 @@ public:
          static int dbg;
          if((dbg&127)==1){
             
+            
             if(si<100 || dJit>0.2 || (dbg&((1<<12)-1))==1){
-               printf("==[bp=%u pp=%u dJit=%.3f ns=%d si=%d tq=%d  mb=%d pb=%d ef=%x errs=%d lr=%u spdq=%u mem=%d]==\n"
+               t_logf(log_audio_stats, __FUNCTION__,"%p [bp=%u pp=%u dJit=%.3f ns=%d si=%d tq=%d  mb=%d pb=%d ef=%x errs=%d lr=%u spdq=%u mem=%d pf=%d]"
+                      ,getEncryptedPtr_debug(this)
                    ,uiBufferedTS,uiPlayPos, dJit,iNeedSamplesInBuf,si,iSamplesInTmpQueueLeft
                    ,iMaxBurstCnt,iPrevBurstCnt
                    ,iErrFlag,iErrs,uiLastReceiveSeq,iSeqPlayDecodePackInQueue
-                   ,mem.bytesUsed());
+                   ,mem.bytesUsed(),iReducePlayDelayCnt);
             }
          }
          dbg++;

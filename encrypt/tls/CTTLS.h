@@ -58,6 +58,8 @@ public:
    
    int isClosed(){return iClosed;}
    
+   void enableBackgroundForVoip(int bTrue);
+   
    int iCallingConnect;
 private:
    int iEntropyInicialized;
@@ -75,6 +77,8 @@ private:
    void *pSSL;
    char bufErr[256];
    int iWaitForRead;
+   
+   int bIsVoipSock;
 };
 
 #endif

@@ -25,6 +25,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #import "SCCheckbox.h"
 
 static CGFloat const kBoundingBoxBorderWidth = 2.0;
@@ -56,14 +57,14 @@ static CGFloat const kBoundingBoxBorderWidth = 2.0;
     self.tintColor = [self defaultTintColor];
     
     [self addTarget:self 
-             action:@selector(handleTouchDown:)
+             action:@selector(toggleCheckmark)
    forControlEvents:UIControlEventTouchDown];
 }
 
 /**
  * Add/remove checkmark image to toggle.
  */
-- (void)handleTouchDown:(UIEvent *)event {
+- (void)toggleCheckmark {
     _imageView.image = (_imageView.image) ? nil : _imgCheckmark;
 }
 

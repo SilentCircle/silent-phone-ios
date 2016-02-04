@@ -23,7 +23,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.10.1</string>
+	<string>2.3</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -39,17 +39,54 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>11001003</string>
+	<string>20300001</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>amazonaws.com</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSThirdPartyExceptionMinimumTLSVersion</key>
+				<string>TLSv1.0</string>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+				<false/>
+			</dict>
+			<key>amazonaws.com.cn</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSThirdPartyExceptionMinimumTLSVersion</key>
+				<string>TLSv1.0</string>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+				<false/>
+			</dict>
+		</dict>
+	</dict>
 	<key>NSHumanReadableCopyright</key>
 	<string></string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Enable location to send it</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Enable location when in use to send it</string>
 	<key>NSMainNibFile</key>
 	<string>MainWindow</string>
 	<key>UIAppFonts</key>
 	<array>
+		<string>TiemposHeadlineWeb-RegularItalic.ttf</string>
+		<string>TiemposHeadlineWeb-Regular.ttf</string>
+		<string>TiemposHeadlineWeb-MediumItalic.ttf</string>
+		<string>TiemposHeadlineWeb-Medium.ttf</string>
+		<string>KarbonWeb-Semibold.ttf</string>
+		<string>KarbonWeb-RegularItalic.ttf</string>
+		<string>KarbonWeb-Regular.ttf</string>
+		<string>KarbonWeb-Medium.ttf</string>
+		<string>KarbonWeb-Bold-2.ttf</string>
 		<string>OCRB.otf</string>
 	</array>
 	<key>UIApplicationExitsOnSuspend</key>
@@ -61,6 +98,8 @@
 		<string>remote-notification</string>
 		<string>voip</string>
 	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
@@ -76,5 +115,7 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
 </dict>
 </plist>

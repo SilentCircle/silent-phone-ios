@@ -286,6 +286,14 @@ public:
       ret=!pthread_create(&h,iHasAttr?&attr:NULL,CTThread::thFnc,(void *)this);
 #endif
       iIsCreated=h && ret?1:0;
+      
+      if(h && iDestroyAfterExit){
+         //if we do not call this it creates thread leak and
+         //it was happening if the destroyAfterExit() was called before create()
+         
+         closeHandle();
+      }
+      
       return iIsCreated?0:-3;
    }
    int iInThread;

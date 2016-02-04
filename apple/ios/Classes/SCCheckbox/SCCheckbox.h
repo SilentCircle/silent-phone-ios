@@ -25,6 +25,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #import <UIKit/UIKit.h>
 
 /**
@@ -56,5 +57,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * Returns YES if checkmark image is not nil, NO otherwise.
  */
 @property (assign, readonly) BOOL isChecked;
+
+/**
+ * If checkmark image is not nil, sets image to nil; otherwise, 
+ * initializes checkmark image.
+ */
+- (void)toggleCheckmark;
 
 @end

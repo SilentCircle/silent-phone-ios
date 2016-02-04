@@ -405,7 +405,8 @@ int CTStrBase::operator == (const char *p){
 int CTStrBase::operator==(CTStrBase *b){
    if(!b)return 0;
    int l=getLen();
-   if(b->getLen()!=l || !l)return 0;
+   if(b->getLen()!=l )return 0;
+   if(!l)return 1;
    short *pD=getText();
    short *ps=b->getText();
    if(ps[l>>1]!=pD[l>>1])return 0;

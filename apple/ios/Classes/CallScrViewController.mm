@@ -26,6 +26,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #import "AppDelegate.h"
 #import "CallScrViewController.h"
 /*
@@ -96,7 +97,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    return YES;
 }
 
-- (void) viewWillDisppear: (BOOL) animated {
+- (void) viewWillDisappear: (BOOL) animated {
    
    [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
    [self resignFirstResponder];
@@ -106,7 +107,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 - (void) remoteControlReceivedWithEvent: (UIEvent *) receivedEvent {
    
-   NSLog(@"ev t=%d st=%d",receivedEvent.type,receivedEvent.subtype);
+   NSLog(@"ev t=%ld st=%ld",(long)receivedEvent.type,(long)receivedEvent.subtype);
    
    if (receivedEvent.type == UIEventTypeRemoteControl) {
       

@@ -26,6 +26,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #import <UIKit/UIKit.h>
 
 #define _T_WO_GUI
@@ -59,7 +60,7 @@ public:
       if(img && (iUserDataLoaded==2 || iUserDataLoaded==4)){
         // 
          iUserDataLoaded=0;
-         int rc=[img retainCount];
+         int rc=(int)[img retainCount];
          printf("[%p rc=%d %d]",img,rc,iImgRetainCnt);void freemem_to_log();freemem_to_log();
          while(iImgRetainCnt>0){
             iImgRetainCnt--;
@@ -112,6 +113,7 @@ public:
       iZRTPShowPopup=0;
       iIsZRTPError=0;
       iReplaceSecMessage[0]=iReplaceSecMessage[1]=0;
+      szPeerAssertedUsername[0]=0;
 
    }
    
@@ -119,15 +121,42 @@ public:
    CTEditBuf<128> zrtpWarning;
    CTEditBuf<128> zrtpPEER;
    CTEditBuf<128> nameFromAB;//or from sip
+   char szPeerAssertedUsername[64];
    
    CTEditBuf<32> incomCallPriority;
+    
+    NSString *getUsernameFromCall(){
+        findAssertedName();
+        NSString * contactUsername = [NSString stringWithUTF8String:& szPeerAssertedUsername[0]];
+        if(!szPeerAssertedUsername[0]){
+            char *p = &bufPeer[0];
+            if(!p[0])p = &bufDialed[0];
+            
+            if(strncmp(p,"sip:",4)==0) p+=4;
+            if(isalpha(p[0])){
+                contactUsername = [NSString stringWithUTF8String:p];
+            }
+        }
+        return contactUsername;
+    }
 
    int sipDispalyNameEquals(CTEditBase &e){
       char bufRet3[128];
       int l=getCallInfo(iCallId,"peername", bufRet3,127);
       if(l<=0 || l>127)return 0;
       bufRet3[l]=0;
+      
+      if(l>0)findAssertedName();
+      
       return e==bufRet3;
+   }
+   int findAssertedName(){
+      if(szPeerAssertedUsername[0])return 1;
+      if(!iInUse)return 0;
+      if(!iIsIncoming && !iCallId)return 0;
+      
+      int l=getCallInfo(iCallId,"AssertedId", szPeerAssertedUsername,sizeof(szPeerAssertedUsername)-1);
+      return l;
    }
    
    int findSipName(){
@@ -138,6 +167,7 @@ public:
       int l=getCallInfo(iCallId,"peername", bufRet3,127);
       if(l>0){
          nameFromAB.setText(bufRet3,l);
+         findAssertedName();
       }
       iIsNameFromSipChecked=1;
       return 1;
@@ -156,7 +186,7 @@ public:
       int ml=sizeof(this->bufPeer)-1;
       
       if(!p){p="Err";iLen=3;}
-      if(iLen==0)iLen=strnlen(p, ml);
+      if(iLen==0)iLen=(int)strnlen(p, ml);
       if(p && strncmp(p,"sip:",4)==0){p+=4;iLen-=4;}
       else if(p && strncmp(p,"sips:",5)==0){p+=5;iLen-=5;}
       
@@ -237,6 +267,8 @@ public:
    char bufSecureMsg[64];
 
    char bufSecureMsgV[64];
+   
+   char szSIPCallId[64];//storing SIP call-id here, we need this to identify this call in a log
    
    int iInUse;
    
@@ -354,6 +386,7 @@ public:
       }
       return  0;
    }
+    
    
    CTCall* getCall(int iType, int ofs){
       int n=0;
@@ -461,8 +494,17 @@ private:
    int charsMatch(const char *a, int iALen, const char *bSZ){
       int n=0;
       if(!bSZ[0])return 0;
-      
-      int ibzlen = strlen(bSZ);
+    
+       if(iALen>4 && strncmp(a,"sip:",4)){
+           bSZ+=4;
+           iALen-=4;
+       }
+       if(iALen>4 && strncmp(bSZ,"sip:",4)){
+           bSZ+=4;
+
+       }
+      int ibzlen = (int)strlen(bSZ);
+    
       
       if(ibzlen==iALen && strncmp(a,bSZ,iALen)==0)return 0x7fffffff;
       if(ibzlen<iALen && strncmp(a,bSZ,ibzlen)==0 && a[ibzlen]=='@')return 0x7ffffffe;
@@ -502,6 +544,31 @@ public:
        return c;
       
    }
+    
+    CTCall *findCallByNumber(const char *nr){
+        
+        if(!nr)return NULL;
+        CTCall *c=NULL;
+        int iCharsMatch=0;
+        int iNrLen = (int)strlen(nr);
+        
+        for(int i=0;i<T_MAX_CALLS;i++){
+            if(calls[i].iInUse && !calls[i].iEnded){
+                int cm1 = charsMatch(nr, iNrLen, &calls[i].bufDialed[0]);
+                int cm2 = charsMatch(nr, iNrLen, &calls[i].bufPeer[0]);
+                int cm = charsMatch(nr, iNrLen, &calls[i].szPeerAssertedUsername[0]);
+                if(cm1<cm)cm = cm1;
+                if(cm2<cm)cm = cm2;
+                
+                if(cm>iCharsMatch && cm>0){//MOSTLY WORKS
+                    c=&calls[i];
+                    iCharsMatch = cm;
+                }
+            }
+        }
+        return c;
+        
+    }
    
    CTCall *findCallById(int iCallId){
 

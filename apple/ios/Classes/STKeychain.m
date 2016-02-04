@@ -27,25 +27,53 @@
 //  OTHER DEALINGS IN THE SOFTWARE.
 //
 
-//#import "STUtils.h"
 #import <Foundation/Foundation.h>
 #import <Security/Security.h>
+#import <UIKit/UIKit.h>
+
 #import "STKeychain.h"
+//#import "DeviceUtil.h"
+#import "NSString+hex.h"
+
+NSString * const STKeychainErrorDomain = @"com.silentcircle.SPKeychainErrorDomain";
+NSString * const kSPDeviceIdAccountKey = @"SPDeviceIdAccount";
+NSString * const kSPDeviceIdServiceKey = @"SPDeviceIdService";
+//NSString * const kSPDeviceIdKey = @"device_id";
+//static NSString * const kSPDeviceIdDelimiterKey = @"^"; //caret to split fields in string
+
+NSString * const kSPKeychainAccessControlKey = @"acct";
+NSString * const kSPKeychainAccountKey = @"acct";
+NSString * const kSPKeychainAccessGroupKey = @"agrp";
+NSString * const kSPKeychainCreatedAtKey = @"cdat";
+NSString * const kSPKeychainClassKey = @"class";
+NSString * const kSPKeychainDataKey = @"v_Data";
+NSString * const kSPKeychainDescriptionKey = @"desc";
+NSString * const kSPKeychainLabelKey = @"labl";
+NSString * const kSPKeychainLastModifiedKey = @"mdat";
+NSString * const kSPKeychainServiceKey = @"svce";
+NSString * const kSPKeychainSyncKey = @"sync";
+NSString * const kSPKeychainTombKey = @"tomb";
+
+
+static BOOL const USE_BASE_64 = NO; // or HEX_STRING
 
 
 #define USE_MAC_KEYCHAIN_API !TARGET_OS_IPHONE || (TARGET_IPHONE_SIMULATOR && __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_3_0)
 
-static NSString *STKeychainErrorDomain = @"SPKeychainErrorDomain";
 
+@interface STKeychain ()
 
 #if USE_MAC_KEYCHAIN_API
-@interface STKeychain ()
 + (SecKeychainItemRef)getKeychainItemReferenceForUsername:(NSString *)username andServiceName:(NSString *)serviceName error:(NSError **)error;
-@end
+#else
++ (NSMutableDictionary *)_queryForService:(NSString *)service account:(NSString *)account;
++ (void)_clearALLKeychainItemsForService:(NSString *)service account:(NSString *)account;
 #endif
 
+@end
 
 @implementation STKeychain
+
 
 #if USE_MAC_KEYCHAIN_API
 
@@ -342,13 +370,15 @@ static NSString *STKeychainErrorDomain = @"SPKeychainErrorDomain";
 			//Only update if we're allowed to update existing.  If not, simply do nothing.
          //(__bridge id)kSecAttrAccessibleAlwaysThisDeviceOnly forKey:(__bridge id)kSecAttrAccessible];
 			
-			NSArray *keys = [[[NSArray alloc] initWithObjects:(NSString *)kSecClass, (__bridge id)kSecAttrAccessible,
+			NSArray *keys = [[[NSArray alloc] initWithObjects:(NSString *)kSecClass, 
+                              (__bridge id)kSecAttrAccessible,
                               kSecAttrService, 
                               kSecAttrLabel, 
                               kSecAttrAccount, 
                               nil] autorelease];
 			
-			NSArray *objects = [[[NSArray alloc] initWithObjects:(NSString *)kSecClassGenericPassword, (__bridge id)kSecAttrAccessibleAlwaysThisDeviceOnly,
+			NSArray *objects = [[[NSArray alloc] initWithObjects:(NSString *)kSecClassGenericPassword, 
+                                 (__bridge id)kSecAttrAccessibleAlwaysThisDeviceOnly,
                                  serviceName,
                                  serviceName,
                                  username,
@@ -364,14 +394,16 @@ static NSString *STKeychainErrorDomain = @"SPKeychainErrorDomain";
 		// No existing entry (or an existing, improperly entered, and therefore now
 		// deleted, entry).  Create a new entry.
 		
-		NSArray *keys = [[[NSArray alloc] initWithObjects:(NSString *)kSecClass, (__bridge id)kSecAttrAccessible,
+		NSArray *keys = [[[NSArray alloc] initWithObjects:(NSString *)kSecClass, 
+                          (__bridge id)kSecAttrAccessible,
                           kSecAttrService, 
                           kSecAttrLabel, 
                           kSecAttrAccount, 
                           kSecValueData, 
                           nil] autorelease];
 		
-		NSArray *objects = [[[NSArray alloc] initWithObjects:(NSString *)kSecClassGenericPassword, (__bridge id)kSecAttrAccessibleAlwaysThisDeviceOnly ,
+		NSArray *objects = [[[NSArray alloc] initWithObjects:(NSString *)kSecClassGenericPassword, 
+                             (__bridge id)kSecAttrAccessibleAlwaysThisDeviceOnly,
                              serviceName,
                              serviceName,
                              username,
@@ -388,7 +420,7 @@ static NSString *STKeychainErrorDomain = @"SPKeychainErrorDomain";
 		if (error != nil) {
 			*error = [NSError errorWithDomain:STKeychainErrorDomain code:status userInfo:nil];
 		}
-        	return NO;
+        return NO;
 	}
     
     return YES;
@@ -424,6 +456,210 @@ static NSString *STKeychainErrorDomain = @"SPKeychainErrorDomain";
     return YES;
 }
 
+
+// 08/03/15 long term device ID storage/access
+#pragma mark - Device ID
+
++ (BOOL)deviceIdExists {
+    NSString *devId = [self getDecodedDeviceId];
+    BOOL devIdExists = (devId && devId.length > 0);
+    return devIdExists;
+}
+
+// [guid]/[device model]
++ (BOOL)createAndStoreDeviceIdWithError:(NSError **)error 
+{
+    if ([self deviceIdExists]) {
+        NSLog(@"%sALERT: keychain item for deviceId exists. NOT creating new keychain item", __PRETTY_FUNCTION__);
+        return NO;
+    }
+
+    OSStatus status = kSPKeychainErrorBadArguments;
+    
+    NSMutableDictionary *writeQuery = [self _queryForService:kSPDeviceIdServiceKey 
+                                                     account:kSPDeviceIdAccountKey];
+//    [writeQuery setObject:(NSString *)kSPDeviceIdServiceKey forKey:(__bridge id)kSecAttrLabel]; // need label attrib?
+    [writeQuery setObject:(__bridge id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly 
+                   forKey:(__bridge id)kSecAttrAccessible];
+    
+#pragma mark Device ID GUID
+    
+    // GUID
+    NSString *guid = [[NSUUID UUID] UUIDString];
+    
+    // encode
+    NSString *encodedStr = [self encodedStringFromString:guid];
+
+    // data
+    NSData *dataStr = [encodedStr dataUsingEncoding:NSUTF8StringEncoding];    
+    [writeQuery setObject:dataStr forKey:(id<NSCopying>)kSecValueData];
+    
+    // Write to keychain
+    NSLog(@"Write new device id to keychain:\n%@\n\n", encodedStr);    
+    status = SecItemAdd((__bridge CFDictionaryRef)writeQuery, NULL);
+    
+    if (status != noErr) {
+        if (error != nil) {
+            *error = [NSError errorWithDomain:STKeychainErrorDomain code:status userInfo:nil];
+        }
+    }
+    
+    return (status == noErr);
+}
+
++ (NSString *)getEncodedDeviceId {
+
+    NSDictionary *keychainDict = [self getDeviceIdKeychainDict];
+    if (nil == keychainDict || keychainDict.count == 0) {
+        return nil;
+    }
+    
+    NSData *devIdData = keychainDict[kSPKeychainDataKey];
+    NSString *encodedDevId = [[[NSString alloc] initWithData:devIdData 
+                                                    encoding:NSUTF8StringEncoding] autorelease];
+    return encodedDevId;
+}
+
++ (NSString *)getDecodedDeviceId {
+    NSString *encStr = [self getEncodedDeviceId];
+    if (nil == encStr || encStr.length == 0) {
+        return nil;
+    }
+
+    NSString *devIdStr = [self decodedStringFromString:encStr];
+    return devIdStr;
+}
+
+// Returns LAST keychain dictionary returned from the 
+// getAllWithService:account:error method
++ (NSDictionary *)getDeviceIdKeychainDict {
+    NSError *error = nil;
+    NSArray *matches = [self getAllWithService:kSPDeviceIdServiceKey 
+                                       account:kSPDeviceIdAccountKey 
+                                         error:&error];
+    if (nil == matches) {
+        NSLog(@"%s\n -- NO device id found in keychain", __PRETTY_FUNCTION__);
+        return nil;
+    }
+    
+    if (error) {
+        NSLog(@"%s\n -- Error accessing device id\n%@", 
+              __PRETTY_FUNCTION__, [error localizedDescription]);
+        return nil;
+    }
+    
+    if (matches.count > 1) {
+        NSLog(@"%s\n -- WARNING: multiple device id keychain items found - returning LAST", 
+              __PRETTY_FUNCTION__);
+    }
+
+    NSDictionary *keychainDict = (__bridge NSDictionary *)[matches lastObject];
+    return keychainDict;
+}
+
++ (NSArray *)getAllWithService:(NSString *)service account:(NSString *)account error:(NSError **)error {
+    
+    NSMutableDictionary *query = [NSMutableDictionary dictionaryWithCapacity:4];
+    [query setObject:service forKey:(__bridge id)kSecAttrService];
+    [query setObject:account forKey:(__bridge id)kSecAttrAccount];
+    [query setObject:(__bridge id)kSecClassGenericPassword forKey:(__bridge id)kSecClass];
+    [query setObject:(__bridge id)kCFBooleanTrue forKey:(__bridge id)kSecReturnAttributes];
+    [query setObject:(__bridge id)kCFBooleanTrue forKey:(__bridge id)kSecReturnData];
+    [query setObject:(__bridge id)kSecMatchLimitAll forKey:(__bridge id)kSecMatchLimit];
+    
+    OSStatus status = kSPKeychainErrorBadArguments;
+    CFTypeRef results = NULL;
+    status = SecItemCopyMatching((__bridge CFDictionaryRef)query, (CFTypeRef *)&results);
+        
+    if (status != noErr) {
+        if (error != nil) {
+            *error = [NSError errorWithDomain:STKeychainErrorDomain code:status userInfo:nil];
+        }
+        return nil;
+    }
+    
+    return (NSArray *)results;
+}
+
+// Public wrapper for deleteAll method
+// Note: instance method for safety against accidental usage
+- (void)deleteALLKeychainItemsForService:(NSString *)service account:(NSString *)account {
+    [[self class] _clearALLKeychainItemsForService:service account:account];
+}
+
+#pragma mark Utilities
+
++ (NSString *)encodedStringFromString:(NSString *)str {
+    if (USE_BASE_64) {
+        return [self base64EncodedStringFromString:str];
+    } else {
+        return [self hexEncodedString:str];
+    }
+}
+
++ (NSString *)decodedStringFromString:(NSString *)encStr {
+    if (USE_BASE_64) {
+        return [self decodedStringFromBase64String:encStr];
+    } else {
+        return [self decodedStringFromHexString:encStr];
+    }    
+}
+
++ (NSString *)hexEncodedString:(NSString *)str {
+    return [NSString stringToHex:str];
+}
+
++ (NSString *)decodedStringFromHexString:(NSString *)hxStr {
+    return [NSString stringFromHex:hxStr];
+}
+
++ (NSString *)base64EncodedStringFromString:(NSString *)str {
+    NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *base64Str = [data base64EncodedStringWithOptions:0];    
+    return base64Str;
+}
+
++ (NSString *)decodedStringFromBase64String:(NSString *)bStr {
+    NSData *data = [[[NSData alloc] initWithBase64EncodedString:bStr options:0] autorelease];
+    NSString *decodedStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    return [decodedStr autorelease];
+}
+
+
+#pragma mark - Private
+
+// Base query dictionary utility - 
+// mutable dictionary returned may be used to add query attributes
++ (NSMutableDictionary *)_queryForService:(NSString *)service account:(NSString *)account {
+
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity:4];
+    
+    [dictionary setObject:(__bridge id)kSecClassGenericPassword forKey:(__bridge id)kSecClass];
+    
+    if (service) {
+        [dictionary setObject:service forKey:(__bridge id)kSecAttrService];
+    }
+    
+    if (account) {
+        [dictionary setObject:account forKey:(__bridge id)kSecAttrAccount];
+    }
+    
+    return dictionary;
+}
+
+// Wrapped by the public deleteALLKeychainItemsForService:account instance method
++ (void)_clearALLKeychainItemsForService:(NSString *)service account:(NSString *)account {
+    
+    NSError *error = nil;
+    NSArray *accounts = [self getAllWithService:service account:account error:&error];
+    for (int i=0; i<accounts.count; i++) {
+        NSError *error = nil;
+        [self deleteItemForUsername:account andServiceName:service error:&error];
+    }
+}
+
 #endif
+
+
 
 @end

@@ -172,7 +172,7 @@ public:
    void clearSdesString();//must be called when peer SDP is received
    
    void release_zrtp();
-   int init_zrtp(int iCaller, char *zid_base16, int iInitVideoHash, int iInitAudioHash);
+   int init_zrtp(int iCaller, char *zid_base16, int callId, int iInitVideoHash, int iInitAudioHash);
    
    int encrypt(char *p, int &iLen, int iIsVideo);
    int decrypt(char *p, int &iLen, int iIsVideo);

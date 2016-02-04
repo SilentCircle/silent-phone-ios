@@ -73,6 +73,16 @@ public:
       CTList *l = &lists[crc & eAnd];
       return (CListItem *)l->findItem(crc, key, iKeyLen);
    }
+   
+   void goThru(int (*fnc)(const void *ret, CListItem *), const void *ret){
+      for (int i = 0; i<eLists; i++){
+         CListItem *p = lists[i].getNext(NULL,1);
+         while(p){
+            if(fnc(ret, p)<0)break;
+            p = lists[i].getNext(p,1);
+         }
+      }
+   }
 
    unsigned int getCRC(const char *key, int iKeyLen){
       if(crcFnc)return crcFnc(key, iKeyLen);

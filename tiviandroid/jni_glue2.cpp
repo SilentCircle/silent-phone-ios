@@ -27,8 +27,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-//
-// Modified by Werner Dittmann
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -172,7 +170,6 @@ static char g_prefLang[16] = "en";
 // Version name of SPA
 static char g_versionName[16] = {'\0'};
 
-
 JavaVM *t_getJavaVM() {
     return g_JavaVM;
 }
@@ -248,6 +245,7 @@ void tivi_log1(const char *p, int val){
 
 
 static char devID[128] = "";
+static char devIDmd5[64]="";
 
 const char *t_getDevID(int &l) {
     l = strlen(devID);
@@ -255,14 +253,7 @@ const char *t_getDevID(int &l) {
 }
 
 const char *t_getDevID_md5() {
-    static char buf[64]="";
-
-    if (!buf[0]) {
-        int l = 0;
-        l = calcMD5((unsigned char *)devID, strlen(devID), buf);
-        buf[l] = 0;
-    }
-    return buf;
+    return devIDmd5;
 }
 
 const char *t_getDev_name(){
@@ -274,6 +265,81 @@ float cpu_usage()
     return 0.1;
 }
 
+#ifdef WITH_AXOLOTL
+extern void loadAxolotl();
+
+void axoLoad()
+{
+    androidLog("Dummy function to force linking of Axolotl static lib\n");
+    loadAxolotl();
+}
+#endif
+//TODO make the same for iOS and Android
+static char push_token[256]={0};
+const char *push_fn = "push-token.txt";
+char * getFileStorePath(void);
+char *loadFile(const  char *fn, int &iLen);
+void saveFile(const char *fn,void *p, int iLen);
+
+void setPushToken(const char *p){
+   int l = snprintf(push_token, sizeof(push_token),"%s",p);
+   char fn[2048];
+   snprintf(fn,sizeof(fn)-1, "%s/%s", getFileStorePath(),push_fn);
+   
+   saveFile(fn, (void*)p, l);
+   
+   void *getAccountByID(int id);
+   void * ph = getAccountByID(0);
+   if(!ph)return;
+   
+   const char* sendEngMsg(void *pEng, const char *p);
+   
+   const char*res =  sendEngMsg(NULL, "all_online");
+   if(res && strcmp(res,"true")==0){
+      sendEngMsg(NULL,":rereg");
+   }
+
+}
+
+
+const char *getPushToken(){
+   if(push_token[0]) return &push_token[0];
+   static int iTestet=0;
+   if(!iTestet){
+      iTestet=1;
+      char fn[2048];
+      snprintf(fn,sizeof(fn)-1, "%s/%s", getFileStorePath(), push_fn);
+      
+      int l=0;
+      char *p = loadFile(fn, l);
+      if(p && l>0){
+         snprintf(push_token, sizeof(push_token),"%s",p);
+         delete p;
+      }
+      
+   }
+   
+   return &push_token[0];
+}
+
+
+const char *getAppID(){
+   static char appid[256]={0};
+   if(appid[0])return appid;
+   
+   
+   const char *p = "put.correct.app_name.here";
+   
+#if defined(DEBUG)
+   snprintf(appid, sizeof(appid), "%s--DEV", p);
+#else
+   snprintf(appid, sizeof(appid), "%s", p);
+#endif
+   
+   
+   return appid;
+   
+}
 
 const char *createZeroTerminated(char *out, int iMaxOutSize, const char *in, int iInLen){
     const char *p = in;
@@ -447,6 +513,10 @@ JNI_FUNCTION(saveImei)(JNIEnv* env, jclass thiz, jstring str)
     strncpy(devID, b, sizeof(devID)-1);
     devID[sizeof(devID)-1] = 0;
 
+    int l = 0;
+    l = calcMD5((unsigned char *)devID, strlen(devID), devIDmd5);
+    devIDmd5[l] = 0;
+
     setImei((char*)b);
     env->ReleaseStringUTFChars(str, b);
     return 0;
@@ -471,7 +541,7 @@ JNI_FUNCTION(savePath)(JNIEnv* env, jclass thiz, jstring str)
 
 
 JNIEXPORT jint JNICALL
-JNI_FUNCTION(doInit)( JNIEnv* env, jobject thiz, jint iDebugFlag, jstring versionName)
+JNI_FUNCTION(doInit)( JNIEnv* env, jobject thiz, jint iDebugFlag)
 {
     jclass phoneServiceClass = NULL;
     iDebugable = iDebugFlag;
@@ -493,13 +563,6 @@ JNI_FUNCTION(doInit)( JNIEnv* env, jobject thiz, jint iDebugFlag, jstring versio
         if (stateCallBackMethod == NULL) {
             return com_silentcircle_silentphone2_services_PhoneServiceNative_NO_STATE_CALLBACK;
         }
-    }
-
-    if (g_versionName[0] == '\0') {
-        const char *b = (const char *)env->GetStringUTFChars(versionName, 0);
-        strncpy(g_versionName, b, sizeof(g_versionName)-1);
-        // store to some global data or get it via 'char* getVersionName()'
-        env->ReleaseStringUTFChars(versionName, b);
     }
     return 0;
 }
@@ -636,7 +699,7 @@ JNI_FUNCTION(setKeyData)(JNIEnv* env, jclass thiz, jbyteArray byteArray)
 }
 
 JNIEXPORT jint JNICALL
-JNI_FUNCTION(initPhone)(JNIEnv* env, jclass thiz, jint configuration, jint iDebugFlag)
+JNI_FUNCTION(initPhone)(JNIEnv* env, jclass thiz, jint configuration, jint iDebugFlag, jstring versionName)
 {
     iDebugable = iDebugFlag;
 
@@ -657,6 +720,12 @@ JNI_FUNCTION(initPhone)(JNIEnv* env, jclass thiz, jint configuration, jint iDebu
             case 2:
                 setProvisioningToDevelop();
                 break;
+        }
+        if (g_versionName[0] == '\0') {
+            const char *b = (const char *)env->GetStringUTFChars(versionName, 0);
+            strncpy(g_versionName, b, sizeof(g_versionName)-1);
+            // store to some global data or get it via 'char* getVersionName()'
+            env->ReleaseStringUTFChars(versionName, b);
         }
         z_main_init(0, NULL);
         setPhoneCB(&fncCBRet, (void*)"a");
@@ -760,6 +829,33 @@ JNI_FUNCTION(getZrtpCounters)(JNIEnv *env, jclass thizz, jint iCallID)
     return intArray;
 }
 
+JNIEXPORT jint JNICALL
+JNI_FUNCTION(getNumAccounts)(JNIEnv* env, jclass thiz)
+{
+    int cnt=0;
+
+    for(int i=0;i<20;i++){
+        void *pCurService=getAccountByID(i);
+        if(pCurService){
+            cnt++;
+        }
+    }
+
+    return cnt;
+}
+
+JNIEXPORT void JNICALL
+JNI_FUNCTION(setPushToken)(JNIEnv* env, jclass thiz, jstring str)
+{
+ __android_log_write(ANDROID_LOG_VERBOSE,"tivi","TiviPhoneService_setPushToken");
+ if(str == NULL){
+     return;
+ }
+ const char *regId = (const char *)env->GetStringUTFChars(str, 0);
+ setPushToken(regId);
+ env->ReleaseStringUTFChars(str, regId);
+ return;
+}
 
 #ifdef __cplusplus
 }

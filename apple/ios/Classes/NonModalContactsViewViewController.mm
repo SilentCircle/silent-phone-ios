@@ -26,6 +26,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #import "NonModalContactsViewViewController.h"
 #import "AppDelegate.h"
 
@@ -145,11 +146,24 @@ NSString *abMultiValueIdentifier2Phone(ABMultiValueRef phoneNumbers, ABMultiValu
 
 - (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier{
    
-   
+    if( property==kABPersonEmailProperty)
+    {
+        ABMultiValueRef emailaddress = ABRecordCopyValue(person, property);
+        
+        NSString* email =abMultiValueIdentifier2Phone(emailaddress,identifier);
+        if(email)
+        {
+            [appDelegate sendEmailInvite:email];
+            CFRelease(email);
+        }
+        CFRelease(emailaddress);
+      
+    }
+    
+
+   // put start chat with contact here
    if(property!=kABPersonPhoneProperty && property!=kABPersonURLProperty)return NO;
    
-   if( property==kABPersonEmailProperty){}
-    
    NSLog(@"selected user contact data %d %d", property,kABPersonEmailProperty);
    
    NSString* phone = nil;

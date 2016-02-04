@@ -793,6 +793,7 @@ private:
                            uiPlayPos=findBestAlign(uiPlayPos,mf);
                            
                            printf("reducing play delay %d\n",(int)uiPlayPos-(int)uiPrevP+frames*2);
+                           rtp_q.iReducePlayDelayCnt++;
                            
                            r=getNextBufR(samples,frames);
                            iPrevPackIsSpeech=vad.isSilence2(samples,frames,getRate());
@@ -809,6 +810,7 @@ private:
                               getNextBufR(&samples[more],skip);
                            }
                            printf("reducing play delay %d+%d\n",frames,skip);
+                           rtp_q.iReducePlayDelayCnt++;
                            iPrevPackIsSpeech=vad.isSilence2(samples,frames,getRate());
                         }
                      }

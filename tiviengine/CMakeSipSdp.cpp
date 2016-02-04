@@ -37,14 +37,31 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #elif _WIN32_WCE
 #define USER_AGENT "User-Agent: TiVi-PDA"
 #elif defined(__APPLE__)
-#define USER_AGENT "User-Agent: TiVi-Apple"
+#include "TargetConditionals.h"
+
+#ifdef TARGET_OS_IPHONE
+  #define USER_AGENT "User-Agent: TiVi-iOS"
+#elif TARGET_IPHONE_SIMULATOR
+  #define USER_AGENT "User-Agent: TiVi-iOS-sim"
+#elif TARGET_OS_MAC
+  #define USER_AGENT "User-Agent: TiVi-Mac-OS"
+#else
+// Unsupported platform
+  #define USER_AGENT "User-Agent: TiVi-Apple"
+#endif
+
 #elif defined(ANDROID_NDK)
 #define USER_AGENT "User-Agent: TiVi-Android"
 #else
 #define USER_AGENT "User-Agent: TiVi-PC"
 #endif
 
-
+const char *getUserAgent(){
+   static char b[256]={0};
+   if(b[0])return b;
+   snprintf(b, sizeof(b), "%s/%s", USER_AGENT, getVersionName());
+   return b;
+}
 
 
 #define ADD_FSTR(sp,LEN,Ds,X) {memcpy((sp+LEN),Ds,X);LEN+=X; sp[LEN]=0; }
@@ -72,13 +89,29 @@ const struct SIP_METH CMakeSip::sip_meth[]=
    {METHOD_PUBLISH,7, "PUBLISH"},
    {METHOD_SUBSCRIBE,9, "SUBSCRIBE"}
 };
+
+void CMakeSip::trySetPriorityHdr(int iPriority){
+   
+   if(iPriority && spSes)spSes->iPriority = iPriority;
+   else if(spSes && !iPriority)iPriority = spSes->iPriority;
+   
+   if(iPriority>=2)
+      addParams("Priority: emergency\r\n");
+   else if(iPriority==1)
+      addParams("Priority: urgent\r\n");
+}
+
 int CMakeSip::addParams(const char *p, int iLenAdd)
 {
    if(!p)return 0;
    
-   if(iLenAdd<0)iLenAdd=strlen(p);
+   if(iLenAdd<=0)iLenAdd=strlen(p);
    
    ADD_L_STR(buf,uiLen,p,iLenAdd);
+   
+   if(spSes){
+      spSes->sipSendAddHdr.set(p, iLenAdd);
+   }
    return 0;
 }
 
@@ -310,7 +343,11 @@ int CMakeSip::makeReq(int id, PHONE_CFG * cfg, ADDR *addrExt,STR_64 *str64ExtADD
    }
    //HDR
    ADD_DSTR(s,uiLen,sip_meth[iMeth]); ADD_CHAR(s,uiLen,' ');
-   ADD_L_STR(s,uiLen,strDstAddr.s, strDstAddr.len);ADD_0_STR(s,uiLen," SIP/2.0\r\n");
+   ADD_L_STR(s,uiLen,strDstAddr.s, strDstAddr.len);
+   if(pSipHdrUriAdd){
+      ADD_CHAR(s,uiLen,';');ADD_0_STR(s,uiLen,pSipHdrUriAdd);
+   }
+   ADD_0_STR(s,uiLen," SIP/2.0\r\n");
    
    switch(id)
    {
@@ -543,10 +580,8 @@ int CMakeSip::makeReq(int id, PHONE_CFG * cfg, ADDR *addrExt,STR_64 *str64ExtADD
          ADD_0_STR(s,uiLen,cfg->szUA);ADD_CRLF(s,uiLen);
       }
       else{
-         const char *pVers=getVersionName();
-         ADD_STR(s,uiLen,USER_AGENT);
-         ADD_CHAR(s,uiLen, '/')
-         ADD_0_STR(s,uiLen,pVers);
+         const char *pUA=getUserAgent();
+         ADD_0_STR(s,uiLen,pUA);
          ADD_CRLF(s,uiLen);
       }
    }
@@ -575,7 +610,29 @@ int CMakeSip::makeReq(int id, PHONE_CFG * cfg, ADDR *addrExt,STR_64 *str64ExtADD
       }
    }
 #endif
-   
+
+#if  defined(ANDROID_NDK)
+   if((id & METHOD_REGISTER) && ( cfg->reg.bRegistring || cfg->reg.bReReg)){
+      const char *getPushToken(void);
+
+      const char *p = getPushToken();
+      if(p && p[0]){
+         const char *app_id = "com.silentcircle.silentphone";
+         //should i add devid?
+         ADD_STR(s,uiLen,"X-TiVi-Push: type=Android; token=");
+
+         ADD_CHAR(s,uiLen,'"');ADD_0_STR(s,uiLen,p);ADD_CHAR(s,uiLen,'"');
+
+         if(app_id && app_id[0]){
+            ADD_STR(s,uiLen,"; appname=\"");
+            ADD_0_STR(s,uiLen,app_id);
+            ADD_CHAR(s,uiLen,'"');
+
+         }
+         ADD_CRLF(s,uiLen);
+      }
+   }
+#endif
    
    if(id != METHOD_CANCEL_IGNORE && (hrr->uiCount || iReplaceRoute))//(toMake & (METHOD_BYE |METHOD_ACK)) && ???
    {
@@ -612,7 +669,11 @@ int CMakeSip::makeReq(int id, PHONE_CFG * cfg, ADDR *addrExt,STR_64 *str64ExtADD
       if(spSes->uiUserVisibleSipPort!=DEAFULT_SIP_PORT)
          uiLen+=sprintf(s+uiLen,":%u",spSes->uiUserVisibleSipPort);
       
-      
+      if(1){
+         ADD_STR(s,uiLen, ";xscdevid=");
+         const char *t_getDevID_md5(void);
+         ADD_0_STR(s,uiLen,t_getDevID_md5());
+      }
       
       if(iIsTCP) {ADD_STR(s,uiLen,";transport=tcp>")}else
          if(iIsTLS) {ADD_STR(s,uiLen,";transport=tls>")} else
@@ -788,6 +849,10 @@ int CMakeSip::makeResp(int id, PHONE_CFG *cfg, char *uri, int iUriLen)
          //         uiLen+=sprintf(s+uiLen,"SIP/2.0 480 Temporarily not available\r\n");
          ADD_STR(s,uiLen,"SIP/2.0 480 Temporarily not available -Try later\r\n");
          break;
+      case -480:
+         //         uiLen+=sprintf(s+uiLen,"SIP/2.0 480 Temporarily not available\r\n");
+         ADD_STR(s,uiLen,"SIP/2.0 480 Temporarily not available -Axolotl is not ready\r\n");
+         break;
       case 481:
          //  uiLen+=sprintf(s+uiLen,"SIP/2.0 481 Call Leg/Transaction Does Not Exist\r\n");
          ADD_STR(s,uiLen,"SIP/2.0 481 Call Leg/Transaction Does Not Exist\r\n");
@@ -945,6 +1010,12 @@ int CMakeSip::makeResp(int id, PHONE_CFG *cfg, char *uri, int iUriLen)
       
       if(spSes->uiUserVisibleSipPort!=DEAFULT_SIP_PORT)
          uiLen+=sprintf(s+uiLen,":%u",spSes->uiUserVisibleSipPort);
+      
+      if(1){
+         ADD_STR(s,uiLen, ";xscdevid=");
+         const char *t_getDevID_md5(void);
+         ADD_0_STR(s,uiLen,t_getDevID_md5());
+      }
       
       if(iIsTCP) ADD_STR(s,uiLen,";transport=tcp>\r\n")else
          if(iIsTLS) ADD_STR(s,uiLen,";transport=tls>\r\n") else

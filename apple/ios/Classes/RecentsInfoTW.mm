@@ -26,18 +26,23 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#import "RecentsInfoTW.h"
-#import "UICellController.h"
-#import "Recents.h"
-#import <QuartzCore/CALayer.h>
-#import "SP_FastContactFinder.h"
-
-
-
 const char *tg_translate(const char *key, int iKeyLen);
 #define T_TR(_T_KEY) tg_translate(_T_KEY, sizeof(_T_KEY)-1)
 #define T_TRL(_T_KEY, _T_KL) tg_translate(_T_KEY, _T_KL)
 #define T_TRNS(_T_KEY) [NSString stringWithUTF8String:tg_translate(_T_KEY, sizeof(_T_KEY)-1)]
+
+#import <QuartzCore/CALayer.h>
+
+#import "RecentsInfoTW.h"
+#import "CallLogPopup.h"
+#import "DBManager.h"
+#import "Recents.h"
+#import "SP_FastContactFinder.h"
+#import "UICellController.h"
+#import "Utilities.h"
+#import "AppDelegate.h"
+
+#define kAddContactIimageSize 30
 
 @interface RecentsInfoTW ()
 
@@ -73,9 +78,6 @@ NSString *translateServ(CTEditBase *b){
   
 }
 
-
-
-
 @implementation RecentsInfoTW
 
 -(NSString *)toNSFromRI:(CTEditBase *)b  ri:(CTRecentsItem *)i{
@@ -100,7 +102,7 @@ NSString *translateServ(CTEditBase *b){
    }
    else{
       if(i->iAnsweredSomewhereElse){
-         b->addText(T_TR("Answered somewhere"));//Answered elsewhere
+         b->addText(T_TR("Answered elsewhere"));//Answered elsewhere
       }
       else if(i->iDir==i->eMissed){
          b->addText("     ",4);
@@ -126,7 +128,12 @@ NSString *translateServ(CTEditBase *b){
    return toNSFromTB(b);
    
 }
-
+- (BOOL) hasAlpha:(NSString *)text
+{
+    NSCharacterSet *s = [NSCharacterSet characterSetWithCharactersInString:@"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"];
+    NSRange r = [text rangeOfCharacterFromSet:s];
+    return r.location != NSNotFound;
+}
  - (void) viewWillAppear:(BOOL)animated
 {
    
@@ -145,13 +152,33 @@ NSString *translateServ(CTEditBase *b){
    [super viewWillAppear:animated];
    
    self.navigationController.navigationBar.barTintColor = [UIColor darkGrayColor];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
    [self.navigationController setNavigationBarHidden:NO animated:animated];
    
    UIButton *uiBt=(UIButton*)[self.view viewWithTag:10];
    [uiBt setTitle:T_TRNS("Add to Favorites") forState:UIControlStateNormal];
+    
+   NSString *name = item->szPeerAssertedUsername[0] ? [NSString stringWithUTF8String:item->szPeerAssertedUsername] : toNSFromTB(&item->peerAddr);
+    NSString *un =[[Utilities utilitiesInstance] removePeerInfo:name lowerCase:YES];
+    
+    if([self hasAlpha:un])
+    {
+        UIButton *rightButtonWithImage = [UIButton buttonWithType:UIButtonTypeCustom];
+        [rightButtonWithImage setFrame:CGRectMake(0,0,kAddContactIimageSize,kAddContactIimageSize)];
+        rightButtonWithImage.userInteractionEnabled = YES;
+        [rightButtonWithImage.imageView setContentMode:UIViewContentModeScaleAspectFit];
+        [rightButtonWithImage setImage:[UIImage imageNamed:@"ChatBubbleButton.png"] forState:UIControlStateNormal];
+        [rightButtonWithImage addTarget:self action:@selector(openChatWithThisUser:) forControlEvents:UIControlEventTouchUpInside];
+        UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:rightButtonWithImage];
+        self.navigationItem.rightBarButtonItem = rightBarButton;
+       
+        [btInviteToSC setHidden:YES];
+    }
+    //else TODO: [btInviteToSC setHidden:check_is_SC_customer];
+    
+    [[Utilities utilitiesInstance] setTabBarHidden:NO];
 
 }
-
 
 - (void)viewDidUnload
 {
@@ -193,6 +220,10 @@ NSString *translateServ(CTEditBase *b){
    
    
    addToFavorites(item,NULL,0);
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"kSilentPhoneFavoriteAddedNotification"
+                                                        object:nil];
+    
    UIButton *b=(UIButton*)[self.view viewWithTag:10]; 
    if(b){
       [b setHidden:YES];
@@ -265,6 +296,37 @@ NSString *translateServ(CTEditBase *b){
    
 }
 
+- (IBAction)openChatWithThisUser:(id)sender {
+    // Rest of chatting interface resides in Chat.storyboard
+    // Instantiate the storyboard and open first viewcontroller
+    NSString *userName = toNSFromTB(&item->peerAddr);
+    NSString *name = toNSFromTB(&item->name);
+    if(item->szPeerAssertedUsername[0]){
+       userName = [NSString stringWithUTF8String:&item->szPeerAssertedUsername[0]];
+    }
+   
+    NSString *displayName;
+    if(name.length > 0)
+    {
+        displayName = name;
+    }
+    else
+    {
+        displayName = userName;
+    }
+    [[Utilities utilitiesInstance] assignSelectedRecentWithContactName:userName];
+    UIStoryboard *chatStoryBoard = [UIStoryboard storyboardWithName:@"Chat" bundle:nil];
+    UIViewController *chatViewController = [chatStoryBoard instantiateViewControllerWithIdentifier:@"ChatViewController"];
+    [self.navigationController pushViewController:chatViewController animated:YES];
+}
+
+- (IBAction)inviteTapped:(id)sender {
+	if ([lbNr.text length] == 0)
+		return;
+	
+	[(AppDelegate *)[UIApplication sharedApplication].delegate sendSMSInvite:lbNr.text];
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
@@ -306,12 +368,14 @@ NSString *translateServ(CTEditBase *b){
    }
    cell.showsReorderControl=NO;
    
-   CTRecentsItem *i=getByIdxAndMarker(lastList,indexPath.row,self);
+   CTRecentsItem *i=getByIdxAndMarker(lastList,(int)indexPath.row,self);
    if(!i){cell.textLabel.text=@"";cell.tag=0;cell.imageView.image=nil; return cell;}
    
    cell.textLabel.minimumScaleFactor=.5;
    cell.textLabel.adjustsFontSizeToFitWidth=YES;
    cell.textLabel.text = [self toNSFromRI:&b ri:i];
+   
+   cell.accessoryType = i->haveCallLog() ?  UITableViewCellAccessoryDetailButton: UITableViewCellAccessoryNone;
 
    cell.tag=indexPath.row;
    
@@ -352,7 +416,7 @@ NSString *translateServ(CTEditBase *b){
 //show delete when swipe left
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
    
-   CTRecentsItem *i=getByIdxAndMarker(lastList,indexPath.row,self);
+   CTRecentsItem *i=getByIdxAndMarker(lastList,(int)indexPath.row,self);
    if(i)lastList->remove(i);
    
    CTRecentsItem *n=getByIdxAndMarker(lastList,0,self);
@@ -372,9 +436,17 @@ NSString *translateServ(CTEditBase *b){
 
 #pragma mark - Table view delegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+}
+
+- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath{
+
+   CTRecentsItem *i=getByIdxAndMarker(lastList,(int)indexPath.row,self);
    
+   if(i && i->haveCallLog()){
+      
+      [CallLogPopup popupLogMessage:i vc:self];
+   }
 }
 
 - (void)dealloc {

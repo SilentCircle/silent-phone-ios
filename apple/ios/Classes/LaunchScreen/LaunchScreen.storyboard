@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="viV-Mn-6zN">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+    </dependencies>
+    <scenes>
+        <!--Launch ScreenVC-->
+        <scene sceneID="W6d-Ag-LrW">
+            <objects>
+                <viewController storyboardIdentifier="LaunchScreenVC" modalTransitionStyle="crossDissolve" modalPresentationStyle="overFullScreen" hidesBottomBarWhenPushed="YES" useStoryboardIdentifierAsRestorationIdentifier="YES" id="viV-Mn-6zN" customClass="LaunchScreenVC" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="4cs-FO-x8G"/>
+                        <viewControllerLayoutGuide type="bottom" id="oyl-Ie-GqO"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="h9k-P5-tKs">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="1000" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" image="SCLogo_light-on-clear_2048.png" translatesAutoresizingMaskIntoConstraints="NO" id="qVn-Vr-Z5t" userLabel="logoImageView">
+                                <rect key="frame" x="75" y="75" width="450" height="450"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="qVn-Vr-Z5t" secondAttribute="height" multiplier="1:1" id="AKA-1A-AT8"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.32941176470588235" green="0.32941176470588235" blue="0.32941176470588235" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="qVn-Vr-Z5t" firstAttribute="centerX" secondItem="h9k-P5-tKs" secondAttribute="centerX" id="BqE-Nf-0Fl"/>
+                            <constraint firstItem="qVn-Vr-Z5t" firstAttribute="centerY" secondItem="h9k-P5-tKs" secondAttribute="centerY" id="g2E-DJ-iC6"/>
+                            <constraint firstItem="qVn-Vr-Z5t" firstAttribute="width" secondItem="h9k-P5-tKs" secondAttribute="width" multiplier="0.75" id="vOe-Oe-pP4"/>
+                        </constraints>
+                    </view>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="S30-fd-Vqt" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="350" y="118"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="SCLogo_light-on-clear_2048.png" width="2048" height="2048"/>
+    </resources>
+</document>

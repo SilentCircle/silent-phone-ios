@@ -25,7 +25,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
 #import <AVFoundation/AVFoundation.h>
 
 int getIOSVersion();
@@ -93,6 +92,10 @@ public:
    AVF_EXPORT NSString *const AVAudioSessionPortBluetoothHFP NS_AVAILABLE_IOS(6_0); /* Input or output on a Bluetooth Hands-Free Profile device */
    AVF_EXPORT NSString *const AVAudioSessionPortUSBAudio     NS_AVAILABLE_IOS(6_0); /* Input or output on a Universal Serial Bus device */
 #endif
+   
+   int isHeadphonesOrBT(){
+      return strcmp(bufLastUsedRoute, AVAudioSessionPortHeadphones.UTF8String)==0 || isBTUsed();
+   }
    
    int isLoudspkrInUse(){
       printf("[isLoudspkrInUse: current_route =%s]",bufLastUsedRoute);
@@ -261,6 +264,7 @@ public:
       else if(AVAudioSessionRouteChangeReasonOldDeviceUnavailable == reasonValue) {
          
          NSLog(@"     OldDeviceUnavailable");
+         checkCurrent();
       }
    }
 private:
@@ -317,6 +321,13 @@ const char * getAudioDevName(){
    return ctBTUsage.getDevName();
 }
 
+int isHeadphonesOrBT(){
+   return ctBTUsage.isHeadphonesOrBT();
+}
+
+extern "C" int c_isHeadphonesOrBT(){
+   return ctBTUsage.isHeadphonesOrBT();
+}
 void setAudioRouteChangeCB(void(*fncCBOnRouteChange)(void *self, void *ptrUserData), void *ptrUserData){
    if(fncCBOnRouteChange){
       AudioSessionAddPropertyListener(kAudioSessionProperty_AudioRouteChange, &CTAudioUsage::propListener, &ctBTUsage);
@@ -385,6 +396,17 @@ rep1:
    if(duplex){
    //   [a setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
       [a setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionAllowBluetooth error:nil];
+       
+//       //09/23/15 - Testing to fix audio recording level changes between
+//       // call and text memo
+//       NSError *avError = nil;
+//       [a setCategory:AVAudioSessionCategoryPlayAndRecord 
+//          withOptions:(AVAudioSessionCategoryOptionDefaultToSpeaker | AVAudioSessionCategoryOptionAllowBluetooth) 
+//                error:&avError];
+//       if (avError) {
+//           NSLog(@"%s\n\tiOS_audio_helper.mm session setup error: %@ at line %d", 
+//                 __PRETTY_FUNCTION__,[avError localizedDescription], __LINE__);
+//       }
       
       const char* sendEngMsg(void *pEng, const char *p);
       
@@ -415,6 +437,12 @@ void t_setActiveAS(int yes){
    }
 #endif
    NSError *err = 0;
+    
+    //09/23/15 - TESTING 
+#warning AUDIO_BUG    
+    if (!yes) {
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryRecord error:nil];
+    }
    [[AVAudioSession sharedInstance] setActive: yes?YES:NO error: &err];
    //setPreferredIOBufferDuration
 }

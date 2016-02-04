@@ -1,6 +1,33 @@
+/*
+Copyright (C) 2016, Silent Circle, LLC.  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Any redistribution, use, or modification is done solely for personal
+      benefit and not for any commercial purpose or for monetary gain
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name Silent Circle nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL SILENT CIRCLE, LLC BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 #import <UIKit/UIKit.h>
-#import <AddressBook/AddressBook.h>
+
 #import "SP_FastContactFinder.h"
 
 #include <ctype.h>
@@ -106,7 +133,7 @@ class CTContactFinder{
       ABMultiValueRef phones = ABRecordCopyValue(person, property);
       
       
-      int iPhoneCnt = ABMultiValueGetCount(phones);
+      int iPhoneCnt = (int)ABMultiValueGetCount(phones);
       
       for(CFIndex i = 0; i < iPhoneCnt; i++) {
          
@@ -118,7 +145,7 @@ class CTContactFinder{
          NSString* mobile=(NSString*)m;
 #endif
          const char *p=[mobile UTF8String];
-         int l=strlen(p);//[mobile length];
+         int l=(int)strlen(p);//[mobile length];
          
          p+=isSPURL(p,l);
          
@@ -196,7 +223,7 @@ public:
      // NSLog(@"[ABAddressBookGetPersonCount=%ld]",ABAddressBookGetPersonCount(ab));
       
       if ( people){
-         int c=[people count];
+         int c=(int)[people count];
          for (int i=0; i<c; i++ )
          {
             ABRecordRef person = (__bridge ABRecordRef)[people objectAtIndex:i];
@@ -215,7 +242,7 @@ public:
    ABRecordRef getPersonByIdx(int i){
       if(!people)return NULL;
       
-      int c=[people count];
+      int c=(int)[people count];
       if(i>=c)return NULL;
       
       return (__bridge ABRecordRef)[people objectAtIndex:i];
@@ -368,7 +395,7 @@ CTContactFinder contactFinder;
    
    if(!number)return nil;
    const char *p = [number UTF8String];
-   return [SP_FastContactFinder findPerson:p  iLen:strlen(p) idx:idx];
+   return [SP_FastContactFinder findPerson:p  iLen:(int)strlen(p) idx:idx];
 }
 
 +(UIImage *)getPersonImage:(int) idx{

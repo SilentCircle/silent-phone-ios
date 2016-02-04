@@ -11,6 +11,6 @@
 @implementation werner_zrtp
 
 @end
-char zrtpBuildInfo[] = "15b2cff";
+char zrtpBuildInfo[] = "a-bcf1fa8 z-59cef58";
 
 

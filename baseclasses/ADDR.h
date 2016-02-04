@@ -145,6 +145,7 @@ public:
    }
    inline int operator ==(ADDR &addr)
    {
+      if(bufAddr[0] && strcmp(bufAddr, addr.bufAddr)==0)return 1;
       if(ip!=addr.ip)return 0;
       if(port)
          return (port==addr.port);

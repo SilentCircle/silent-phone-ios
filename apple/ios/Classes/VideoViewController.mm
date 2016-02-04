@@ -26,6 +26,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #import "VideoViewController.h"
 #import "CallCell.h"
 #include "CTVideoInIOS.h"
@@ -162,7 +163,7 @@ int isPlaybackVolumeMuted();
 - (void) willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
    [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
    
-   float rotation = [SquareCamViewController getRotation:toInterfaceOrientation];
+   float rotation = [SquareCamViewController getRotation:(int)toInterfaceOrientation];
    
    int iResize = UIInterfaceOrientationIsLandscape(self.interfaceOrientation)!=UIInterfaceOrientationIsLandscape(toInterfaceOrientation);
    
@@ -196,7 +197,7 @@ int isPlaybackVolumeMuted();
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
 
    if(cvc ){
-      [cvc setOrientation:self.interfaceOrientation];
+      [cvc setOrientation:(int)self.interfaceOrientation];
       [self alignObjects:[self getNearest:cvc.frame.origin.x y:cvc.frame.origin.y] lb:nil];
       //[self alignObjects:[self getNearest:0 y:0] lb:nil];
    }

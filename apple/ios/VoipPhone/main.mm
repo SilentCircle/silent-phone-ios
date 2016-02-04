@@ -1,16 +1,36 @@
-//
-//  main.m
-//  VoipPhone
+/*
+Copyright (C) 2016, Silent Circle, LLC.  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Any redistribution, use, or modification is done solely for personal
+      benefit and not for any commercial purpose or for monetary gain
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name Silent Circle nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL SILENT CIRCLE, LLC BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 //
 //  Created by Janis Narbuts on 4.2.2012.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-
-#import "AppDelegate.h"
 #import "KeychainItemWrapper.h"
-
 
 int isBackgroundReadable(const char *fn);
 void log_file_protection_prop(const char *fn);
@@ -20,14 +40,11 @@ void saveFile(const char *fn,void *p, int iLen);
 void bin2Hex(unsigned char *Bin, char * Hex ,int iBinLen);
 int hex2BinL(unsigned char *Bin, char *Hex, int iLen);
 
-
-
 //http://www.ios-developer.net/iphone-ipad-programmer/development/file-saving-and-loading/using-the-document-directory-to-store-files
 void setFileStorePath(const char *p);
 char *getFileStorePath();
 
 void setFSPath(char *p);
-
 
 void testD3(){
    int get_time(void);
@@ -138,8 +155,6 @@ void freemem_to_log(){
 static char bufDevID[T_MAX_DEV_ID_LEN+2];
 static char bufMD5[T_MAX_DEV_ID_LEN+32+1];
 
-
-
 void initDevID(){
    
    memset(bufDevID,0,sizeof(bufDevID));
@@ -195,6 +210,7 @@ void initDevID(){
    
    
 }
+
 
 static char push_token[256]={0};
 const char *push_fn = "push-token.txt";
@@ -294,7 +310,6 @@ const char *t_getDevID_md5(){
    
    return &bufMD5[0];
 }
-
 
 
 int iAppStartTime;
@@ -492,17 +507,31 @@ void initLang(const char *pDef);
 
 void setProvisioningToDevelop();
 
+void Log(char const* format, ...){
+   char buf[2048];
+   
+   va_list arg;
+   va_start(arg, format);
+   vsnprintf(buf, sizeof(buf), format, arg);
+   va_end( arg );
+   
+ //  log_fnc(tag, buf);
+   NSLog(@"axolog=[%s]", buf);
+}
+
 int main(int argc, char *argv[])
 {
    
-   
+    //09/24/15 set ios9 network debugging logs
+//    setenv("CFNETWORK_DIAGNOSTICS", "3", 1);
+
    //puts(argv[0]);
    // void test_pwd_ed(int iSetKey);test_pwd_ed(1);exit(0);
    
    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
   // void setProvisioningToDevelop();
 //#warning REMOVE THIS not using Production
-//setProvisioningToDevelop();
+  //setProvisioningToDevelop();
    testD3();
 
 //   return 0;
@@ -527,7 +556,7 @@ int main(int argc, char *argv[])
    NSLog(@"[path=%s] build=release",argv[0]);
 #endif
    
-   
+    void initDevID();
    initDevID();
    
    rememberAppStartupTime();

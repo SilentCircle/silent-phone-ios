@@ -26,30 +26,33 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#include <string.h>
-#import "AppDelegate.h"
-#import "CallManeger.h"
-#import "ZRTPInfoView.h"
-#import "ZIDViewController.h"
-
-#import "SP_FastContactFinder.h"
-
-//#include "MediaPlayer/MediaPlayer.h"
 #import <MediaPlayer/MPVolumeSettings.h>
 #import <MediaPlayer/MPVolumeView.h>
+#import <MessageUI/MessageUI.h>
+#import <MessageUI/MFMailComposeViewController.h>
 
-
-
-//#include <MPVolumeSettings.h>
-
-
-#import "VideoViewController.h"
-#import "../../../utils/Reachability.h"
-
+#include <string.h>
 #include "../../../os/CTMutex.h"
 #include "../../../tiviandroid/engcb.h"
-
 #include "../../../utils/CTNumberHelper.h"
+
+#import "AppDelegate.h"
+#import "CallManeger.h"
+#import "DBManager.h"
+#import "LocationManager.h"
+#import "SP_FastContactFinder.h"
+#import "VideoViewController.h"
+#import "Utilities.h"
+#import "../../../utils/Reachability.h"
+#import "ZRTPInfoView.h"
+#import "ZIDViewController.h"
+#import "SCFileManager.h"
+
+#import "ChatViewController.h"
+#import "LaunchScreenVC.h"
+#import "SCContainerVC.h"
+
+#import "LockAlertDelegate.h"
 
 CTNumberHelperBase *pDialerHelper = g_getDialerHelper();
 
@@ -182,6 +185,12 @@ static void fnc_log(void *ret, const char *line, int iLen){
    l->ns=[ns stringByAppendingString:[NSString stringWithUTF8String:buf]];
 }
 
+// Added for provisioning window handling
+@interface AppDelegate()
+@property(retain, nonatomic) UIWindow *cachedWindow;
+@property(retain, nonatomic) UIWindow *provWindow;
+@property(retain, nonatomic) SCContainerVC *provRootVC;
+@end
 
 @implementation AppDelegate
 
@@ -281,7 +290,6 @@ static void fnc_log(void *ret, const char *line, int iLen){
    for(int y=0,i=0;y<4;y++)
       for(int x=0;x<3;x++,i++){
          UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-         
          [button addTarget:self  action:@selector(pressDP_Bt:) forControlEvents:UIControlEventTouchDown];
          [button addTarget:self  action:@selector(textFieldReturn:) forControlEvents:UIControlEventTouchDown];
          [button addTarget:self  action:@selector(pressDP_Bt_up:) forControlEvents:UIControlEventTouchUpInside];
@@ -469,7 +477,7 @@ static void fnc_log(void *ret, const char *line, int iLen){
   
    [answer setTitle:T_TRNS("Answer") forState:UIControlStateNormal];
    
-   [keypaditem setTitle:T_TRNS("Keypad")];
+   //[keypaditem setTitle:T_TRNS("Call")];
    [lbVolumeWarning setText:T_TRNS("Volume is too low")];
 }
 
@@ -489,10 +497,10 @@ static void fnc_log(void *ret, const char *line, int iLen){
    iExiting=0;
    iLoudSpkr=0;
    
-   iAudioUnderflow=0;
+ //  iAudioUnderflow=0;
    iSettingsIsVisble=0;
    iShowCallMngr=0;
-   iCanShowMediaInfo=0;
+ //  iCanShowMediaInfo=0;
    iAudioBufSizeMS=700;
    vvcToRelease=NULL;
 #ifdef T_CREATE_CALL_MNGR 
@@ -535,6 +543,7 @@ static void fnc_log(void *ret, const char *line, int iLen){
    [self checkProvValues];
    
    [uiMainTabBarController setSelectedIndex:3];
+    [uiTabBar selectSeperatorWithTag:3];
    
    nr.delegate=self;
    nr.enablesReturnKeyAutomatically = NO;
@@ -622,6 +631,7 @@ static void fnc_log(void *ret, const char *line, int iLen){
    CGRect keyboard = [[aNotification.userInfo valueForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
    frame.origin.y = keyboard.origin.y - frame.size.height - uiMainTabBarController.view.frame.origin.y;
    float dur = [[aNotification.userInfo valueForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+
    [UIView animateWithDuration:dur animations:^
     {
        [uiTabBar setFrame:frame];
@@ -960,12 +970,70 @@ time_t iLastPushVoipAt=0;
  */
 
 - (void)application:(UIApplication *)app didReceiveLocalNotification:(UILocalNotification *)notif {
+    
+    //[[UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil] instantiateViewControllerWithIdentifier:@"ViewController"];
+    
+    NSString *userName = [notif.userInfo objectForKey:@"contactName"];
+    UITabBarController *tabBarContrller = (UITabBarController *)self.window.rootViewController;
+    [self checkForLockAlert];
+    
+    if(userName)
+        [[Utilities utilitiesInstance] assignSelectedRecentWithContactName:userName];
+    
+    if(userName && tabBarContrller.selectedIndex != 4)
+    {
+        tabBarContrller.selectedIndex = 4;
+        
+        
+        UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"Chat" bundle:nil];
+        UIViewController *chatViewController = [storyBoard instantiateViewControllerWithIdentifier:@"ChatViewController"];
+        
+        UINavigationController *navigationViewC = (UINavigationController *)tabBarContrller.selectedViewController;
+        
+        // pop chat viewcontroller since we are going to present a new one
+        [navigationViewC popViewControllerAnimated:YES];
+        [navigationViewC pushViewController:chatViewController animated:YES];
+        [uiTabBar selectSeperatorWithTag:4];
+    }
+    else if(![notif.userInfo objectForKey:@"call_id"])
+    {
+        // we dont know if chat is open or not, so just pop to root and push new chat view
+        
+        UINavigationController *navigationViewC = (UINavigationController *)tabBarContrller.selectedViewController;
+        [navigationViewC popToRootViewControllerAnimated:NO];
+        UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"Chat" bundle:nil];
+        UIViewController *chatViewController = [storyBoard instantiateViewControllerWithIdentifier:@"ChatViewController"];
+        [navigationViewC pushViewController:chatViewController animated:YES];
+    }
+    //
    // Handle the notificaton when the app is running
 //   NSLog(@"Recieved Notification %@",notif);
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation{
     NSLog(@"Recieved openURL %@ %@",[url absoluteString],sourceApplication);
+    
+    if ([[url scheme] isEqualToString:@"file"])
+    {
+        [Utilities utilitiesInstance].deepLinkUrl = url;
+        [uiMainTabBarController setSelectedIndex:4];
+        UITabBarController *tabBarContrller = (UITabBarController *)self.window.rootViewController;
+        tabBarContrller.selectedIndex = 4;
+        
+        
+        UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"Chat" bundle:nil];
+        UIViewController *searchViewController = [storyBoard instantiateViewControllerWithIdentifier:@"SearchViewController"];
+        UINavigationController *navigationViewC = (UINavigationController *)tabBarContrller.selectedViewController;
+        
+        // pop chat viewcontroller since we are going to present a new one
+        [navigationViewC popViewControllerAnimated:YES];
+        
+        [navigationViewC pushViewController:searchViewController animated:YES];
+        [uiTabBar selectSeperatorWithTag:4];
+        return YES;
+    }
+    
+    
    const char *p=[[url absoluteString] UTF8String];
    int l=[url absoluteString].length;
    
@@ -985,12 +1053,27 @@ time_t iLastPushVoipAt=0;
       [self setText:[NSString stringWithUTF8String:p+iIs]];
    
    [uiMainTabBarController setSelectedIndex:3];
+    [uiTabBar selectSeperatorWithTag:3];
    
    return YES;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
+    [[[[UIApplication sharedApplication] delegate] window] endEditing:YES];
+	
+    /*DELETE*/
+    /*
+   //we have to disable splash screen when app goes to background
+   if(0){
+      if (!_splashVC) {
+         UIStoryboard *splashStoryBoard = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
+         _splashVC = [splashStoryBoard instantiateViewControllerWithIdentifier:@"LaunchScreenVC"];
+      }
+      [self.window.rootViewController presentViewController:_splashVC animated:NO completion:nil];
+   }
+	*/
+    
    // [UIApplication sharedApplication].applicationIconBadgeNumber|=16;
    // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
    // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
@@ -1168,11 +1251,45 @@ time_t iLastPushVoipAt=0;
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-   
-   NSLog(@"applicationDidEnterBackground");
+   [[LocationManager locationManagerInstance].locationManager stopUpdatingLocation];
+    
+    // start counting lock time
+    NSMutableDictionary *delayDict = [[[NSUserDefaults standardUserDefaults] objectForKey:@"lockTimeDict"] mutableCopy];
+    int isActive = [[delayDict objectForKey:@"isActive"] intValue];
+    
+    if(isActive == 0)
+    {
+        [delayDict setValue:[NSNumber numberWithLong:time(NULL)] forKey:@"lockTime"];
+    }
+    
+    [delayDict setValue:[NSNumber numberWithInt:1] forKey:@"isActive"];
+    [[NSUserDefaults standardUserDefaults] setValue:delayDict forKey:@"lockTimeDict"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    // invalidate and remove burn timers when user closes app
+    [[Utilities utilitiesInstance] invalidateBurnTimers];
+    
+    /*
+    // FIX: dissapearing tab bar after launch
+    // must pop viewcontrollers with hidesBottomBarWhenPushed = YES
+    
+    UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
+    UIViewController *viewC = tabBarController.selectedViewController;
+    if([viewC isKindOfClass:[UINavigationController class]])
+    {
+        UINavigationController *navigationViewC = (UINavigationController *) viewC;
+        [navigationViewC popToRootViewControllerAnimated:NO];
+    }
+     */
+    
+   NSLog(@"applicationDidEnterBackground");//ViewControllerWithBottomBar
    [nr setText:@""];
-   [uiMainTabBarController setSelectedIndex:3];
+    
+    // put it back if everything fails
+  // [uiMainTabBarController setSelectedIndex:3];
+    //[uiTabBar selectSeperatorWithTag:3];
    
+    
    /*
     //bugy
    UIImageView *imageView = [[UIImageView alloc] initWithFrame:self.window.bounds];
@@ -1195,17 +1312,45 @@ time_t iLastPushVoipAt=0;
       [self stopRingMT];
    }
    calls.relCallsNotInUse();
+    
 }
-
-
-
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-   //--dbg--[UIApplication sharedApplication].applicationIconBadgeNumber=100;
-   
+    [[UITableViewCell appearance] setBackgroundColor:[UIColor clearColor]];
+    
+#pragma mark Configure TabBar    
+    // Replace MainTabBarControllers Contacts view controller from MainWindow.xib with
+    // SilentContactsViewController from Contacts storyboard.
+    NSMutableArray* controllersArray = [NSMutableArray arrayWithArray:uiMainTabBarController.viewControllers];
+    UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"Contacts" bundle:nil];
+    UIViewController *contactsViewController = [storyBoard instantiateViewControllerWithIdentifier:@"ContactsNavigationViewController"];
+    [controllersArray replaceObjectAtIndex:2 withObject:contactsViewController];
+    [uiMainTabBarController setViewControllers:controllersArray animated:YES];
+    uiMainTabBarController.delegate = self;
+    
+    [uiTabBar addSeperators];
+    [Utilities utilitiesInstance].appDelegateTabBar = uiTabBar;
+    UIColor *tbTint = [UIColor colorWithRed:0.965 green:0.953 blue:0.922 alpha:1];
+    [[UITabBar appearance] setTintColor:tbTint];
+    
+    //10/13/15 - Accessibility for tabbaritems:
+    // NOTE: accessibility labels are not VoiceOver enabled on UITabBarItem without titles.
+    // Set titles and labels.
+    ((UITabBarItem*)uiTabBar.items[0]).accessibilityLabel = ((UITabBarItem*)uiTabBar.items[0]).title = T_TRNS("Favorites");
+    ((UITabBarItem*)uiTabBar.items[1]).accessibilityLabel = ((UITabBarItem*)uiTabBar.items[1]).title = T_TRNS("Recents");
+    ((UITabBarItem*)uiTabBar.items[2]).accessibilityLabel = ((UITabBarItem*)uiTabBar.items[2]).title = T_TRNS("Contacts");
+    ((UITabBarItem*)uiTabBar.items[3]).accessibilityLabel = ((UITabBarItem*)uiTabBar.items[3]).title = T_TRNS("Call");
+    ((UITabBarItem*)uiTabBar.items[4]).accessibilityLabel = ((UITabBarItem*)uiTabBar.items[4]).title = T_TRNS("Text");
+    // Loop thru tabbaritems and offset title out of view.
+    for (UITabBarItem *tbItem in uiTabBar.items) {
+        tbItem.isAccessibilityElement = YES;
+        tbItem.titlePositionAdjustment = UIOffsetMake(0, 1000);
+    }
+    
+    [Utilities utilitiesInstance].dialPadActionButtonView = actionButtonsView;
+    [DBManager dBManagerInstance];
    NSLog(@"didFinishLaunchingWithOptions %d", application.applicationState);
-   
    
    if(UIApplicationStateBackground==application.applicationState)
       [self tryWorkInBackground];
@@ -1255,7 +1400,13 @@ time_t iLastPushVoipAt=0;
 
    }
    
-   
+#pragma mark Provisioning Window
+    // present provisioning VC if not yet provisioned
+    int isProvisioned(int iCheckNow);
+    int provOk=isProvisioned(0);
+    if(!provOk){        
+        [self setupAndDisplayProvisioningWindow];
+    }
    
    
    [SP_FastContactFinder start];
@@ -1263,9 +1414,88 @@ time_t iLastPushVoipAt=0;
    return YES;
 }
 
+- (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
+    UITabBarItem *item = [tabBarController.tabBar selectedItem];
+    [uiTabBar selectSeperatorWithTag:(int)item.tag];
+    if((tabBarController.selectedIndex == 1 || tabBarController.selectedIndex == 4))
+    {
+        [self checkForLockAlert];
+    }
+}
+
+-(void) checkForLockAlert
+{
+
+    NSString *lockKey = [[NSUserDefaults standardUserDefaults] valueForKey:@"lockKey"];
+    NSDictionary * delayInfo = [[NSUserDefaults standardUserDefaults] objectForKey:@"lockTimeDict"];
+    NSNumber *delayTime = [delayInfo objectForKey:@"lockDelayTime"];
+    NSNumber *delayTimeStamp = [delayInfo objectForKey:@"lockTime"];
+
+    
+    NSNumber *isActive = [delayInfo objectForKey:@"isActive"];
+    
+    
+    long fullDelayTime = [delayTime intValue] + [delayTimeStamp intValue];
+    if(fullDelayTime > time(NULL))
+    {
+        if([Utilities utilitiesInstance].lockedOverlayView)
+        {
+            [[Utilities utilitiesInstance].lockedOverlayView removeFromSuperview];
+        }
+        NSMutableDictionary *delayDict = [[[NSUserDefaults standardUserDefaults] objectForKey:@"lockTimeDict"] mutableCopy];
+        [delayDict setValue:[NSNumber numberWithInt:0] forKey:@"isActive"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+    UITabBarController *mainController = (UITabBarController*)  self.window.rootViewController;
+    if(lockKey && (mainController.selectedIndex == 1 || mainController.selectedIndex == 4))
+    {
+        // has app been minimized after setting lock
+        if([isActive intValue] == 1)
+        {
+            if(fullDelayTime < time(NULL))
+            {
+                if([Utilities utilitiesInstance].lockedOverlayView)
+                {
+                    [[Utilities utilitiesInstance].lockedOverlayView removeFromSuperview];
+                }
+                [Utilities utilitiesInstance].lockedOverlayView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [Utilities utilitiesInstance].screenWidth, [Utilities utilitiesInstance].screenHeight)];
+                [[Utilities utilitiesInstance].lockedOverlayView setBackgroundColor:[UIColor blackColor]];
+                
+                [mainController.selectedViewController.view addSubview:[Utilities utilitiesInstance].lockedOverlayView];
+                [[LockAlertDelegate lockAlertInstance] presentLockedAlertView];
+            }
+        }
+
+    } else
+    {
+        if([Utilities utilitiesInstance].lockedOverlayView)
+        {
+            [[Utilities utilitiesInstance].lockedOverlayView removeFromSuperview];
+        }
+
+    }
+}
+
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-   
+    if([Utilities utilitiesInstance].selectedRecentObject && [Utilities utilitiesInstance].selectedRecentObject.shareLocationTime > time(NULL))
+    {
+        [[LocationManager locationManagerInstance].locationManager startUpdatingLocation];
+    }
+    
+	// make sure we don't have any lingering decrypted attachments lying around
+	[SCFileManager cleanMediaCache];
+	 // reinstantiate burn timers for every chatobject
+   //GO: what will happen if we are reading data from DB a the same time ?
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    for (NSArray *conversationArray in [Utilities utilitiesInstance].chatHistory.allValues) {
+        NSArray *a = [conversationArray mutableCopy];
+        for (ChatObject *thisChatObject in a) {
+            [[DBManager dBManagerInstance] setOffBurnTimerForBurnTime:thisChatObject.burnTime andChatObject:thisChatObject checkForRemoveal:YES];
+        }
+    }
+    });
+    
    NSLog(@"applicationWillEnterForeground");
 
    iIsInBackGround=0;
@@ -1279,13 +1509,25 @@ time_t iLastPushVoipAt=0;
    }
    
    [[UIApplication sharedApplication]clearKeepAliveTimeout];
+    
+    [self checkForLockAlert];
    
    // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-   NSLog(@"applicationDidBecomeActive %d", application.applicationState);
+    /*DELETE*/
+    /*
+	if (0 && _splashVC) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            [_splashVC dismissViewControllerAnimated:NO completion:nil];
+            _splashVC = nil;
+        });
+	}
+     */
+    
+	NSLog(@"applicationDidBecomeActive %d", application.applicationState);
    setPhoneCB(&fncCBRet,self);
    iIsInBackGround=0;
    
@@ -1316,14 +1558,15 @@ time_t iLastPushVoipAt=0;
    int isProvisioned(int iCheckNow);
    int provOk=isProvisioned(0);
    
-   
-   if(!provOk){
-      [self showProvScreen];
-   }
-   else{
-      [self setOutgoingAccount:nil];
-   }
-   [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    if (provOk) {
+        [self setOutgoingAccount:nil];
+    }
+    else if (!provOk && nil == _cachedWindow) {
+        [self setupAndDisplayProvisioningWindow];
+    }
+
+    
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
    
    [recentsController resetBadgeNumber:false];
    
@@ -1492,6 +1735,14 @@ time_t iLastPushVoipAt=0;
    if(callMngr)[callMngr release];
    [window release];
    callMngr=nil;
+    [callButton release];
+    [chatBtnInCallScr release];
+	[actionButtonsView release];
+    
+    [_provRootVC release];
+    [_provWindow release];
+    [_cachedWindow release];
+    
    [super dealloc];
    NSLog(@"dealloc ok");
 }
@@ -1708,7 +1959,7 @@ time_t iLastPushVoipAt=0;
          NSString *bestName = toNSFromTB(&c->nameFromAB);
          
          notif.alertBody =[NSString stringWithFormat: @"%@\n%@ %@ \n%@",T_TRNS("Incoming call"),bestName, p, toNSFromTB(&c->incomCallPriority)];
-         notif.alertAction = T_TRNS("Answer");
+         //notif.alertAction = T_TRNS("Answer");
          notif.category = @"INCOMING_CALL_NOTIFICATION";
          //int useRetroRingtone();
          
@@ -1812,8 +2063,17 @@ time_t iLastPushVoipAt=0;
    unsigned int tc = getTickCount();
    
    c->uiEndedAt = tc;
-   c->uiRelAt = tc + 5000;
+   c->uiRelAt = tc + 5000;//we have to set rel time, because we are saving on main thread
    if(!c->uiRelAt)c->uiRelAt=1;//if getTickCount()+5000 == 0
+   
+   [recentsController addToRecentsCall:c];
+   
+   if(c->iIsIncoming && !c->uiStartTime && !c->iDontAddMissedCall){
+      [self notifyMissedCall: c];
+   }
+
+   
+   /*
    
    // c->
    const char *pServ="Unknown";
@@ -1835,21 +2095,24 @@ time_t iLastPushVoipAt=0;
       memmove(_nr+1,_nr,len+1);
       _nr[0]='+';
    }
+
+   
    
    if(c->iIsIncoming && !c->uiStartTime){
       if(c->iDontAddMissedCall){
          //answered somewhere else
-         [recentsController addToRecents:CTRecentsAdd::addReceived(&c->nameFromAB, _nr,0,pServ,1)];
+         [recentsController addToRecents:CTRecentsAdd::addReceived(&c->nameFromAB, _nr,c->szSIPCallId,0,pServ,1)];
       }
       else{
          [self notifyMissedCall: c];
-         [recentsController addToRecents:CTRecentsAdd::addMissed(&c->nameFromAB, _nr,0,pServ)];
+         [recentsController addToRecents:CTRecentsAdd::addMissed(&c->nameFromAB, _nr,c->szSIPCallId,0,pServ)];
       }
    }
    else if(c->iIsIncoming)
-      [recentsController addToRecents:CTRecentsAdd::addReceived(&c->nameFromAB, _nr,get_time()-(int)c->uiStartTime,pServ)];
+      [recentsController addToRecents:CTRecentsAdd::addReceived(&c->nameFromAB, _nr,c->szSIPCallId,get_time()-(int)c->uiStartTime,pServ)];
    else 
-      [recentsController addToRecents:CTRecentsAdd::addDialed(&c->nameFromAB, _nr,c->uiStartTime?(get_time()-(int)c->uiStartTime):0,pServ)];
+      [recentsController addToRecents:CTRecentsAdd::addDialed(&c->nameFromAB, _nr,c->szSIPCallId,c->uiStartTime?(get_time()-(int)c->uiStartTime):0,pServ)];
+    */
    
 }
 
@@ -2031,12 +2294,6 @@ time_t iLastPushVoipAt=0;
    NSLog(@"cc=%d",cc);
    if(!cc)return -1;
    
-  
-   UIDevice *device = [UIDevice currentDevice];
-   device.proximityMonitoringEnabled = YES;
-   if (device.proximityMonitoringEnabled == YES){
-      NSLog(@"pr ok");
-   } 
    if(cc==1){
       [self setCurCallMT:calls.getCall(0)];
    }
@@ -2084,11 +2341,19 @@ time_t iLastPushVoipAt=0;
    
    if(second==recentsController.presentedViewController)iCallScreenIsVisible=1;
    
+
    if(iCallScreenIsVisible || second.isBeingPresented){
       if(iShowCallMngr)
          [self showCallManeger];
       return ;
    }
+   
+    /*DELETE*/
+//   if((recentsController.presentedViewController)
+//		&& (![recentsController.presentedViewController isKindOfClass:[LaunchScreenVC class]])) {
+//      return;
+//   }
+   
    iCallScreenIsVisible = 3;
 
    [self checkVolumeWarning];
@@ -2096,6 +2361,16 @@ time_t iLastPushVoipAt=0;
    [self checkLeds];
    
    [self startMotionDetect];
+   
+   int isHeadphonesOrBT(void);
+   
+   if(!isHeadphonesOrBT()){
+      UIDevice *device = [UIDevice currentDevice];
+      device.proximityMonitoringEnabled = YES;
+      if (device.proximityMonitoringEnabled == YES){
+         NSLog(@"pr ok");
+      }
+   }
 
    //TODO checkSpkrState
    
@@ -2116,7 +2391,7 @@ time_t iLastPushVoipAt=0;
      // LaunchThread(self);
 
       
-      findIntByServKey(NULL, "iAudioUnderflow", &iAudioUnderflow);
+     // findIntByServKey(NULL, "iAudioUnderflow", &iAudioUnderflow);
    }
    
    
@@ -2257,22 +2532,22 @@ time_t iLastPushVoipAt=0;
    
    int findCSC_C_S(const char *nr, char *szCountry, char *szCity, char *szID, int iMaxLen);
    char bufC[64],szCity[64],sz2[64];
-   
-
-   
+	
+   CGRect frameR = lbDst.frame;
    if(findCSC_C_S(pNr, &bufC[0], &szCity[0], &sz2[0],64)>0){
       strcat(sz2,".png");
       UIImage *im=[UIImage imageNamed: [NSString stringWithUTF8String:&sz2[0]]];
-      lbDst.center=CGPointMake(126,53);
+	  frameR.origin.x = callScreenFlag.frame.origin.x+callScreenFlag.frame.size.width+3;
+	  lbDst.frame = frameR;
+//      lbDst.center=CGPointMake(126,53);
       [callScreenFlag setImage:im];
-      
    }
    else{
-      lbDst.center=CGPointMake(100,53);
+	  frameR.origin.x = callScreenFlag.frame.origin.x;
+	  lbDst.frame = frameR;
+//      lbDst.center=CGPointMake(100,53);
       [callScreenFlag setImage:nil];
    }
-   
-
 }
 
 int iAnimatingKeyPadInCall=0;
@@ -2385,7 +2660,19 @@ int iAnimatingKeyPadInCall=0;
       if(c->iIsIncoming && !c->iActive)view6pad.alpha=.3;
       else view6pad.alpha=1.0;
    }
-   
+    
+   NSString *un = c->getUsernameFromCall();
+    if(un.length > 0)
+    {
+        [chatBtnInCallScr setUserInteractionEnabled:YES];
+        chatBtnInCallScr.alpha = 1.f;
+    }else
+    {
+        [chatBtnInCallScr setUserInteractionEnabled:NO];
+        chatBtnInCallScr.alpha = 0.6f;
+    }
+  // [self.chatBtn setHidden:un.length<1];
+    
    return 0;
    
 }
@@ -2461,11 +2748,13 @@ int iAnimatingKeyPadInCall=0;
             break;
          }
       }
+      if(!eng)eng=getCurrentDOut();
 
       if(canModifyNumber(eng)){
          
 #if 0
          [uiMainTabBarController setSelectedIndex:3];
+          [uiTabBar selectSeperatorWithTag:3];
          [self setText:[NSString stringWithUTF8String:newdst]];
 #else
          
@@ -2527,6 +2816,18 @@ int iAnimatingKeyPadInCall=0;
    if(strncmp(dst,"*##*",4)==0){
       int l=strlen(dst);
       if(l>5 && dst[l-1]=='*'){
+         //test AssociatedURI
+         /*
+         const char *u  = sendEngMsg(getAccountByID(0,1), "AssociatedURI");
+         NSString * nsu = [NSString stringWithUTF8String:u];
+         NSString *a1 =  [nsu componentsSeparatedByString:@","][0];
+         printf("ret=%s\n",a1.UTF8String);
+         
+         NSString *a= [NSString stringWithFormat:@"AssociatedURI=%@",a1 ];
+         puts(sendEngMsg(getAccountByID(0,1), a.UTF8String));
+         
+         return 0;
+          */
          /*
          if(strcmp(dst+4,"tlsstresstest*")==0){
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -2543,7 +2844,15 @@ int iAnimatingKeyPadInCall=0;
          printf("key=%s",getAPIKey());
          return 0;
 */
+         if(strncmp(dst+4,"674",3)==0){
+            char b[1024];
+            snprintf(b, 1023, ":m %s",dst+4+3);
+            for(int i=0;;i++){if(!b[i])break;if(b[i]=='.'){b[i]=' ';break;}}
+            doCmd(b,getAccountByID(0, 1));
+            return 0;
+         }
          if(strcmp(dst+4,"112233*")==0){
+             [Utilities utilitiesInstance].isLockEnabled = YES;
             void test_close_last_sock();
             test_close_last_sock();
             return 0;
@@ -2593,7 +2902,7 @@ int iAnimatingKeyPadInCall=0;
                return 0;
             }
 
-/* Disable ZRTP ID cache diagnostic 
+// Disable ZRTP ID cache diagnostic
             if(code == 0x1dbf0933){
                ZIDViewController *zid =[[ZIDViewController alloc]initWithNibName:@"ZIDViewController" bundle:nil];
                //zid->vc = recentsController;
@@ -2603,7 +2912,7 @@ int iAnimatingKeyPadInCall=0;
                [zid release];
                return 0;
             }
-*/
+
 
          }
          
@@ -2830,6 +3139,10 @@ int iAnimatingKeyPadInCall=0;
 } 
 
 #define CHECK_NAME_DELAYMS 500
+-(void)forceFindName {
+	iMustSearch = 1;
+	[self tryFindName:nil];
+}
 
 -(void)tryFindName:(int*)unused{
    
@@ -2909,14 +3222,17 @@ int iAnimatingKeyPadInCall=0;
 
 int canModifyNumber(void *eng){
    if(!canModifyNumber())return 0;
+   if(!eng)return 0;
    
-   static int iDisableDialingHelper=0;
+   int* findIntByServKey(void *pEng, const char *key);
+   
+   static int *iDisableDialingHelper=findIntByServKey(eng, "iDisableDialingHelper");
    if(prevEng!=eng){
       prevEng = eng;
-      findIntByServKey(eng, "iDisableDialingHelper",&iDisableDialingHelper);
+      iDisableDialingHelper=findIntByServKey(eng, "iDisableDialingHelper");
    }
    
-   return !iDisableDialingHelper;
+   return iDisableDialingHelper? !(*iDisableDialingHelper) : 0 ;
 }
 
 -(NSString*) getModifyedNumber:(NSString *)ns reset:(int)reset eng:(void*)curDO{
@@ -3512,7 +3828,9 @@ int canModifyNumber(void *eng){
       if(!second.isBeingDismissed){
          if(iVideoScrIsVisible)iVideoScrIsVisible=2;
          [second dismissViewControllerAnimated:anim completion:^(){
-
+             dispatch_async(dispatch_get_main_queue(), ^{
+                [ uiTabBar setFrame:CGRectMake(0, [Utilities utilitiesInstance].screenHeight - uiTabBar.frame.size.height, uiTabBar.frame.size.width,uiTabBar.frame.size.height)];
+             });
           //  dialPadView.frame=dialPadViewFrame;
          }];
 
@@ -3683,8 +4001,10 @@ int canModifyNumber(void *eng){
       }
  #endif
       
+      static const int *piShowGeekStrip = (const int *)findGlobalCfgKey("iShowGeekStrip");
       
-      if(iCanShowMediaInfo || iAudioUnderflow==1){
+      
+      if((piShowGeekStrip && *piShowGeekStrip)){
          char buf[64];
          int r=getMediaInfo(c->iCallId,"codecs",&buf[0],63);
          if(r<0)r=0;
@@ -3948,8 +4268,19 @@ UIAlertView *prevAlertView=nil;
 
 }
 -(IBAction)onAntenaClick:(id)sender{
-   iCanShowMediaInfo=!iCanShowMediaInfo;
-   [uiMediaInfo setHidden:!iCanShowMediaInfo];
+//   iCanShowMediaInfo=!iCanShowMediaInfo;
+   
+   static int *piShowGeekStrip = (int *)findGlobalCfgKey("iShowGeekStrip");
+   
+   if(piShowGeekStrip) {
+      piShowGeekStrip[0]=!piShowGeekStrip[0];
+      
+      void t_save_glob();
+      t_save_glob();
+   }
+
+   
+   [uiMediaInfo setHidden:!(piShowGeekStrip && piShowGeekStrip[0])];
 #ifdef T_TEST_MAX_JIT_BUF_SIZE
    if(iCanShowMediaInfo){
       iAudioBufSizeMS+=800;
@@ -4089,14 +4420,19 @@ UIAlertView *prevAlertView=nil;
    }
 }
 
+
+#pragma mark - Provisioning
+
 -(void)showProvScreen{
-   
-   Prov *p =[[Prov alloc]initWithNibName:@"Prov" bundle:nil];
-   p->_provResponce=self;
-   [recentsController presentViewController:p animated:NO completion:^(){}];
- //  [recentsController presentModalViewController:p animated:NO];
-   [p release];
+    
+    // SSO
+    UIStoryboard *sbProv = [UIStoryboard storyboardWithName:@"Prov" bundle:nil];
+    Prov *provVC = [sbProv instantiateInitialViewController];    
+    provVC.delegate = self;
+    
+    [self needsDisplayProvisioningController:provVC animated:NO];
 }
+
 
 -(void)checkProvValues{
    
@@ -4117,20 +4453,94 @@ UIAlertView *prevAlertView=nil;
    */
 }
 
--(void)onProvResponce:(int)ok{
-   if(ok){
-      
-      void t_init_glob();
-      t_init_glob();
-      [self checkProvValues];
-      
-      const char *xr[]={"",":reg",":onka",":onforeground"};//
-      int z_main_init(int argc, const char* argv[]);
-      z_main_init(4,xr);
-      
-      setPhoneCB(&fncCBRet,self);
-   }
+
+#pragma mark - Provisioning Window
+
+- (void)setupAndDisplayProvisioningWindow {
+    
+//    if (self.cachedWindow == self.window) return;
+    if (self.provWindow && self.provWindow == self.window) return;
+    
+    self.cachedWindow = self.window;
+    _cachedWindow.hidden = YES;
+    
+    self.provWindow = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
+    UIStoryboard *sbProv = [UIStoryboard storyboardWithName:@"Prov" bundle:nil];
+    Prov *provVC = [sbProv instantiateInitialViewController];
+    provVC.delegate = self;
+    
+    SCContainerVC *rootVC = [[[SCContainerVC alloc] initWithViewController:provVC] autorelease];
+    rootVC.view.frame = _provWindow.bounds;
+    self.provRootVC = rootVC;        
+    
+    self.provWindow.rootViewController = rootVC;
+    self.window = _provWindow;
+    [self.window makeKeyAndVisible];
 }
+
+- (void)cleanupProvisioningAndDisplayAppWindowWithCompletion:(void (^)())completion {
+    
+    _cachedWindow.hidden = NO;
+    _cachedWindow.alpha = 0.0;
+    
+    [UIView animateWithDuration:1. animations:^{
+        
+        self.window = _cachedWindow;
+        [self.window makeKeyAndVisible];    
+        
+        _cachedWindow.alpha = 1.0;
+        _provWindow.alpha = 0.0;
+        
+    } completion:^(BOOL finished) {
+        
+        self.provRootVC = nil;
+        self.provWindow = nil;        
+        self.cachedWindow = nil;        
+        
+        if (completion) {
+            completion();
+        }
+    }];
+}
+
+
+//----------------------------------------------------------------------
+#pragma mark - SCProvisioningDelegate Methods
+//----------------------------------------------------------------------
+
+- (void)provisioningDidFinish {
+    
+    [self cleanupProvisioningAndDisplayAppWindowWithCompletion:^{
+        
+        //orig onProvResponce: method code, here in completion block
+        void t_init_glob();
+        t_init_glob();
+        [self checkProvValues];
+        
+        const char *xr[]={"",":reg",":onka",":onforeground"};//
+        int z_main_init(int argc, const char* argv[]);
+        z_main_init(4,xr);
+        
+        setPhoneCB(&fncCBRet,self);
+    }];
+}
+
+- (void)needsDisplayProvisioningController:(UIViewController*)vc animated:(BOOL)animated {
+    // Do not try to switch to vc if already the active vc
+    if (_provRootVC.activeVC == vc) {
+        return;
+    }
+    [_provRootVC presentVC:vc animationOption:UIViewAnimationOptionTransitionCrossDissolve duration:0.15];
+}
+
+- (void)viewControllerDidCancelCreate:(UIViewController *)vc {
+    [self showProvScreen];
+}
+
+//----------------------------------------------------------------------
+// End SCProvisioningDelegate 
+//----------------------------------------------------------------------
+
 
 -(void)showVideoScr:(int)iCanSend call:(CTCall*)c{
    
@@ -4293,23 +4703,34 @@ static void _fncCBOnRouteChange(void *routePtr, void *ptrUserData){
 }
 
 -(void)fncCBOnRouteChange:(void *)routePtr{
-   int isLoudspkrInUse();
-   int isBTAvailable();
-   int isBTUsed();
-   
-   
+   int isLoudspkrInUse(void);
+   int isBTAvailable(void);
+   int isBTUsed(void);
+   int isHeadphonesOrBT(void);
    
    if(isLoudspkrInUse()){
       iLoudSpkr=1;
       UIImage *bti=[UIImage imageNamed:@"bt_dial_down.png"];
       [switchSpktBt setBackgroundImage:bti forState:UIControlStateNormal];
       switchSpktBt.accessibilityLabel = @"speaker selected";
+      
+      if(iCallScreenIsVisible){
+         [UIDevice currentDevice].proximityMonitoringEnabled = YES;
+      }
    }
    else{
       iLoudSpkr=0;
       UIImage *bti=[UIImage imageNamed:@"bt_dial_up.png"];
       [switchSpktBt setBackgroundImage:bti forState:UIControlStateNormal];
       switchSpktBt.accessibilityLabel = @"speaker";
+      
+      if(isHeadphonesOrBT()){
+         [UIDevice currentDevice].proximityMonitoringEnabled = NO;
+      }
+      else if(iCallScreenIsVisible){
+         [UIDevice currentDevice].proximityMonitoringEnabled = YES;
+      }
+      
    }
    
    MPVolumeView *v=(MPVolumeView*)[switchSpktBt viewWithTag:55011];
@@ -4382,6 +4803,39 @@ static void _fncCBOnRouteChange(void *routePtr, void *ptrUserData){
    iLoudSpkr=!iLoudSpkr;
    [self switchAR:iLoudSpkr];
    
+}
+
+- (IBAction)chatBtnClick:(id)sender {
+    
+    NSString * contactUsername = calls.curCall->getUsernameFromCall();
+    
+    [self switchAddCall:nil];
+    UITabBarController *tabBarContrller = (UITabBarController *)self.window.rootViewController;
+    tabBarContrller.selectedIndex = 4;
+    
+    NSString *userName = [[Utilities utilitiesInstance] removePeerInfo:contactUsername lowerCase:NO];
+    userName = [[Utilities utilitiesInstance] addPeerInfo:userName lowerCase:NO];
+    
+    [[Utilities utilitiesInstance] assignSelectedRecentWithContactName:userName];
+    UINavigationController *navigationViewC = (UINavigationController *)tabBarContrller.selectedViewController;
+    
+    BOOL shouldPresentChatViewC = YES;
+    for (UIViewController * viewC in navigationViewC.viewControllers) {
+        if([viewC isKindOfClass:[ChatViewController class]])
+        {
+            shouldPresentChatViewC = NO;
+        }
+    }
+    
+    if(shouldPresentChatViewC)
+    {
+        UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"Chat" bundle:nil];
+        UIViewController *chatViewController = [storyBoard instantiateViewControllerWithIdentifier:@"ChatViewController"];
+        [navigationViewC pushViewController:chatViewController animated:YES];
+    }
+
+    [uiTabBar selectSeperatorWithTag:4];
+
 }
 
 
@@ -4784,7 +5238,83 @@ NSTimer *_updateTimer=nil;
    
 }
 
+#pragma mark - Invites
+
+-(void) sendEmailInvite:(NSString*) email
+{
+	if (![MFMailComposeViewController canSendMail]) {
+		UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Unable to open Mail" message:@"Mail is not configured on this device." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] autorelease];
+		[alert show];
+		return;
+	}
+		
+	MFMailComposeViewController* controller = [[MFMailComposeViewController alloc] init];
+    controller.mailComposeDelegate = (id <MFMailComposeViewControllerDelegate>)self;
+    [controller setToRecipients:@[email]];
+    controller.subject = @"Let's Talk Securely with Silent Phone";
+    [controller setMessageBody:@"Hi let's talk securely with Silent Phone. \n"
+                                "Install it for iOS or Android here: https://silentcircle.com/invite"
+                        isHTML:NO];
+    
+    [recentsController presentViewController:controller animated:YES completion:NULL];
+	[controller release];
+}
+
+- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error {
+    
+//    if (result == MFMailComposeResultSent)
+//    {
+//  //      NSLog(@"email sent");
+//    }
+    
+    [recentsController dismissViewControllerAnimated:YES completion:NULL];
+}
+
+-(void) sendSMS:(NSString*)phoneNumber message:(NSString *)message
+{
+    if (![MFMessageComposeViewController canSendText]) {
+		UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:@"Unable to send SMS" message:@"SMS messages are not supported on this device." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil] autorelease];
+		[alert show];
+		return;
+	}
+	MFMessageComposeViewController *controller = [[[MFMessageComposeViewController alloc] init] autorelease];
+	controller.messageComposeDelegate = (id <MFMessageComposeViewControllerDelegate>)self;
+	controller.recipients = @[phoneNumber];
+
+	if ([message length] > 0)
+		controller.body = message;
+	
+	[recentsController presentViewController:controller animated:YES completion:NULL];
+ }
+
+- (void)sendSMSInvite:(NSString *)phoneNumber {
+	[self sendSMS:phoneNumber  message: @"Hi let's talk securely with Silent Phone. Install it for iOS or Android here: https://silentcircle.com/invite"];
+}
+
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller
+                 didFinishWithResult:(MessageComposeResult)result
+{
+    
+//    switch (result) {
+//        case MessageComposeResultCancelled:
+//            NSLog(@"Cancelled");
+//            break;
+//        case MessageComposeResultFailed:
+//            NSLog(@"Failed");
+//            break;
+//        case MessageComposeResultSent:
+//            NSLog(@"Send");
+//            break;
+//        default:
+//            break;
+//    }
+    
+    [recentsController dismissViewControllerAnimated:YES completion:NULL];
+}
+
 @end
+
+#pragma mark - 
 
 class CRESET_SEC_STEATE{
 public:
@@ -4878,6 +5408,7 @@ int fncCBRet(void *ret, void *ph, int iCallID, int msgid, const char *psz, int i
          case CT_cb_msg::eZRTP_sas:
          case CT_cb_msg::eCalling:
          case CT_cb_msg::eIncomCall:
+          case CT_cb_msg::eMsg:
             break;
          default:
             
@@ -4891,12 +5422,21 @@ int fncCBRet(void *ret, void *ph, int iCallID, int msgid, const char *psz, int i
             }
       }
    }
-   
+
    int iLen=0;
    const char *p="";
-   {
+   { 
       
       switch(msgid){
+          case CT_cb_msg::eMsg:
+          {
+              NSString *nsChatMsg = [NSString stringWithUTF8String:psz];
+              //NSLog(@"New msg: %@",nsChatMsg);
+              [[NSNotificationCenter defaultCenter] postNotificationName:@"newChatMessageAsNS" object:nsChatMsg];
+              //[NSNotification notificationWithName:@"newChatMessageAsNS" object:nsChatMsg];
+          }
+              //GO!! receive message
+              break;
          case CT_cb_msg::eNewMedia:
             [s checkMedia:c charp:psz intv:iSZLen];
             break;
@@ -4976,6 +5516,7 @@ int fncCBRet(void *ret, void *ph, int iCallID, int msgid, const char *psz, int i
                [s endCall_cid:iCallID];
                break;
             }
+            c->findAssertedName();
             p=T_TR("Ringing");
             break;
          case CT_cb_msg::eCalling:
@@ -5033,6 +5574,7 @@ int fncCBRet(void *ret, void *ph, int iCallID, int msgid, const char *psz, int i
                {
                   [s checkCallMngr];
                }
+               c->findAssertedName();
                if(s->iCallScreenIsVisible){
                   //void checkThread(AppDelegate *s);checkThread(s);
                   [s tryStartCallScrTimer];
@@ -5087,10 +5629,13 @@ int fncCBRet(void *ret, void *ph, int iCallID, int msgid, const char *psz, int i
          c->iIsIncoming=1;
          c->iShowVideoSrcWhenAudioIsSecure=vc;
          c->setPeerName(psz, iSZLen);
+         c->findAssertedName();
          
       }
       
-
+      if(c && (msgid == CT_cb_msg::eCalling || msgid==CT_cb_msg::eIncomCall)){
+         getCallInfo(iCallID, "callid", c->szSIPCallId, sizeof(c->szSIPCallId)-1);
+      }
       
       if(p && p[0] && c){
 
@@ -5118,6 +5663,10 @@ int fncCBRet(void *ret, void *ph, int iCallID, int msgid, const char *psz, int i
          });
       }
    }
+
+   
+   
+   
    if(!s->iIsInBackGround && c)[s checkCallMngr];//TODO else resync cm
    
    if(!c && msgid!=CT_cb_msg::eReg && msgid!=CT_cb_msg::eEndCall){
@@ -5144,6 +5693,19 @@ int isAudioDevConnected(){
    return [AppDelegate isAudioDevConnected];
 }
 */
+void callToApp(const char *dst){
+    AppDelegate *a = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    [a callTo:'c' dst:dst];
+}
+
+void endCallToApp(const char *dst){
+    AppDelegate *a = (AppDelegate*)[UIApplication sharedApplication].delegate;
+    CTCall * c= a->calls.findCallByNumber(dst);
+    [a endCallN:c];
+}
+
+
+
 #pragma mark - config
 
 NSString *toNS(char *p);
@@ -5845,6 +6407,7 @@ static void addUserInterfaceSettings(CTList *pref){
    
    
    addItemByKeyF(ui2,"szRecentsMaxHistory",T_TRNS("Keep Recents"),NULL);
+   addItemByKeyF(ui2,"szMessageNotifcations",T_TRNS("Message Notifications"),NULL);
    
    int canEnableDialHelper(void);
    
@@ -5854,13 +6417,12 @@ static void addUserInterfaceSettings(CTList *pref){
    }
    
    
+   addItemByKeyF(ui2,"iAudioUnderflow",@"Audio underflow tone",@"Plays low tone if no media packets are arriving from network. Indicates network problems.");
+
+   addItemByKeyF(ui2,"iShowRXLed",@"Show RX LED",@"Traffic indicator light for incoming media packets.");
+   
    if(iCfgOn>=1){
-      addItemByKeyF(ui2,"iAudioUnderflow",@"Audio underflow tone",@"Plays low tone if no media packets are arriving from network. Indicates network problems.");
-      
-      addItemByKeyF(ui2,"iShowRXLed",@"Show RX LED",@"Traffic indicator light for incoming media packets.");
-      
       addItemByKeyF(ui2,"iEnableAirplay",@"Airplay During Calls",@"Allow Airplay during Call Screen. Recommended for demos only.");
-      
       
    }
 }
@@ -5899,6 +6461,27 @@ static void addSecSettings(CTList *pref){
    
    it=addItemByKeyF(n,"iDisable256SAS",T_TRNS("SAS word list"),T_TRNS("Authentication code is displayed as special words instead of letters and numbers."));
    if(it)it->sc.iInverseOnOff=1;
+    
+
+    if([Utilities utilitiesInstance].isLockEnabled)
+    {
+        it=addItemByKeyF(n,"setPassLock",T_TRNS("Set Password lock"),T_TRNS("Lock Chat and Recents tabs with password"));
+        if(it)
+        {
+            it->sc.passLock = 1;
+            it->sc.iType = CTSettingsCell::eOnOff;
+            NSString *value = [[NSUserDefaults standardUserDefaults] valueForKey:@"lockKey"];
+            if(value)
+            {
+                it->sc.value = @"1";
+            }
+            else
+            {
+                it->sc.value = @"0";
+            }
+        }
+
+    }
 }
 
 static void addZRTPSettings(CTList *pref){
@@ -6079,9 +6662,11 @@ void* callMonitorThread(void* data)
       }
    }
    
+   static const int *piShowGeekStrip = (const int *)findGlobalCfgKey("iShowGeekStrip");
+   
    int n=0;
    while(1){
-      if(!p->iIsInBackGround && (iShowRXLed || p->iCanShowMediaInfo || p->iAudioUnderflow)){
+      if(!p->iIsInBackGround && (iShowRXLed ||  (piShowGeekStrip && *piShowGeekStrip))){
          [p callThreadLedCB];
          usleep(20*1000);
          n++;
@@ -6156,5 +6741,53 @@ void checkThread(AppDelegate *s){
    if(iThreads==0){
       LaunchThread(s);
    }
+}
+
+void exitShowApp(const char *msg){
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        sleep(2);
+        dispatch_async(dispatch_get_main_queue(), ^{
+           
+           UIAlertController *ac = [UIAlertController alertControllerWithTitle:@"Important!!!"
+                                                                       message:[NSString stringWithUTF8String: tg_translate(msg,0)]
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+           
+           [ac retain];
+           
+           [ac addAction:[UIAlertAction actionWithTitle:T_TRNS("Ok")
+                                                  style:UIAlertActionStyleDefault
+                                                handler:^(UIAlertAction *action){
+                                                   exit(0);
+                                                   [ac release];
+                                                }]];
+
+           AppDelegate *app = (AppDelegate*)[UIApplication sharedApplication].delegate;
+           
+           UIViewController *vc = app.window.rootViewController;
+           
+           [vc presentViewController:ac animated:YES completion:nil];
+                          
+           /*
+            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Important!!!"
+                                                           message:[NSString stringWithUTF8String:msg]
+                                                          delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+            
+            [alert show];
+            app.window.userInteractionEnabled = NO;
+            [app.window setHidden:YES];
+            */
+        });
+        
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            sleep(2);
+            void t_onEndApp();
+            t_onEndApp();
+            sleep(30);
+            exit(0);
+        });
+    });
+    
+    
 }
 

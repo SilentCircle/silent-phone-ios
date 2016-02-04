@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6250" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="RecentsInfoTW">
             <connections>
+                <outlet property="btInviteToSC" destination="mAr-FE-WrL" id="4bp-tZ-sZ0"/>
                 <outlet property="view" destination="67" id="126"/>
             </connections>
         </placeholder>
@@ -15,7 +16,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <tableView clipsSubviews="YES" tag="5511" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="68">
-                    <rect key="frame" x="0.0" y="103" width="320" height="465"/>
+                    <rect key="frame" x="0.0" y="108" width="320" height="460"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <connections>
@@ -24,40 +25,15 @@
                     </connections>
                 </tableView>
                 <view tag="5533" contentMode="scaleToFill" id="kxn-RD-OxK">
-                    <rect key="frame" x="0.0" y="5" width="320" height="90"/>
+                    <rect key="frame" x="0.0" y="5" width="320" height="105"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
                         <imageView userInteractionEnabled="NO" tag="1" contentMode="scaleAspectFit" image="ico_user.png" id="69">
-                            <rect key="frame" x="0.0" y="9" width="90" height="78"/>
+                            <rect key="frame" x="0.0" y="16" width="90" height="78"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         </imageView>
-                        <imageView userInteractionEnabled="NO" tag="301" contentMode="scaleToFill" id="159">
-                            <rect key="frame" x="90" y="47" width="24" height="16"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        </imageView>
-                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="2" contentMode="left" text="John Carter" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="73">
-                            <rect key="frame" x="95" y="7" width="191" height="37"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="26"/>
-                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="3" contentMode="left" text="1055" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="74">
-                            <rect key="frame" x="95" y="44" width="181" height="24"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="4" contentMode="left" text="daffy" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="75">
-                            <rect key="frame" x="95" y="71" width="102" height="16"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                            <nil key="highlightedColor"/>
-                        </label>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="152">
-                            <rect key="frame" x="0.0" y="9" width="87" height="78"/>
+                            <rect key="frame" x="0.0" y="12" width="87" height="86"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                             <state key="normal">
@@ -71,8 +47,33 @@
                                 <action selector="showVCard:" destination="-1" eventType="touchUpInside" id="154"/>
                             </connections>
                         </button>
+                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="2" contentMode="left" text="John Carter" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="73">
+                            <rect key="frame" x="95" y="7" width="217" height="37"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="26"/>
+                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <imageView userInteractionEnabled="NO" tag="301" contentMode="scaleToFill" id="159">
+                            <rect key="frame" x="90" y="44" width="24" height="16"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        </imageView>
+                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="3" contentMode="left" text="1055" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="74">
+                            <rect key="frame" x="95" y="41" width="217" height="24"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="4" contentMode="left" text="daffy" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="75">
+                            <rect key="frame" x="95" y="64" width="102" height="16"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
                         <button opaque="NO" tag="10" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="156">
-                            <rect key="frame" x="205" y="66" width="115" height="25"/>
+                            <rect key="frame" x="214" y="59" width="106" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
                             <state key="normal" title="Add to Favorites">
@@ -82,16 +83,30 @@
                                 <action selector="addToFavorites:" destination="-1" eventType="touchUpInside" id="158"/>
                             </connections>
                         </button>
+                        <button opaque="NO" tag="10" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="mAr-FE-WrL">
+                            <rect key="frame" x="95" y="80" width="120" height="25"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
+                            <state key="normal" title="Invite to Silent Circle">
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="inviteTapped:" destination="-1" eventType="touchUpInside" id="s0q-dv-Ay3"/>
+                            </connections>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                 </view>
             </subviews>
             <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
-            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
-            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
         </view>
     </objects>
     <resources>
         <image name="ico_user.png" width="103" height="103"/>
     </resources>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
+    </simulatedMetricsContainer>
 </document>

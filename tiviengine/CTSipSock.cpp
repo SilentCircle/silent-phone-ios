@@ -31,6 +31,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "../baseclasses/CTBase.h"
 #include "CTSipSock.h"
 #include "../sipparser/client/sip_utils.inl"
+
+#include "tivi_log.h"
+
 #ifdef _WIN32
 #define snprintf _snprintf
 #endif
@@ -175,9 +178,11 @@ static const char *sipCert = productionCert;
 
 /**
  * @brief Set SIP link and certificate for use in development network.
+ * 
+ * The Tivi development SIP server uses the production certificates.
  */
 void setSipToDevelop() {
-    sipCert = developmentCert;
+    sipCert = productionCert;  // developmentCert;
 }
 
 /**
@@ -242,6 +247,7 @@ void tivi_slog(const char* format, ...)
 CTSipSock::~CTSipSock(){
 
    iExiting=1;
+   CTMutexAutoLock al(testTCP_TLSMutex);
    closeSocket();
    Sleep(20);
    //tcpPrev=tcp;
@@ -278,7 +284,7 @@ void CTSipSock::addToDelete(int iIsTLS, void *s){
    }
    if(!s || iIsTLS==-1)return;
    
-   if(!iEmptyCnt)tivi_slog("[WARN: addToDelete: iEmptyCnt=0]");//TODO next to delete
+   if(!iEmptyCnt)log_events( __FUNCTION__,"[WARN: addToDelete: iEmptyCnt=0]");//TODO next to delete
    
    for(int i=0;i<eDelSocketCnt;i++){
       
@@ -289,7 +295,7 @@ void CTSipSock::addToDelete(int iIsTLS, void *s){
          return;
       }
    }
-   tivi_slog("Should not be here, trying to delete socket");
+   t_logf(log_events, __FUNCTION__,"Should not be here, trying to delete socket");
    
    if(iIsTLS)delete (CTTLS*)s;
    else delete (CTSockTcp*)s;
@@ -395,6 +401,7 @@ SOCKET CTSipSock::createSockBind(int iBind){
    
    int z;
    for( z=0;z<30 && iIsReceiving;z++)Sleep(15);
+   if(iExiting)return -1;
    
    if(iType==eTCP){
       tcpPrev=tcp;
@@ -488,8 +495,8 @@ int CTTCP_TLS_SendQ::addToQueue(const char *buf, int iLen, ADDR *address, int iS
 {
    // mq.
  //nedriikst saglabaat sock
-   //TODO if new ip remove or new sockt remo prev msg from q
-   if(iLen<11)return 0;///iLen<8 gaja
+
+   if(iLen<11)return 0;//ignore udp keepalive or any invalid SIP packet
    static long long s_msg_id=1;
     
    for(int i=0;i<Q_CNT;i++){
@@ -520,7 +527,7 @@ int CTTCP_TLS_SendQ::addToQueue(const char *buf, int iLen, ADDR *address, int iS
             p->uiTS=getTickCount();
             if(iLen>sizeof(p->buf)-1){
                iLen=sizeof(p->buf)-1;
-               tmp_log("AQ: send buf is too small");
+               log_events(__FUNCTION__,"AQ: send buf is too small");
             }
             
             memcpy(p->buf,buf,iLen);
@@ -611,10 +618,8 @@ int CTSipSock::sendQueue(){
    
    int i;
 
-   
    int iErrFlag=0;
-#if 1
-   
+
    for(i=0;i<Q_CNT;i++){
    
       CTTCP_TLS_SendQ::AA_SEND_Q *q=sq.getOldest();
@@ -630,17 +635,19 @@ int CTSipSock::sendQueue(){
             iErrFlag|=1;
             //timeout
             if(q->uiTS && q->a.ip)
-               printf("[e-timeout l=%d ofs=%d]\n",q->iLen,d);
+               t_logf(log_events, __FUNCTION__,"e-timeout l=%d ofs=%d\n",q->iLen,d);
             else
                sent++;//??
          }
          else if(q->iSockType!=this->iType){
-            puts("e-socktype");
+            log_events( __FUNCTION__,"e-socktype");
             iErrFlag|=2;
          }
          else {
-            
-            printf("[send %s [%.*s] %d]",q->a.bufAddr, 30, q->buf, getTickCount()-q->uiTS);
+            int inQ = getTickCount()-q->uiTS;
+            if(inQ > 1000){
+               t_logf(log_events, __FUNCTION__,"[send %s [%.*s] %d]",q->a.bufAddr, 30, q->buf, inQ);
+            }
             int ret=sendToReal(q->buf, q->iLen, &q->a);
             
             if(ret<0){
@@ -648,7 +655,7 @@ int CTSipSock::sendQueue(){
                iErrFlag|=4;
                failCount++;
                q->iBusy=0;
-               char d[64];sprintf(d,"sendToReal()=%d t=%dms\n",ret, uiTS-q->uiTS);tmp_log(d);
+               t_logf(log_events, __FUNCTION__,"sendToReal()=%d t=%dms\n",ret, uiTS-q->uiTS);
                Sleep(30);
             }
             else sent++;
@@ -659,75 +666,18 @@ int CTSipSock::sendQueue(){
          if(sent>16 || (sent>8 && failCount) || failCount>3 || (failCount && getTickCount()-uiTS>3000))break;
       }
    }
-   
-#else
-  int iCnt=0;
-  int pp=sq.iPrevSendPos;
 
-
-   for(int z=0;z<2;z++){
-      
-      if(z){if(!pp)break;pp=0;}
-      for(i=pp;i<Q_CNT;i++){
-         iCnt++;
-         if(iCnt>Q_CNT){
-            //if(!z)puts("sip sock e icnt");
-            break;
-         }
-         
-         if(iExiting)break;
-         
-         CTTCP_TLS_SendQ::AA_SEND_Q *q=&sq.sendQ[i];
-         
-         if(q->iBusy==CTTCP_TLS_SendQ::eReady){
-            
-            q->iBusy=CTTCP_TLS_SendQ::eSending;
-            
-            sq.iPrevSendPos=i+1;
-            //if binded addr
-            int d = (int)(uiTS-q->uiTS);
-            if(d>8000){
-               iErrFlag|=1;
-               //timeout
-               if(q->uiTS && q->a.ip)
-                  printf("[e-timeout l=%d ofs=%d]\n",q->iLen,d);
-               else
-                  sent++;//??
-            }
-            else if(q->iSockType!=this->iType){
-               puts("e-socktype");
-               iErrFlag|=2;
-            }
-            else {
-               
-               printf("[send %s [%.*s] %d]",q->a.bufAddr, 30, q->buf, getTickCount()-q->uiTS);
-               int ret=sendToReal(q->buf, q->iLen, &q->a);
-
-               if(ret<0){
-                  uiTS=getTickCount();
-                  iErrFlag|=4;
-                  failCount++;
-                  q->iBusy=0;
-                  char d[64];sprintf(d,"sendToReal()=%d t=%dms\n",ret, uiTS-q->uiTS);tmp_log(d);
-                  Sleep(30);
-               }
-               else sent++;
-            }
- 
-            q->iBusy=CTTCP_TLS_SendQ::eNotInUse;
-            c++;
-            if(sent>16 || (sent>8 && failCount) || failCount>3 || (failCount && getTickCount()-uiTS>3000))break;
-         }
-      }
-   }
-#endif
    if((failCount && c) || iErrFlag) {
-      char d[64];sprintf(d,"send quve %d %d %d e%d\n",c,sent,failCount,iErrFlag);tmp_log(d);
+      t_logf(log_events, __FUNCTION__,"WARN: send quve %d %d %d e%d\n",c,sent,failCount,iErrFlag);
    }
    return c;
 }
 
 int CTSipSock::sendTo(const char *buf, int iLen, ADDR *address){
+   
+   if(iLen > 10){ //ignore SIP keepalive
+      t_logf(log_sip, __FUNCTION__, "ADDR=%08x LEN=%d\n[%.*s]",address->ip, iLen, iLen, buf);
+   }
    
    if(iType==eUDP){
       return sendToReal(buf,iLen,address);
@@ -747,6 +697,7 @@ void CTSipSock::forceRecreate(){
 int CTSipSock::sendToReal(const char *buf, int iLen, ADDR *address){
     if(iExiting)return -1;
     if(iIsSuspended){Sleep(20);return -2;}
+   
 
     if(iType==eUDP){
         return udp.sendTo(buf,iLen,address);
@@ -754,14 +705,16 @@ int CTSipSock::sendToReal(const char *buf, int iLen, ADDR *address){
     if(iLen==1)return 1;
 
     CTMutexAutoLock al(testTCP_TLSMutex); 
+ 
+    if(iExiting)return -1;
 
     if ((iFlagRecreate && (iFlagRecreate&4)==0) || (iType==eTLS && tls && (tls->isClosed() || !tls->isConected())) ||
         (iType==eTCP && (!tcp || ((tcp && tcp->getAddrConnected().ip && tcp->getAddrConnected()!=*address))))  ||
         (iType==eTLS && (!tls || ((tls && tls->getAddrConnected().ip && tls->getAddrConnected()!=*address))))
     ) {
-        if(iFlagRecreate)tivi_slog("[iFlagRecreate]");
+        if(iFlagRecreate)t_logf(log_events,__FUNCTION__, "iFlagRecreate=%x",iFlagRecreate);
         else if(iType==eTCP){
-            if(tcp)printf("[tcp %d=%d,%d=%d]",tcp->getAddrConnected().ip,address->ip,tcp->getAddrConnected().getPort(),address->getPort());
+            if(tcp)t_logf(log_events, __FUNCTION__, "[tcp %d=%d,%d=%d]",tcp->getAddrConnected().ip,address->ip,tcp->getAddrConnected().getPort(),address->getPort());
         }
         else if(iType==eTLS){
             int isRelease();
@@ -771,7 +724,7 @@ int CTSipSock::sendToReal(const char *buf, int iLen, ADDR *address){
                 char bufB[32];
                 tls->getAddrConnected().toStr(&bufA[0]);
                 address->toStr(&bufB[0]);
-                tivi_slog("[tls conn=%s dst=%s]",bufA, bufB);
+                t_logf(log_events, __FUNCTION__, "[tls conn=%s dst=%s]",bufA, bufB);
             }
         }
 
@@ -782,7 +735,7 @@ int CTSipSock::sendToReal(const char *buf, int iLen, ADDR *address){
         Sleep(20);
 
         int r = createSockBind(1);
-        tivi_slog("_recr = %d", r + iType*100);
+        t_logf(log_events, __FUNCTION__, "_recr = %d", r + iType*100);
         Bind(addr.getPort(),1);
     }
     if(iType==eTCP){
@@ -790,7 +743,7 @@ int CTSipSock::sendToReal(const char *buf, int iLen, ADDR *address){
         if(tcp){
             if(!tcp->isConected()){tcp->_connect(address);}
             if(tcp->isConected()){
-                printf("[tcp-connected]");
+                t_logf(log_events, __FUNCTION__, "[tcp-connected]");
                 if(iLen<20){
                     iLen=0;//do not send keeplive
                     return 0;//tcp->_send("\r\n\r\n",0);//test
@@ -800,9 +753,9 @@ int CTSipSock::sendToReal(const char *buf, int iLen, ADDR *address){
                     Sleep(60);//wait recv starts listen
                 }
                 int r=tcp->_send(buf,iLen);
-                if(iLen>0)tivi_slog("sent[%d]-tcp\n[%.*s]",r,min(iLen,10),buf);
+                if(iLen>0)t_logf(log_events, __FUNCTION__,"sent[%d]-tcp\n[%.*s]",r,min(iLen,10),buf);
                 if(r<0){
-                    tivi_slog("[tcp recreate]");
+                    t_logf(log_events, __FUNCTION__,"[tcp recreate]");
                     iFlagRecreate|=2;
                     iFlagRecreate &= ~4;
                 }
@@ -816,8 +769,9 @@ int CTSipSock::sendToReal(const char *buf, int iLen, ADDR *address){
     if (iType==eTLS) {
         if (tls) {
             if (!tls->isConected() && iLen > 0) {
+                tls->enableBackgroundForVoip(1);
                 checkCert(address);
-                tivi_slog("tls-connect");
+                t_logf(log_events, __FUNCTION__, "tls-connect");
                 tls->_connect(address);
             }
             if (tls->isConected()){
@@ -828,10 +782,10 @@ int CTSipSock::sendToReal(const char *buf, int iLen, ADDR *address){
                 else {
                     r=tls->_send(buf,iLen);
                     if (iLen > 0)
-                        tivi_slog("sent[%d]-tls [%.*s]", r, min(iLen, 20), buf);
+                        t_logf(log_events, __FUNCTION__,"sent[%d]-tls [%.*s]", r, min(iLen, 20), buf);
 
                     if (r < 0) {
-                        tivi_slog("f-recr");
+                        t_logf(log_events, __FUNCTION__,"f-recr err:%d",r);
                         iFlagRecreate|=2;//ok
                         iFlagRecreate&=~4;
                     }
@@ -989,9 +943,9 @@ int CTSipSock::recvFrom(char *buf, int iLen, ADDR *address){
       
       rec=recFrom2(&cbTcp,buf,iLen,&tmpBuf[0],sizeof(tmpBuf),&iBytesInNextTmpBuf);
       if(rec<=0){
-         printf("[rec-tcp-err %d]",rec);
+         t_logf(log_events, __FUNCTION__,"[rec-tcp-err %d]",rec);
          if(rec==0){
-            puts("[recFrom2 recreate]");
+            t_logf(log_events, __FUNCTION__,"[recFrom2 recreate]");
             iFlagRecreate|=2;
             iFlagRecreate&=~4;
             Sleep(30);
@@ -1017,7 +971,7 @@ int CTSipSock::recvFrom(char *buf, int iLen, ADDR *address){
       rec=recFrom2(&cbTcp,buf,iLen,&tmpBuf[0],sizeof(tmpBuf),&iBytesInNextTmpBuf);
       if(rec<=0){
          if(tls->peerClosed()==1 && iTlsIsSent){
-            tmp_log("[tls->peerClosed() recreate]");
+            log_events( __FUNCTION__, "[tls->peerClosed() recreate]");
             iFlagRecreate|=2;
             iFlagRecreate&=~4;
             return rec;

@@ -454,7 +454,7 @@ int setCfgValueSZ(char *sz, void *pCfg, char *key, int iKeyLen){
    int i=0;
    void *pSet;
    int iSize;
-   if(type == PHONE_CFG::e_char){
+   if(type == PHONE_CFG::e_char || type == PHONE_CFG::e_secure){
       pSet=sz;
       iSize=strlen(sz);
    }

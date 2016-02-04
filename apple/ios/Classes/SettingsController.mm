@@ -1,3 +1,7 @@
+/*
+ - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section;
+ - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section;
+ */
 #import "SettingsController.h"
 #import "UICellController.h"
 
@@ -31,10 +35,10 @@ CTSettingsItem *findRItem(CTList *l, int row){
 
 CTSettingsItem *findSItem(CTList *l, NSIndexPath *indexPath){
    CTSettingsItem *item;
-   item=findSection(l,indexPath.section);
+   item=findSection(l,(int)indexPath.section);
    if(!item|| !item->root)return NULL;
    l=item->root;
-   return findRItem(l,indexPath.row);
+   return findRItem(l,(int)indexPath.row);
 }
 
 CTSettingsItem *findSItem(CTList *l, int section, int row){
@@ -93,6 +97,7 @@ int countItemsInSection(CTList *l, int section){
 {
 	[super viewDidLoad];
    iTView_was_visible=0;
+    passwordAlertState = 0;
 }
 - (void)viewDidDisappear:(BOOL)animated{
    iTView_was_visible=0;
@@ -143,14 +148,14 @@ int countItemsInSection(CTList *l, int section){
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
    
-   CTSettingsItem *i=findSection(list,section);
+   CTSettingsItem *i=findSection(list,(int)section);
    if(!i)return @"Error";
    NSString *l = i->sc.getLabel();
    return l?l:@"";
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section{
-   CTSettingsItem *i=findSection(list,section);
+   CTSettingsItem *i=findSection(list,(int)section);
    if(!i)return @"Error";
    NSString *f = i->sc.getFooter();
    return f?f:@"";
@@ -174,11 +179,11 @@ int countItemsInSection(CTList *l, int section){
    if(!src)return;
    if(sourceIndexPath.section==destinationIndexPath.section){
       if(sourceIndexPath.row==destinationIndexPath.row)return;
-      CTSettingsItem *s=findSection(list,destinationIndexPath.section);
+      CTSettingsItem *s=findSection(list,(int)destinationIndexPath.section);
       CTList *l=s->root;
       
       {
-         int iAfter=destinationIndexPath.row;
+         int iAfter=(int)destinationIndexPath.row;
          //if(iAfter>0)iAfter--;
          
          CTSettingsItem *after=findRItem(l,iAfter);
@@ -204,7 +209,7 @@ int countItemsInSection(CTList *l, int section){
    }
    else{
       CTList *l=src->parent;
-      CTSettingsItem *dst=findSection(list,destinationIndexPath.section);
+      CTSettingsItem *dst=findSection(list,(int)destinationIndexPath.section);
       if(!dst || !dst->root)return;
       CTList *dl=dst->root;
 
@@ -236,12 +241,12 @@ int countItemsInSection(CTList *l, int section){
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	return countSections(list);//countItemsInSection;
+    return list?countSections(list):0;//countItemsInSection;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	return countItemsInSection(list,section);//[listContent count];
+    return list?countItemsInSection(list,(int)section):0;//[listContent count];
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -502,7 +507,213 @@ int countItemsInSection(CTList *l, int section){
    if(i){
       i->setValue([sw isOn]?"1":"0");
    }
+    
+    if(i->sc.passLock == 1)
+    {
+        _lockKeySwitch = [sw retain];
+        if(sw.isOn)
+        {
+            [self setPassWordWithAlertText:@"Set Passcode" andTag:sw.tag];
+        }
+        else // open password editing
+        {
+            [sw setOn:YES animated:YES];
+            passwordAlertState = pDoneSetting;
+             [self presentLockedAlertViewWithTag:sw.tag];
+        }
+    }
 }
+
+-(void) presentLockedAlertViewWithTag:(long)tag
+{
+    NSDictionary * delayInfo = [[NSUserDefaults standardUserDefaults] objectForKey:@"lockTimeDict"];
+    NSNumber *delayTime = [delayInfo objectForKey:@"lockDelayTime"];
+    NSString *delayString;
+    switch ([delayTime intValue]) {
+        case 5:
+            delayString = @"5 Seconds";
+            break;
+        case 15:
+            delayString = @"15 Seconds";
+            break;
+        case 60:
+            delayString = @"1 Minute";
+            break;
+        case 60 * 15:
+            delayString = @"15 Minutes";
+            break;
+        case 60 * 60:
+            delayString = @"1 Hour";
+            break;
+        case 60 * 60 * 4:
+            delayString = @"4 Hours";
+            break;
+        default:
+            delayString = @"4 Hours";
+            break;
+    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Passcode" message:@"Enter Passcode" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Turn Off",@"Change Passcode",[NSString stringWithFormat:@" Change Delay (%@)",delayString], nil];
+    alert.tag = tag;
+    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [alert textFieldAtIndex:0].delegate = self;
+    [alert show];
+        [alert release];
+    });
+}
+
+-(void) setPassWordWithAlertText:(NSString *) alertText andTag:(long) tag
+{
+    passwordAlertState = pEnterPassword;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:alertText message:@"Enter New Passcode" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Next", nil];
+    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+    alert.tag = tag;
+    [alert textFieldAtIndex:0].secureTextEntry = YES;
+    //[alert textFieldAtIndex:0].delegate = self;
+    [alert show];
+        [alert release];
+    });
+}
+
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    
+    NSString *thisPassword = [alertView textFieldAtIndex:0].text;
+    NSString *passWord = [[NSUserDefaults standardUserDefaults] valueForKey:@"lockKey"];
+    
+    if (buttonIndex != [alertView cancelButtonIndex])
+    {
+        if(passwordAlertState == pEnterPassword)
+        {
+            // NO ARC !!
+            _enteredPassword = [[NSString stringWithFormat:@"%@",thisPassword] retain];
+            
+            passwordAlertState = pRepeatPassword;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Passcode Lock" message:@"Reenter New Passcode" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Next", nil];
+                alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+                alert.tag = alertView.tag;
+                //[alert textFieldAtIndex:0].delegate = self;
+                [alert textFieldAtIndex:0].secureTextEntry = YES; 
+                [alert show];
+                [alert release];
+            });
+        } else if(passwordAlertState == pRepeatPassword)
+        {
+            
+            if(![_enteredPassword isEqualToString:thisPassword])
+            {
+                [self setPassWordWithAlertText:@"Password Mismatch" andTag:alertView.tag];
+            } else
+            {
+                [[NSUserDefaults standardUserDefaults] setValue:_enteredPassword forKey:@"lockKey"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                
+                long currentTime = time(NULL);
+                long timeDelay = 0;
+                timeDelay = 5;
+                NSDictionary *delayDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithLong:currentTime],@"lockTime",[NSNumber numberWithLong:timeDelay],@"lockDelayTime",[NSNumber numberWithLong:0],@"isActive", nil];
+                [[NSUserDefaults standardUserDefaults] setValue:delayDict forKey:@"lockTimeDict"];
+
+                passwordAlertState = pDone;
+                [_enteredPassword release];
+            }
+        }else if(passwordAlertState == pDoneSetting) // lock is active
+        {
+                switch (buttonIndex) {
+                case 1:
+                {
+                    if([passWord isEqualToString:thisPassword])
+                    {
+                        [_lockKeySwitch setOn:NO animated:YES];
+                        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"lockKey"];
+                        [[NSUserDefaults standardUserDefaults] synchronize];
+                    } else
+                    {
+                        // keep showing the same alertview
+                        [self presentLockedAlertViewWithTag:alertView.tag];
+                    }
+                }
+                    break;
+                case 2:
+                {
+                    [self setPassWordWithAlertText:@"Set new Passcode" andTag:alertView.tag];
+                }
+                    break;
+                case 3:
+                {
+                    if([passWord isEqualToString:thisPassword])
+                    {
+                        [self presentDelayAlertViewWithTag:alertView.tag];
+                    } else
+                    {
+                        [self presentLockedAlertViewWithTag:alertView.tag];
+                    }
+                }
+                    break;
+                default:
+                    break;
+            }
+        } else if(passwordAlertState == pEditDelay)
+        {
+            long currentTime = time(NULL);
+            long timeDelay = 0;
+            switch (buttonIndex) {
+                case 1:
+                    timeDelay = 5;
+                    break;
+                case 2:
+                    timeDelay = 15;
+                    break;
+                case 3:
+                    timeDelay = 60;
+                    break;
+                case 4:
+                    timeDelay = 60 * 15;
+                    break;
+                case 5:
+                    timeDelay = 60 * 60;
+                    break;
+                case 6:
+                    timeDelay = 60 * 60 * 4;
+                    break;
+                default:
+                    break;
+            }
+            NSDictionary *delayDict = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithLong:currentTime],@"lockTime",[NSNumber numberWithLong:timeDelay],@"lockDelayTime",[NSNumber numberWithLong:0],@"isActive", nil];
+            [[NSUserDefaults standardUserDefaults] setValue:delayDict forKey:@"lockTimeDict"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+
+            passwordAlertState = pDoneSetting;
+        }
+    } else
+    {
+        if(!passWord)
+        {
+            CTSettingsItem *i=findSItem (list, (int)alertView.tag/100,alertView.tag%100);
+            i->sc.value = @"0";
+            [_lockKeySwitch setOn:NO animated:NO];
+            
+        }
+        passwordAlertState = pDone;
+    }
+}
+
+-(void) presentDelayAlertViewWithTag:(long) tag
+{
+    passwordAlertState = pEditDelay;
+    dispatch_async(dispatch_get_main_queue(), ^{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Passcode Delay" message:nil delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"5 Seconds",@"15 Seconds",@"1 Minute",@"15 Minutes",@"1 Hour",@"4 Hours", nil];
+    alert.tag = tag;
+    alert.delegate = self;
+    alert.alertViewStyle = UIAlertViewStyleDefault;
+    [alert show];
+    [alert release];
+    });
+}
+
 /*
  
  // [cell.textField addTarget:self action:@selector(onTFChange:) forControlEvents:UIControlEventEditingDidEnd];

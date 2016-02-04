@@ -36,8 +36,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "../os/CTTcp.h"
 #include "../os/CTMutex.h"
 
-#include "stdlib.h"//qsort
+#include <stdlib.h>//qsort
 
+#include "../tiviengine/tivi_log.h"
 
 //#define T_TMR_TEST
 #ifdef _WIN32
@@ -70,7 +71,7 @@ void CTMRConnectionInfo::updateMedianRT(int n_rt){
       rtPos = 0;
       qsort(&lastRoundtrips[0],127, sizeof(int),q_compareInt);
       iMedianRT = lastRoundtrips[63];
-      printf("[iMedianRT=%d mi%d ma%d]\n",iMedianRT, lastRoundtrips[0], lastRoundtrips[126]);
+      t_logf(log_audio_stats, __FUNCTION__,"TMR iMedianRT=%d mi%d ma%d",iMedianRT, lastRoundtrips[0], lastRoundtrips[126]);
       iMinRoundtripTime = (lastRoundtrips[0]+iMinRoundtripTime+1)>>1;
       iLastMaxRT = lastRoundtrips[120];
       //TODO mark we can update to recomended socket count 
@@ -220,7 +221,7 @@ int CTMRConnector::_send(void *p, int iLen){
    sentAt = getTC();
    int r = s ? s->_send((char*)p, iLen):-3;
    if(((char *)p)[4]!='R' && ((char *)p)[4]!='p')
-      printf("[_send %c %d]\n", ((char *)p)[4],r);
+      t_logf(log_audio, __FUNCTION__,"[_send %c %d]", ((char *)p)[4],r);
    return r;
 }
 
@@ -413,7 +414,7 @@ int CTMRConnector::workerThread(){
    s->closeSocket();
    Sleep(200);
    delete s;
-   printf("exit th st[S%lld R%lld RT%d v%d sentat%llu mid%llu] \n",rtpPacketsSent,rtpPacketsReceived, roundtrip, tmr_info->iIsVideo, pingSentAt,tmr_info->mediaID);
+   t_logf(log_audio_stats, __FUNCTION__,"exit th st[S%lld R%lld RT%d v%d sentat%llu mid%llu]",rtpPacketsSent,rtpPacketsReceived, roundtrip, tmr_info->iIsVideo, pingSentAt,tmr_info->mediaID);
    if(iResetInTh)iInThread=0;
    return 0;
 }
@@ -466,14 +467,14 @@ int CTMRConnector::onRcv(unsigned char *pack, int iLen){
       }
       
       if(pack[0]!='u' && pack[0]!='c'){
-         printf("[Warn: TMR first byte = (%c %d)]",pack[0], pack[0]);
+         t_logf(log_events, __FUNCTION__,"[Warn: TMR first byte = (%c %d)]",pack[0], pack[0]);
          return 0;
       }
       
       TMR_PACK_STR tmr;
       int r = parseTMR(&tmr, pack+1, iLen-1);
       if(r<0){
-         printf("[err parseTMR()=%d]\n",r);
+         t_logf(log_events, __FUNCTION__,"[err parseTMR()=%d]\n",r);
          return r;
       }
       
@@ -482,7 +483,7 @@ int CTMRConnector::onRcv(unsigned char *pack, int iLen){
       int code = -1;
       tmr.getValue(TMR_PACK_STR::eRESP_CODE,&code);
       if(code!=200){
-         printf("[err TMR_PACK_IDS::eRESP_CODE %d]\n",code);
+         t_logf(log_events, __FUNCTION__,"[err TMR_PACK_IDS::eRESP_CODE %d]\n",code);
          stop();
          return 0;
       }
@@ -492,7 +493,7 @@ int CTMRConnector::onRcv(unsigned char *pack, int iLen){
       if(tmr.getValue(TMR_PACK_STR::eSERV_PORT, &port)<0 ||
               tmr.getValue(TMR_PACK_STR::eSERV_IP4, &ip)<0){
 
-         printf("[err TMR_PACK_IDS::eSERV_IP4 || TMR_PACK_IDS::eSERV_PORT]\n");
+         t_logf(log_events, __FUNCTION__,"[err TMR_PACK_IDS::eSERV_IP4 || TMR_PACK_IDS::eSERV_PORT]\n");
       }
       
       tmr.getValue(TMR_PACK_STR::eMEDIA_ID, &tmr_info->mediaID);

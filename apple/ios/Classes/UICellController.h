@@ -96,6 +96,7 @@ public:
       pCfg=NULL;
       iIsInt=-1;
       iInverseOnOff=0;
+       passLock = 0;
       onChange=NULL;
       pRetCB=NULL;
       iCanDelete=0;
@@ -108,6 +109,7 @@ public:
    int iIsInt;
    int iPhoneEngineType;
    int iInverseOnOff;//on off inversed logic
+    int passLock;
    
    int iCanDelete;
    

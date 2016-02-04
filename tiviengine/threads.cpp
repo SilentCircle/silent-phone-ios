@@ -58,7 +58,9 @@ int CTiViPhone::TimerProc(void *f)
    int iSecondsSinceStart=0;
    int iSecondsSinceIPChanged=0;
 
-   
+   if(ph->p_cfg.iIndex < 2){//start only for sc
+      CTAxoInterfaceBase::sharedInstance(ph->p_cfg.user.un);
+   }
    int ip;
    int iNextSipKA_at=10;
    
@@ -99,7 +101,10 @@ int CTiViPhone::TimerProc(void *f)
       
       // Check for long waits. Also add real number of ticks if loop wakes up faster than once a second
       if (waitTime > 1100) {
-         __android_log_print(ANDROID_LOG_DEBUG,"TIMERNEW", "Current time: %ld, waitTime: %u, uiT: %u, uiGT: %llu\n", time(NULL), waitTime, uiT, ph->uiGT);
+         
+         t_logf(log_events,__FUNCTION__, "Current time: %ld, waitTime: %u, uiT: %u, uiGT: %llu\n", time(NULL), waitTime, uiT, ph->uiGT);
+         
+//         __android_log_print(ANDROID_LOG_DEBUG,"TIMERNEW", "Current time: %ld, waitTime: %u, uiT: %u, uiGT: %llu\n", time(NULL), waitTime, uiT, ph->uiGT);
          ph->uiGT += 1000;                 // Max wait time in ms, according to T_SLEEP_INC_TIME macro - JANIS
          iWasSuspended = waitTime > 5000;
       }
@@ -120,7 +125,7 @@ int CTiViPhone::TimerProc(void *f)
          d=1;
       }
       else if(d>20000){
-         printf("thread is too slow, posible something is wrong, time=%llu d=%u\n",ph->uiGT, d);
+         t_logf(log_events,__FUNCTION__, "thread is too slow, posible something is wrong or suspended by OS, time=%llu d=%u\n",ph->uiGT, d);
          if(d>36000001)d=36000001;//10h
          iWasSuspended=1;
       }

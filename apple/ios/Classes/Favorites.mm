@@ -27,9 +27,9 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+
 #import "Favorites.h"
 #import "AppDelegate.h"
-
 
 #define _T_WO_GUI
 #include "../../../baseclasses/CTListBase.h"
@@ -52,17 +52,40 @@ static  NSString *toNS(CTEditBase *b, int N=0){
    return toNSFromTB(b);
 }
 
+static int iHasMods = 0;
+
+int removeFromFavorites(CTRecentsItem *i){
+
+    if(!i)
+        return 0;
+    
+    CTRecentsList *fl = CTRecentsList::sharedFavorites();
+    
+    fl->load();
+    
+    if(!fl->hasRecord(i))
+        return 0;
+    
+    fl->removeRecord(i);
+    
+    iHasMods = 1;
+    
+    return 0;
+    
+}
+
 int addToFavorites(CTRecentsItem *i, void *fav, int iFind){
    Favorites *pFav=(Favorites *)fav;
    static Favorites *f=pFav;
    if(fav){
       f=pFav;
    }
-   if(!i || !f)return 0;
+   if(!i)return 0;
    
-   f->fl->load();
+   CTRecentsList *fl = CTRecentsList::sharedFavorites();
+   fl->load();
    
-   if(f->fl->hasRecord(i))return 1;
+   if(fl->hasRecord(i))return 1;
    if(iFind)return 0;
    
    
@@ -76,12 +99,11 @@ int addToFavorites(CTRecentsItem *i, void *fav, int iFind){
    n->myAddr.setText(i->myAddr);
    n->lbServ.setText(i->lbServ);
    
-   f->fl->getList()->addToTail(n);
-   f->fl->activateAll();
-   f->fl->save();
+   fl->getList()->addToTail(n);
+   fl->activateAll();
+   fl->save();
    
-   [[f tableView] reloadData];
-
+    iHasMods = 1;
    
    return 0;
    
@@ -178,8 +200,11 @@ int addToFavorites(CTRecentsItem *i, void *fav, int iFind){
    [self dismissViewControllerAnimated:YES completion:^(){}];
    CFRelease(phone);
    CFRelease(phoneNumbers);
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"kSilentPhoneFavoriteAddedNotification"
+                                                        object:nil];
+
    return NO;
-   
 }
 
 -(void)addPress:(id)unused
@@ -226,7 +251,7 @@ int addToFavorites(CTRecentsItem *i, void *fav, int iFind){
    [bba release];
    
    if(!fl)
-      fl=new CTRecentsList(1);
+      fl = CTRecentsList::sharedFavorites();
 
 }
 
@@ -242,6 +267,13 @@ int addToFavorites(CTRecentsItem *i, void *fav, int iFind){
             [self.tableView reloadSections: [NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
          });
       });
+   }
+   else if(iHasMods) {
+       
+       iHasMods = 0;
+       
+       fl->load();
+       [self.tableView reloadData];
    }
 }
 
@@ -293,7 +325,7 @@ int addToFavorites(CTRecentsItem *i, void *fav, int iFind){
 		aCell = favCell;self.favCell = nil;
 	}
    
-   CTRecentsItem *i=fl->getByIndex(indexPath.row);
+   CTRecentsItem *i=fl->getByIndex((int)indexPath.row);
 
    {
       
@@ -342,9 +374,9 @@ int addToFavorites(CTRecentsItem *i, void *fav, int iFind){
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
 {
-   CTRecentsItem *f=fl->getByIndex(fromIndexPath.row);
+   CTRecentsItem *f=fl->getByIndex((int)fromIndexPath.row);
    if(!f)return;
-   CTRecentsItem *t=fl->getByIndex(toIndexPath.row);
+   CTRecentsItem *t=fl->getByIndex((int)toIndexPath.row);
    if(!t || f==t)return;
    
    CTList *l=fl->getList();
@@ -387,8 +419,11 @@ int addToFavorites(CTRecentsItem *i, void *fav, int iFind){
 //show delete when swipe left
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
    
-   fl->removeByIndex(indexPath.row);
+   fl->removeByIndex((int)indexPath.row);
    fl->activateAll();
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"kSilentPhoneFavoriteRemovedNotification"
+                                                        object:nil];
    
    [tableView reloadSections: [NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
 
@@ -404,7 +439,7 @@ int addToFavorites(CTRecentsItem *i, void *fav, int iFind){
 {
    [tableView deselectRowAtIndexPath:indexPath animated:NO];
    
-   CTRecentsItem *i=fl->getByIndex(indexPath.row);
+   CTRecentsItem *i=fl->getByIndex((int)indexPath.row);
    
    [appDelegate callToR:i];
    /*

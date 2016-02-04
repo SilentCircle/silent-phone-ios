@@ -60,14 +60,14 @@ public:
    char idd[8];
    char ndd[8];
    
-   CListItemStringCountry(char *country,char *code):CListItem(atoi(code)){strcpy(ccode,code);countryName.setText(country);iCountryCodeLen=strlen(code);}
+   CListItemStringCountry(char *country,char *code):CListItem(atoi(code)){strcpy(ccode,code);countryName.setText(country);iCountryCodeLen=(int)strlen(code);}
    
    CListItemStringCountry(char *country,int iCLen,char *code, int iCodeLen=0):CListItem(atoi(code)){
       sz2code[0]=0;
       countryName.setText(country,iCLen);
-      if(iCodeLen<=0)iCodeLen=strlen(code);
+      if(iCodeLen<=0)iCodeLen=(int)strlen(code);
       strncpy(ccode,code,iCodeLen);ccode[iCodeLen]=0;
-      iCountryCodeLen=strlen(code);
+      iCountryCodeLen=(int)strlen(code);
       idd[0]=0;
       ndd[0]=0;
    }
@@ -410,7 +410,7 @@ public:
    
    CListItemStringCountry *findCountryByName(const char *name){
       
-      int nl = strlen(name);
+      int nl = (int)strlen(name);
       
       for(int i=0;i<eLists;i++){
          CTList *l = &ccListI[i];
@@ -630,7 +630,7 @@ void initCC(char *p, int iLen){
 
 int canAddUS_CCode(const char *nr){
    if(*nr=='0' || *nr=='1' || *nr=='+')return 0;
-   int iLen=strlen(nr);
+   int iLen=(int)strlen(nr);
    
    char nrClean[US_NR_LEN+2];
    int iCleanLen=1;nrClean[0]='1';
@@ -766,7 +766,7 @@ public:
    
    const char *tryRemoveNDD(const char *nr){
       if(iHasUpdated==2)return nr;
-      int l = strlen(nr);
+      int l = (int)strlen(nr);
       
       if(l>=sizeof(nrWONdd))return nr;
       if(l<7)return nr;
@@ -796,7 +796,7 @@ public:
    
    int setDialed(const char *nr){
       if(iHasUpdated)return 0;
-      int l = strlen(nr);
+      int l = (int)strlen(nr);
       
       if(l>=sizeof(bufDialed))return 0;
       
@@ -819,8 +819,8 @@ public:
       
       nr = &bufDialed[0];
       
-      int nddl = strlen(cr->ndd);
-      int iddl = strlen(cr->idd);
+      int nddl = (int)strlen(cr->ndd);
+      int iddl = (int)strlen(cr->idd);
       
       printf(" ndd[%s] idd[%s]\n",cr->ndd, cr->idd);
       

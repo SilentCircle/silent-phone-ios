@@ -52,6 +52,8 @@ public:
       iIsTooOld=0;
       
       iAnsweredSomewhereElse=0;
+      szSIPCallID[0]=0;
+      szPeerAssertedUsername[0]=0;
    }
    
    inline int isTooOld(int now, int iKeepHistoryFor){
@@ -100,6 +102,8 @@ public:
       return iAtFoundInPeer;
    }
    
+   inline int haveCallLog(){return szSIPCallID[0];}
+   
    int isSamePeer(CTRecentsItem *i){
       if(!i)return 0;
       
@@ -118,11 +122,35 @@ public:
 //         if(iLen==i->peerAddr.getLen() && memcmp(p,i_p,iLen*2)==0)
   //          return 1;
          
-         if(iAtFoundInPeer && i->iAtFoundInPeer)
-            return  (iAtFoundInPeer==i->iAtFoundInPeer 
+         if(iAtFoundInPeer && i->iAtFoundInPeer){
+            int is =  (iAtFoundInPeer==i->iAtFoundInPeer
                      && p[iAtFoundInPeer>>1]==i_p[iAtFoundInPeer>>1] 
                      && p[iAtFoundInPeer -1]==i_p[iAtFoundInPeer -1] 
                      && memcmp(p,i_p,(iAtFoundInPeer-1)*2)==0);
+            if(is)return is;
+         }
+         
+         if(szPeerAssertedUsername[0] && i->szPeerAssertedUsername[0]){
+            return strcmp(szPeerAssertedUsername,i->szPeerAssertedUsername)==0;
+         }
+         
+         char sz[64];
+         if(szPeerAssertedUsername[0]){
+            int ll = sizeof(sz)-1;
+            i->peerAddr.getTextUtf8(sz, &ll);
+            int ofs = (szPeerAssertedUsername[3]==':') ? 4 : 0;
+          //  printf("[%s %s]\n",&szPeerAssertedUsername[0],sz);
+            return strcmp(&szPeerAssertedUsername[ofs],sz)==0;
+         }
+         
+         if(i->szPeerAssertedUsername[0]){
+            int ll = sizeof(sz)-1;
+            peerAddr.getTextUtf8(sz, &ll);
+            int ofs = (i->szPeerAssertedUsername[3]==':') ? 4 : 0;
+            //printf("[%s %s]\n",&szPeerAssertedUsername[0],sz);
+            return strcmp(&i->szPeerAssertedUsername[ofs],sz)==0;
+         }
+         
          
       }
       return 0;
@@ -146,6 +174,9 @@ public:
    
    int iIsTooOld;//#SP-117
    
+   char szSIPCallID[64];//if we want to store this into db we have to store also logs into disk.
+   
+   char szPeerAssertedUsername[64];
 };
 int loadRecents(CTList *l);
 void saveRecents(CTList *l);
@@ -177,8 +208,19 @@ class CTRecentsList: protected CTList{
    int iCanSave;
    int iLoaded;
    
-public:
-   CTRecentsList(int iIsFavorites=0):CTList(),iIsFavorites(iIsFavorites){iIsSaved=0;iCurrentListIsMissed=0;lastAdded=NULL;iItemCnt=0;iLoaded=0;iCanSave=1;}
+   //CTRecentsList(int iIsFavorites=0):CTList(),iIsFavorites(iIsFavorites){iIsSaved=0;iCurrentListIsMissed=0;lastAdded=NULL;iItemCnt=0;iLoaded=0;iCanSave=1;}
+    CTRecentsList(int iIsFavorites=0):CTList(),iIsFavorites(iIsFavorites){iIsSaved=0;iCurrentListIsMissed=0;lastAdded=NULL;iItemCnt=0;iLoaded=0;iCanSave=1;}
+    
+    public:
+    static CTRecentsList *sharedFavorites(){
+        static CTRecentsList * l = new CTRecentsList(1);
+        return l;
+    }
+    static CTRecentsList *sharedRecents(){
+        static CTRecentsList * l = new CTRecentsList(0);
+        return l;
+    }
+
    
    void enableAutoSave(int f){iCanSave=f;}
    void save(){

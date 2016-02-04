@@ -79,7 +79,7 @@ ZRtp::ZRtp(uint8_t *myZid, ZrtpCallback *cb, std::string id, ZrtpConfigure* conf
         callback(cb), dhContext(NULL), DHss(NULL), auxSecret(NULL), auxSecretLength(0), rs1Valid(false),
         rs2Valid(false), msgShaContext(NULL), hash(NULL), cipher(NULL), pubKey(NULL), sasType(NULL), authLength(NULL),
         multiStream(false), multiStreamAvailable(false), peerIsEnrolled(false), mitmSeen(false), pbxSecretTmp(NULL),
-        enrollmentMode(false), configureAlgos(*config), zidRec(NULL), saveZidRecord(true) {
+        enrollmentMode(false), configureAlgos(*config), zidRec(NULL), saveZidRecord(true), masterStream(NULL) {
 
 #ifdef ZRTP_SAS_RELAY_SUPPORT
     enableMitmEnrollment = config->isTrustedMitM();
@@ -90,6 +90,7 @@ ZRtp::ZRtp(uint8_t *myZid, ZrtpCallback *cb, std::string id, ZrtpConfigure* conf
 
     signatureData = NULL;
     paranoidMode = config->isParanoidMode();
+    sasSignSupport = config->isSasSignature();
 
     // setup the implicit hash function pointers and length
     hashLengthImpl = SHA256_DIGEST_LENGTH;
@@ -191,6 +192,8 @@ ZRtp::~ZRtp() {
     memset(srtpSaltR, 0, MAX_DIGEST_LENGTH);
 
     memset(zrtpSession, 0, MAX_DIGEST_LENGTH);
+
+    peerNonces.clear();
 }
 
 void ZRtp::processZrtpMessage(uint8_t *message, uint32_t pSSRC, size_t length) {
@@ -378,6 +381,7 @@ ZrtpPacketCommit* ZRtp::prepareCommit(ZrtpPacketHello *hello, uint32_t* errMsg) 
 #endif
 
     signSasSeen = hello->isSasSign();
+
     // Construct a DHPart2 message (Initiator's DH message). This packet
     // is required to compute the HVI (Hash Value Initiator), refer to
     // chapter 5.4.1.1.
@@ -425,7 +429,7 @@ ZrtpPacketCommit* ZRtp::prepareCommit(ZrtpPacketHello *hello, uint32_t* errMsg) 
     // hash first messages to produce overall message hash
     // First the Responder's Hello message, second the Commit (always Initator's).
     // Must use negotiated hash.
-    msgShaContext = createHashCtx();
+    msgShaContext = createHashCtx(msgShaContext);
     hashCtxFunction(msgShaContext, (unsigned char*)hello->getHeaderBase(), helloLen);
     hashCtxFunction(msgShaContext, (unsigned char*)zrtpCommit.getHeaderBase(), len);
 
@@ -464,7 +468,7 @@ ZrtpPacketCommit* ZRtp::prepareCommitMultiStream(ZrtpPacketHello *hello) {
     // First the Responder's Hello message, second the Commit
     // (always Initator's).
     // Must use the negotiated hash.
-    msgShaContext = createHashCtx();
+    msgShaContext = createHashCtx(msgShaContext);
 
     int32_t helloLen = hello->getLength() * ZRTP_WORD_SIZE;
     hashCtxFunction(msgShaContext, (unsigned char*)hello->getHeaderBase(), helloLen);
@@ -623,7 +627,7 @@ ZrtpPacketDHPart* ZRtp::prepareDHPart1(ZrtpPacketCommit *commit, uint32_t* errMs
     if (msgShaContext != NULL) {
         closeHashCtx(msgShaContext, NULL);
     }
-    msgShaContext = createHashCtx();
+    msgShaContext = createHashCtx(msgShaContext);
 
     // Hash messages to produce overall message hash:
     // First the Responder's (my) Hello message, second the Commit (always Initator's), 
@@ -856,6 +860,10 @@ ZrtpPacketConfirm* ZRtp::prepareConfirm1MultiStream(ZrtpPacketCommit* commit, ui
         return NULL;
     }
 
+    if (!checkAndSetNonce(commit->getNonce())) {
+        *errMsg = NonceReused;
+        return NULL;
+    }
     // check if Commit contains "Mult" as pub key type
     AlgorithmEnum* cp = &zrtpPubKeys.getByName((const char*)commit->getPubKeysType());
     if (!cp->isValid() || *(int32_t*)(cp->getName()) != *(int32_t*)mult) {
@@ -899,7 +907,7 @@ ZrtpPacketConfirm* ZRtp::prepareConfirm1MultiStream(ZrtpPacketCommit* commit, ui
     if (msgShaContext != NULL) {
         closeHashCtx(msgShaContext, NULL);
     }
-    msgShaContext = createHashCtx();
+    msgShaContext = createHashCtx(msgShaContext);
 
     // Hash messages to produce overall message hash:
     // First the Responder's (my) Hello message, second the Commit
@@ -971,12 +979,6 @@ ZrtpPacketConfirm* ZRtp::prepareConfirm2(ZrtpPacketConfirm* confirm1, uint32_t* 
         *errMsg = CriticalSWError;
         return NULL;
     }
-    signatureLength = confirm1->getSignatureLength();
-    if (signSasSeen && signatureLength > 0 && confirm1->isSignatureLengthOk()) {
-        signatureData = confirm1->getSignatureData();
-        callback->checkSASSignature(sasHash);
-        // TODO: error handling if checkSASSignature returns false.
-    }
     /*
      * The Confirm1 is ok, handle the Retained secret stuff and inform
      * GUI about state.
@@ -992,6 +994,12 @@ ZrtpPacketConfirm* ZRtp::prepareConfirm2(ZrtpPacketConfirm* confirm1, uint32_t* 
     // may not be set even if peer's flag is set in confirm1 message.
     sasFlag = zidRec->isSasVerified();
 
+    signatureLength = confirm1->getSignatureLength();
+    if (signSasSeen && signatureLength > 0 && confirm1->isSignatureLengthOk()) {
+        signatureData = confirm1->getSignatureData();
+        callback->checkSASSignature(sasHash);
+        // TODO: error handling if checkSASSignature returns false.
+    }
     // now we are ready to save the new RS1 which inherits the verified
     // flag from old RS1
     zidRec->setNewRs1((const uint8_t*)newRs1);
@@ -1169,23 +1177,22 @@ ZrtpPacketConf2Ack* ZRtp::prepareConf2Ack(ZrtpPacketConfirm *confirm2, uint32_t*
             *errMsg = CriticalSWError;
             return NULL;
         }
-        signatureLength = confirm2->getSignatureLength();
-        if (signSasSeen && signatureLength > 0 && confirm2->isSignatureLengthOk() ) {
-            signatureData = confirm2->getSignatureData();
-            callback->checkSASSignature(sasHash);
-            // TODO: error handling if checkSASSignature returns false.
-        }
         /*
-        * The Confirm2 is ok, handle the Retained secret stuff and inform
-        * GUI about state.
-        */
+         * The Confirm2 is ok, handle the Retained secret stuff and inform
+         * GUI about state.
+         */
         bool sasFlag = confirm2->isSASFlag();
         // Our peer did not confirm the SAS in last session, thus reset
         // our SAS flag too. Reset the flag also if paranoidMode is true.
         if (!sasFlag || paranoidMode) {
             zidRec->resetSasVerified();
         }
-
+        signatureLength = confirm2->getSignatureLength();
+        if (signSasSeen && signatureLength > 0 && confirm2->isSignatureLengthOk() ) {
+            signatureData = confirm2->getSignatureData();
+            callback->checkSASSignature(sasHash);
+            // TODO: error handling if checkSASSignature returns false.
+        }
         // save new RS1, this inherits the verified flag from old RS1
         zidRec->setNewRs1((const uint8_t*)newRs1);
         if (saveZidRecord)
@@ -1790,7 +1797,6 @@ void ZRtp:: computeSharedSecretSet(ZIDRecord *zidRec) {
     uint8_t randBuf[RS_LENGTH];
     uint32_t macLen;
 
-    fprintf(stderr, "Compute shared secrets\n");
     detailInfo.secretsCached = 0;
     if (!zidRec->isRs1Valid()) {
         randomZRTP(randBuf, RS_LENGTH);
@@ -2319,6 +2325,8 @@ void ZRtp::computeSRTPKeys() {
         // Compute the ZRTP Session Key
         KDF(s0, hashLength, (unsigned char*)zrtpSessionKey, strlen(zrtpSessionKey)+1, KDFcontext, kdfSize, hashLength*8, zrtpSession);
 
+        // Compute the exported Key
+        KDF(s0, hashLength, (unsigned char*)zrtpExportedKey, strlen(zrtpExportedKey)+1, KDFcontext, kdfSize, hashLength*8, zrtpExport);
         // perform  generation according to chapter 5.5 and 8.
         // we don't need a speciai sasValue filed. sasValue are the first
         // (leftmost) 32 bits (4 bytes) of sasHash
@@ -2340,7 +2348,7 @@ void ZRtp::computeSRTPKeys() {
         }
 
         if (signSasSeen)
-            callback->signSAS(sasHash);
+             callback->signSAS(sasHash);
 
         detailInfo.pubKey = pubKey->getReadable();
         detailInfo.sasType = sasType->getReadable();
@@ -2407,8 +2415,9 @@ void ZRtp::setNegotiatedHash(AlgorithmEnum* hash) {
         hmacFunction = hmac_sha256;
         hmacListFunction = hmac_sha256;
 
-        createHashCtx = createSha256Context;
-        closeHashCtx = closeSha256Context;
+        createHashCtx = initializeSha256Context;
+        msgShaContext = &hashCtx.sha256Ctx;
+        closeHashCtx = finalizeSha256Context;
         hashCtxFunction = sha256Ctx;
         hashCtxListFunction = sha256Ctx;
         break;
@@ -2421,8 +2430,9 @@ void ZRtp::setNegotiatedHash(AlgorithmEnum* hash) {
         hmacFunction = hmac_sha384;
         hmacListFunction = hmac_sha384;
 
-        createHashCtx = createSha384Context;
-        closeHashCtx = closeSha384Context;
+        createHashCtx = initializeSha384Context;
+        msgShaContext = &hashCtx.sha384Ctx;
+        closeHashCtx = finalizeSha384Context;
         hashCtxFunction = sha384Ctx;
         hashCtxListFunction = sha384Ctx;
         break;
@@ -2435,8 +2445,9 @@ void ZRtp::setNegotiatedHash(AlgorithmEnum* hash) {
         hmacFunction = macSkein256;
         hmacListFunction = macSkein256;
 
-        createHashCtx = createSkein256Context;
-        closeHashCtx = closeSkein256Context;
+        createHashCtx = initializeSkein256Context;
+        msgShaContext = &hashCtx.skeinCtx;
+        closeHashCtx = finalizeSkein256Context;
         hashCtxFunction = skein256Ctx;
         hashCtxListFunction = skein256Ctx;
         break;
@@ -2449,8 +2460,9 @@ void ZRtp::setNegotiatedHash(AlgorithmEnum* hash) {
         hmacFunction = macSkein384;
         hmacListFunction = macSkein384;
 
-        createHashCtx = createSkein384Context;
-        closeHashCtx = closeSkein384Context;
+        createHashCtx = initializeSkein384Context;
+        msgShaContext = &hashCtx.skeinCtx;
+        closeHashCtx = finalizeSkein384Context;
         hashCtxFunction = skein384Ctx;
         hashCtxListFunction = skein384Ctx;
         break;
@@ -2475,6 +2487,10 @@ void ZRtp::resetSASVerified() {
 
     zidRec->resetSasVerified();
     getZidCacheInstance()->saveRecord(zidRec);
+}
+
+bool ZRtp::isSASVerified() {
+    return zidRec->isSasVerified();
 }
 
 void ZRtp::setRs2Valid() {
@@ -2625,7 +2641,7 @@ std::string ZRtp::getPeerHelloHash() {
     return stm.str();
 }
 
-std::string ZRtp::getMultiStrParams() {
+std::string ZRtp::getMultiStrParams(ZRtp **zrtpMaster) {
 
     // the string will hold binary data - it's opaque to the application
     std::string str("");
@@ -2638,11 +2654,13 @@ std::string ZRtp::getMultiStrParams() {
         tmp[2] = zrtpSymCiphers.getOrdinal(*cipher);
         memcpy(tmp+3, zrtpSession, hashLength);
         str.assign(tmp, hashLength + 1 + 1 + 1); // set chars (bytes) to the string
+        if (zrtpMaster != NULL)
+            *zrtpMaster = this;
     }
     return str;
 }
 
-void ZRtp::setMultiStrParams(std::string parameters) {
+void ZRtp::setMultiStrParams(std::string parameters, ZRtp *zrtpMaster) {
 
     char tmp[MAX_DIGEST_LENGTH + 1 + 1 + 1]; // max. hash length + cipher + authLength + hash
 
@@ -2663,6 +2681,8 @@ void ZRtp::setMultiStrParams(std::string parameters) {
     // after setting zrtpSession, cipher, and auth-length set multi-stream to true
     multiStream = true;
     stateEngine->setMultiStream(true);
+    if (zrtpMaster != NULL)
+        masterStream = zrtpMaster;
 }
 
 bool ZRtp::isMultiStream() {
@@ -2841,6 +2861,30 @@ int ZRtp::getNumberOfCountersZrtp() {
 
 int ZRtp::getCountersZrtp(int32_t* counters) {
     return stateEngine->getRetryCounters(counters);
+}
+
+uint8_t* ZRtp::getExportedKey(int32_t *length) {
+    if (length != NULL)
+        *length = hashLength;
+    return zrtpExport;
+}
+
+bool ZRtp::checkAndSetNonce(uint8_t* nonce) {
+    // This is for backward compatibility if an applications uses the old
+    // get- and setMultiStrParams functions
+    if (masterStream == NULL)
+        return true;
+
+    for (std::vector<std::string>::iterator it = masterStream->peerNonces.begin() ; it != masterStream->peerNonces.end(); ++it) {
+        if (memcmp((*it).data(), nonce, ZRTP_WORD_SIZE * 4) == 0) {
+            return false;
+        }
+    }
+    // the string holds the binary nonce
+    std::string str("");
+    str.assign((char *)nonce, ZRTP_WORD_SIZE * 4);
+    masterStream->peerNonces.push_back(str);
+    return true;
 }
 
 /** EMACS **

@@ -26,7 +26,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
 #import "Recents.h"
 #import "UICellController.h"
 #import "SettingsController.h"
@@ -59,29 +58,31 @@ CTRecentsItem *getByIdxAndMarker(CTList *l, int idx, void* iMarker){
 }
 
 
-void CTRecentsAdd::add(int iDir,CTStrBase *nameFromABorSIP, char *p, int iDur, const char *serv){
+void CTRecentsAdd::add(int iDir,CTStrBase *nameFromABorSIP, char *p, char *pCallId, int iDur, const char *serv){
+   //it is safe to set pointer only because we are reusing call object, and are not releasing-cleannig immediately
    iThisDir=iDir;
    iThisDur=iDur;
    pThisPeer=p;
    pThisServ=serv;
    pThisNameFromABorSIP = nameFromABorSIP;
+   pThisCallId=pCallId;
 }
 
-CTRecentsAdd* CTRecentsAdd::addMissed(CTStrBase *nameFromABorSIP,char *p, int iDur, const char *serv){
+CTRecentsAdd* CTRecentsAdd::addMissed(CTStrBase *nameFromABorSIP,char *p, char *pCallId, int iDur, const char *serv){
    CTRecentsAdd *n=new CTRecentsAdd();
-   n->add(CTRecentsItem::eMissed,nameFromABorSIP,p,0,serv);
+   n->add(CTRecentsItem::eMissed,nameFromABorSIP,p,pCallId,0,serv);
    
    return n;
 }
-CTRecentsAdd* CTRecentsAdd::addDialed(CTStrBase *nameFromABorSIP,char *p, int iDur, const char *serv){
+CTRecentsAdd* CTRecentsAdd::addDialed(CTStrBase *nameFromABorSIP,char *p, char *pCallId, int iDur, const char *serv){
    CTRecentsAdd *n=new CTRecentsAdd();
-   n->add(CTRecentsItem::eDialed,nameFromABorSIP,p,iDur,serv);
+   n->add(CTRecentsItem::eDialed,nameFromABorSIP,p,pCallId,iDur,serv);
    return n;
 }
-CTRecentsAdd* CTRecentsAdd::addReceived(CTStrBase *nameFromABorSIP,char *p, int iDur, const char *serv, int iAnsweredSomewhereElse){
+CTRecentsAdd* CTRecentsAdd::addReceived(CTStrBase *nameFromABorSIP,char *p, char *pCallId, int iDur, const char *serv, int iAnsweredSomewhereElse){
    CTRecentsAdd *n=new CTRecentsAdd();
    n->iAnsweredSomewhereElse = iAnsweredSomewhereElse;
-   n->add(CTRecentsItem::eReceived,nameFromABorSIP,p,iDur,serv);
+   n->add(CTRecentsItem::eReceived,nameFromABorSIP,p,pCallId,iDur,serv);
    return n;
 }
 
@@ -476,7 +477,7 @@ CTContactFinder contactFinder;
 {
 	[super viewDidLoad];
    
-   rl=new CTRecentsList();
+   rl = CTRecentsList::sharedRecents();
    iRecentsLoaded=0;
    
    tw_test.rowHeight=57;//recentTableViewCell.frame.size.height;
@@ -557,25 +558,122 @@ CTContactFinder contactFinder;
    
 }
 
+-(void)setBadgeForRecents:(int)value{
+    [[NSUserDefaults standardUserDefaults]  setValue:[NSString stringWithFormat:@"%d",value ] forKey:@"badgeNumberForRecents"];
+   // int iv=[UIApplication sharedApplication].applicationIconBadgeNumber;
+    if(value)
+        [uiTabBarItem setBadgeValue:[NSString stringWithFormat:@"%d",value]];
+    else [uiTabBarItem setBadgeValue:nil];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"updateAppBadge" object:nil];
+}
+
+-(int)getBadgeForRecents{
+    NSString *badgeNumberStr = [[NSUserDefaults standardUserDefaults] objectForKey:@"badgeNumberForRecents"];
+    int badgeNumber = 0;
+    if(badgeNumberStr)
+    {
+        badgeNumber = [badgeNumberStr intValue];
+    }
+    return badgeNumber;
+}
+
 -(void)addToRecentsMT:(CTRecentsAdd*) r{
 
    if(!r)return;
    
    rl->load();
    
-   rl->add(r->iThisDir, r->pThisNameFromABorSIP,r->pThisPeer,"my",r->pThisServ,r->iThisDur,r->iAnsweredSomewhereElse);
+   CTRecentsItem *i = rl->add(r->iThisDir, r->pThisNameFromABorSIP,r->pThisPeer,"my",r->pThisServ,r->iThisDur,r->iAnsweredSomewhereElse);
+   if(i && r->pThisCallId){
+      strncpy(i->szSIPCallID, r->pThisCallId, sizeof(i->szSIPCallID)-1);
+      i->szSIPCallID[sizeof(i->szSIPCallID)-1]=0;
+   }
+   [self onAddCall:r->iThisDir==CTRecentsItem::eMissed];
+   
+   delete r;
+}
+-(void)onAddCall:(BOOL)missed{
+   
    rl->countItemsGrouped();
    
-   
-   if(r->iThisDir==CTRecentsItem::eMissed){
-      [UIApplication sharedApplication].applicationIconBadgeNumber ++;
-      [self saveRecents];
+   if(missed){
 
-      [self resetBadgeNumber:false];
+       int badgeNumber = [self getBadgeForRecents];
+       badgeNumber++;
+       
+       [self setBadgeForRecents:badgeNumber];
+
+      [self saveRecents];
    }
    
    [tw_test reloadSections: [NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
-   delete r;
+   
+}
+
+-(void)addToRecentsCall:(CTCall*) c{
+   dispatch_async(dispatch_get_main_queue(), ^(void) {
+      void *getCurrentDOut(void);
+      void* findCfgItemByServiceKey(void *ph, char *key, int &iSize, char **opt, int *type);
+   
+      const char *pServ="Unknown";
+   
+      if(!c->pEng)c->pEng=getCurrentDOut();
+      
+      if(c->pEng){
+         int sz=0;
+         char *pRet=(char*)findCfgItemByServiceKey(c->pEng, (char*)"tmpServ", sz, NULL, NULL);
+         if(pRet && sz>0){
+            pServ=pRet;
+         }
+         
+      }
+      char *_nr = &c->bufPeer[0];
+      if(!_nr[0])_nr = &c->bufDialed[0];
+      
+      int len = (int)strlen(_nr);
+      
+      if(c->iIsIncoming && _nr[0]!='+' && _nr[0]!='0' && isdigit(_nr[0]) && len>6 && len+1<sizeof(c->bufDialed)){//hack all numbers should start with +
+         memmove(_nr+1,_nr,len+1);
+         _nr[0]='+';
+      }
+      
+      rl->load();
+      
+      int dir ;
+      unsigned int dur = get_time()-c->uiStartTime;
+      
+      if(c->iIsIncoming && !c->uiStartTime){
+         if(c->iDontAddMissedCall){
+            dir = CTRecentsItem::eReceived;
+            //answered somewhere else
+         }
+         else{
+            dir = CTRecentsItem::eMissed;
+         }
+      }
+      else if(c->iIsIncoming){
+         dir = CTRecentsItem::eReceived;
+      }
+      else{
+         dir = CTRecentsItem::eDialed;
+      }
+      if(!c->uiStartTime)dur = 0;
+      //add(int iDir, CTStrBase *nameFromABorSIP, const char *peer, const char *myAddr, const char *serv, unsigned int uiDuration, int iAnsweredSomewhereElse)
+      CTRecentsItem *i = rl->add(dir, &c->nameFromAB, _nr,"my",pServ, dur, c->iDontAddMissedCall);
+      
+      if(i && c->szSIPCallId[0]){
+         strncpy(i->szSIPCallID, c->szSIPCallId, sizeof(i->szSIPCallID)-1);
+         i->szSIPCallID[sizeof(i->szSIPCallID)-1]=0;
+      }
+      if( i && c->szPeerAssertedUsername[0]){
+         strncpy(i->szPeerAssertedUsername, c->szPeerAssertedUsername, sizeof(i->szPeerAssertedUsername)-1);
+         i->szPeerAssertedUsername[sizeof(i->szPeerAssertedUsername)-1]=0;
+      }
+      printf("szPeerAssertedUsername=%s\n",i->szPeerAssertedUsername);
+      
+      [self onAddCall:dir == CTRecentsItem::eMissed];
+   });
 }
 
 -(void)addToRecents:(CTRecentsAdd*) r{
@@ -602,12 +700,13 @@ CTContactFinder contactFinder;
 -(void)resetBadgeNumber:(bool)bResetToZero{
    
    if(bResetToZero){
-      [UIApplication sharedApplication].applicationIconBadgeNumber=0;
+       [self setBadgeForRecents:0];
    }
-   int iv=[UIApplication sharedApplication].applicationIconBadgeNumber;
-   if(iv)
-      [uiTabBarItem setBadgeValue:[NSString stringWithFormat:@"%d",iv]];
-   else [uiTabBarItem setBadgeValue:nil];
+   else {
+       
+       [self setBadgeForRecents:[self getBadgeForRecents]];
+   }
+
 }
 
 -(IBAction)segment_pressed:(id)sender{
@@ -653,7 +752,7 @@ CTContactFinder contactFinder;
 
 //show delete when swipe left
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-   rl->removeRecord(rl->getByIndex(indexPath.row));
+   rl->removeRecord(rl->getByIndex((int)indexPath.row));
    
    [tw_test reloadSections: [NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
    
@@ -693,23 +792,7 @@ CTContactFinder contactFinder;
 	if ((people != nil) && [people count])
 	{
 		ABRecordRef person = (ABRecordRef)[people objectAtIndex:0];
-		ABPersonViewController *picker = [[ABPersonViewController alloc] init];
-      UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:picker];
-      //navigation.navigationItem.leftBarButtonItem
-      UIBarButtonItem *bbi=[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelViewPerson:)];
-      picker.navigationItem.backBarButtonItem=bbi;
-      [bbi release];
-      
-      picker.navigationItem.hidesBackButton=NO;
-      
-		picker.personViewDelegate = self;
-		picker.displayedPerson = person;
-		// Allow users to edit the person’s information
-		picker.allowsEditing = YES;
-      //  picker.allowsActions
-		[self presentViewController:navigation animated:NO completion:^(){}];
-      [navigation release];
-      [picker release];
+		[self showEditPersonViewController:person completion:nil];
 	}
 	
 	
@@ -720,7 +803,7 @@ CTContactFinder contactFinder;
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath{
    
-   CTRecentsItem *i=rl->getByIndex(indexPath.row);
+   CTRecentsItem *i=rl->getByIndex((int)indexPath.row);
 
 	if(!i)return;
 
@@ -765,7 +848,7 @@ CTContactFinder contactFinder;
 		aCell = recentTableViewCell;
 		self.recentTableViewCell = nil;
 	}
-   CTRecentsItem *i=rl->getByIndex(indexPath.row);
+   CTRecentsItem *i=rl->getByIndex((int)indexPath.row);
 
    if(!i){
       aCell.lbFromNr.text=@"err";
@@ -849,7 +932,7 @@ CTContactFinder contactFinder;
 {
    [tableView deselectRowAtIndexPath:indexPath animated:NO];
    
-   CTRecentsItem *i=rl->getByIndex(indexPath.row);
+   CTRecentsItem *i=rl->getByIndex((int)indexPath.row);
    
    [appDelegate callToR:i];
 }
@@ -881,12 +964,10 @@ CTContactFinder contactFinder;
 #pragma mark Show all contacts
 -(void)showPeoplePickerController
 {
-   
 	ABPeoplePickerNavigationController *picker = [[ABPeoplePickerNavigationController alloc] init];
-   picker.peoplePickerDelegate = self;
-   [self presentViewController:picker animated:NO completion:^(){}];
-   //[self presentModalViewController:picker animated:YES];
-   [picker release];
+	picker.peoplePickerDelegate = self;
+	[self presentViewController:picker animated:YES completion:^(){}];
+	[picker release];
 }
 
 
@@ -895,6 +976,10 @@ CTContactFinder contactFinder;
 - (void)peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController *)peoplePicker {
    
    [self dismissViewControllerAnimated:YES completion:^(){}];
+	if (_newContactS) {
+		[_newContactS release];
+		_newContactS = nil;
+	}
 }
 // Called when users tap "Display and Edit Contact" in the application. Searches for a contact named "Appleseed" in 
 // in the address book. Displays and allows editing of all information associated with that contact if
@@ -960,202 +1045,210 @@ CTContactFinder contactFinder;
    if(r>=0)item->iABChecked=2;
    return r;
 }
-/*
--(void)showPersonViewController
-{
-	// Fetch the address book 
-	ABAddressBookRef addressBook = ABAddressBookCreate();
-	// Search for the person named "Appleseed" in the address book
-	NSArray *people = (NSArray *)ABAddressBookCopyPeopleWithName(addressBook, CFSTR("Echotest"));
-	// Display "Appleseed" information if found in the address book 
-	if ((people != nil) && [people count])
-	{
-		ABRecordRef person = (ABRecordRef)[people objectAtIndex:0];
-		ABPersonViewController *picker = [[[ABPersonViewController alloc] init] autorelease];
-		picker.personViewDelegate = self;
-		picker.displayedPerson = person;
-		// Allow users to edit the person’s information
-		picker.allowsEditing = YES;
-		[self.navigationController pushViewController:picker animated:YES];
-	}
-	else 
-	{
-       //can not find contact
-	}
-	
-	[people release];
-	CFRelease(addressBook);
-}
-*/
 
 #pragma mark Create a new person
 // Called when users tap "Create New Contact" in the application. Allows users to create a new contact.
--(void)showNewPersonViewController
-{
+// aContact is optional, pass it to pre-fill some information
+-(void)showNewPersonViewController:(ABRecordRef)aContact {
 	ABNewPersonViewController *picker = [[ABNewPersonViewController alloc] init];
 	picker.newPersonViewDelegate = self;
-   //ABPersonViewController.
+	if (aContact != nil)
+		picker.displayedPerson = aContact;
 	
 	UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:picker];
 	[self presentViewController:navigation animated:NO completion:^(){}];
-   //[self presentModalViewController:navigation animated:YES];
 	
 	[picker release];
 	[navigation release];	
 }
 
+-(void)showEditPersonViewController:(ABRecordRef)aContact completion:(void (^)(void))completion {
+	ABPersonViewController *personVC = [[ABPersonViewController alloc] init];
+	personVC.personViewDelegate = self;
+	personVC.displayedPerson = aContact;
+	personVC.allowsActions = NO;
+	personVC.allowsEditing = YES;
+	personVC.title = @"";
+	
+	// set back button as "Done" because we cannot cancel saved changes
+	UIBarButtonItem *bbi = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(cancelViewPerson:)];
+	personVC.navigationItem.backBarButtonItem=bbi;
+	[bbi release];
+	personVC.navigationItem.hidesBackButton=NO;
+	
+	UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:personVC];
+	[self presentViewController:navigation animated:YES completion:completion];
+	
+	[personVC release];
+	[navigation release];
+}
+
+enum CallActionSheetOptions {
+	// cancel = 0
+	kActionSheet_SilentPhone = 1
+	,kActionSheet_SMSInvite
+	,kActionSheet_SMSMessage
+	,kActionSheet_CreateContact
+	,kActionSheet_ExistingContact
+};
+
 #pragma mark Add data to an existing person
-// Called when users tap "Edit Unknown Contact" in the application. 
+// Called when users tap "Edit Unknown Contact" in the application.
 -(void)showUnknownPersonViewControllerNS:(NSString *)ns
 {
    CTEditBuf<128> b;
    CTEditBuf<128> o;
-   const char *p =[ns UTF8String];
+   b.setText([ns UTF8String], (int)[ns length]);
    
-   int isPhone(const char *sz,int len);
-   int iIsPh=isPhone(p, ns.length);
-   
-   int iAddSipPrefix=0;
-   if(p && !iIsPh && strncmp(p,"sip:",4))iAddSipPrefix=1;
-   
-   b.setText(p,[ns length]);
-   
-   int ret=[self findContactByEB:&b outb:&o];
-   
-   
-   if(ret>=0){
-      NSString *e=[NSString stringWithFormat:@"Could not add a phone number\n %@ has %@",toNSFromTB(&o),ns];
-      UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Number is already in your address book." 
-                                                      message:e 
-                                                     delegate:nil 
-                                            cancelButtonTitle:@"Cancel"
-                                            otherButtonTitles:nil];
-      [alert show];
-      [alert release];
-      return;
-   }
-   
-	ABRecordRef aContact = ABPersonCreate();
-	CFErrorRef anError = NULL;
-	ABMultiValueRef sip = ABMultiValueCreateMutable(kABMultiStringPropertyType);
-	bool didAdd = ABMultiValueAddValueAndLabel(sip, iAddSipPrefix?[NSString stringWithFormat:@"sip:%@",ns] :ns, /*kABOtherLabel*/  
-                                              CFStringRef(@"Silent Circle")
-                                              //kABPersonInstantMessageUsernameKey
-                                              , NULL);
+	BOOL alreadyContact = ([self findContactByEB:&b outb:&o] >= 0);
+	_actionSheetContactS = [[NSString alloc] initWithString:ns]; // copy for action sheet
 	
-	if (didAdd == YES)
-	{
-		ABRecordSetValue(aContact,iIsPh?kABPersonPhoneProperty:kABPersonURLProperty /*kABPersonPhoneProperty*/ /*kABPersonEmailProperty*/, sip, &anError);
-		if (anError == NULL)
-		{
-#if 1
-			ABUnknownPersonViewController *picker = [[ABUnknownPersonViewController alloc] init];
-			picker.unknownPersonViewDelegate = self;
-			picker.displayedPerson = aContact;
-			picker.allowsAddingToAddressBook = YES;
-         picker.allowsActions = YES;
-			picker.alternateName = @"";
-			picker.title = @"";
-			picker.message = @"";
-         
-
-         UINavigationController *navigation = [[UINavigationController alloc] initWithRootViewController:picker];
-         picker.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel 
-                                                                                                  target:self action:@selector(cancelAddPerson:)]autorelease];
-        //-- navigation.navigationBar.barStyle = UIBarStyleBlack;
-         
-         
-         
-         [self presentViewController:navigation animated:YES completion:^(){}];
-         [picker release];
-         [navigation release];
-         
-         [SP_FastContactFinder needsUpdate];
-
-#endif
-		}
-		else 
-		{
-			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" 
-                                                         message:@"Could not create unknown user" 
-                                                        delegate:nil 
-                                               cancelButtonTitle:@"Cancel"
-                                               otherButtonTitles:nil];
-			[alert show];
-			[alert release];
-		}
-	}	
-	CFRelease(sip);
-	CFRelease(aContact);
+	UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Choose an option" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:nil];
+	// add buttons after initialization to guarantee cancelButtonIndex == 0
+	// make sure button ordering matches CallActionSheetOptions enum
+	[actionSheet addButtonWithTitle:@"Call with Silent Phone"];
+	[actionSheet addButtonWithTitle:@"Send SMS Invite"];
+	[actionSheet addButtonWithTitle:@"Send SMS Message"];
+	if (!alreadyContact) {
+		[actionSheet addButtonWithTitle:@"Create New Contact"];
+		[actionSheet addButtonWithTitle:@"Add to Existing Contact"];
+	}
+	[actionSheet showInView:self.view];
+	// note: actionSheet released in delegate callback
 }
 
+#pragma mark - UIActionSheetDelegate
+- (void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex {
+	if (buttonIndex == actionSheet.cancelButtonIndex) {
+		[actionSheet release];
+		[_actionSheetContactS release];
+		_actionSheetContactS = nil;
+		return; // cancelled
+	}
+	
+	const char *p =[_actionSheetContactS UTF8String];
+	extern int isPhone(const char *sz,int len);
+	int iIsPh = isPhone(p, (int)_actionSheetContactS.length);
+	BOOL bAddSipPrefix = (p && !iIsPh && strncmp(p,"sip:",4));
+	
+	switch (buttonIndex) {
+		case kActionSheet_SilentPhone:
+			[appDelegate callToCheckUS:'c' dst:p  eng:NULL];
+			break;
+		case kActionSheet_SMSInvite:
+			[appDelegate sendSMSInvite:_actionSheetContactS];
+			break;
+		case kActionSheet_SMSMessage:
+			[appDelegate sendSMS:_actionSheetContactS message:nil];
+			break;
+		case kActionSheet_CreateContact: {
+			ABRecordRef aContact = ABPersonCreate();
+			CFErrorRef error = NULL;
+			ABMultiValueRef sip = ABMultiValueCreateMutable(kABMultiStringPropertyType);
+			NSString *phoneS = bAddSipPrefix ? [NSString stringWithFormat:@"sip:%@", _actionSheetContactS] : _actionSheetContactS;
+			BOOL didAdd = ABMultiValueAddValueAndLabel(sip, (__bridge CFTypeRef)phoneS, iIsPh ? kABOtherLabel : CFStringRef(@"Silent Circle"), NULL);
+			if (didAdd) {
+				ABRecordSetValue(aContact,iIsPh ? kABPersonPhoneProperty : kABPersonURLProperty, sip, &error);
+				didAdd = (error == nil);
+			}
+			if (didAdd)
+				[self showNewPersonViewController:aContact];
+			else {
+				UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+																message:@"Unable to create new contact"
+															   delegate:nil
+													  cancelButtonTitle:@"Cancel"
+													  otherButtonTitles:nil];
+				[alert show];
+				[alert release];
+			}
+			CFRelease(sip);
+			CFRelease(aContact);
+			break;
+		}
+		case kActionSheet_ExistingContact: {
+			_newContactS = [[NSString alloc] initWithString:_actionSheetContactS];
+			[self showPeoplePickerController];
+			break;
+		}
+	}
+	[SP_FastContactFinder needsUpdate];
+	
+	[actionSheet release];
+	[_actionSheetContactS release];
+	_actionSheetContactS = nil;
+}
 
 - (void)cancelViewPerson:(id)unused
 {
    [self dismissViewControllerAnimated:YES completion:^(){}];
 }
 
-- (void)cancelAddPerson:(id)unused
-{
-   [self.parentViewController dismissViewControllerAnimated:YES completion:^(){}];
-}
+//- (void)cancelAddPerson:(id)unused
+//{
+//   [self.parentViewController dismissViewControllerAnimated:YES completion:^(){}];
+//}
 
--(void)showUnknownPersonViewController
-{
-#if 0
-	ABRecordRef aContact = ABPersonCreate();
-	CFErrorRef anError = NULL;
-	ABMultiValueRef email = ABMultiValueCreateMutable(kABMultiStringPropertyType);
-	bool didAdd = ABMultiValueAddValueAndLabel(email, @"John-Appleseed@mac.com", kABOtherLabel, NULL);
+#pragma mark ABPeoplePickerNavigationControllerDelegate methods
+- (void)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker didSelectPerson:(ABRecordRef)person {
+	if (_newContactS == nil)
+		return;
 	
-	if (didAdd == YES)
-	{
-		ABRecordSetValue(aContact, kABPersonEmailProperty, email, &anError);
-		if (anError == NULL)
-		{
-			ABUnknownPersonViewController *picker = [[ABUnknownPersonViewController alloc] init];
-			picker.unknownPersonViewDelegate = self;
-			picker.displayedPerson = aContact;
-			picker.allowsAddingToAddressBook = YES;
-         picker.allowsActions = YES;
-			picker.alternateName = @"John Appleseed";
-			picker.title = @"John Appleseed";
-			picker.message = @"Company, Inc";
-			
-			[self.navigationController pushViewController:picker animated:YES];
-			[picker release];
+	// this is an existing contact we're adding a property to
+	// update existing contact with new phone or URL
+	CFErrorRef error = nil;
+	const char *p =[_newContactS UTF8String];
+	extern int isPhone(const char *sz,int len);
+	int iIsPh = isPhone(p, (int)_newContactS.length);
+	BOOL bAddSipPrefix = (p && !iIsPh && strncmp(p,"sip:",4));
+	NSString *valueS = bAddSipPrefix ? [NSString stringWithFormat:@"sip:%@", _newContactS] : _newContactS;
+
+	BOOL didAdd = NO;
+	if (iIsPh ) {
+		ABMultiValueRef existingPhones = ABRecordCopyValue(person, kABPersonPhoneProperty);
+		ABMultiValueRef allPhones = ABMultiValueCreateMutableCopy(existingPhones);
+		didAdd = ABMultiValueAddValueAndLabel(allPhones, valueS, kABOtherLabel, NULL);
+		if (didAdd) {
+			ABRecordSetValue(person, kABPersonPhoneProperty, allPhones, &error);
+			didAdd = (error == nil);
 		}
-		else 
-		{
-			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" 
-                                                         message:@"Could not create unknown user" 
-                                                        delegate:nil 
-                                               cancelButtonTitle:@"Cancel"
-                                               otherButtonTitles:nil];
+	} else { // URL
+		ABMultiValueRef existingURLs = ABRecordCopyValue(person, kABPersonURLProperty);
+		ABMultiValueRef allURLs = ABMultiValueCreateMutableCopy(existingURLs);
+		didAdd = ABMultiValueAddValueAndLabel(allURLs, valueS, CFStringRef(@"Silent Circle"), NULL);
+		if (didAdd) {
+			ABRecordSetValue(person, kABPersonURLProperty, allURLs, &error);
+			didAdd = (error == nil);
+		}
+	}
+
+	if (didAdd) {
+		// save changes
+		ABAddressBookSave(peoplePicker.addressBook, &error);
+		didAdd = (error == nil);
+	}
+	
+	// open person picker
+	[peoplePicker dismissViewControllerAnimated:YES completion:^{
+		if (didAdd) {
+			[self showEditPersonViewController:person completion:nil];
+			[SP_FastContactFinder needsUpdate];
+			[appDelegate forceFindName];
+		}
+		else {
+			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+															message:@"Unable to update contact"
+														   delegate:nil
+												  cancelButtonTitle:@"Cancel"
+												  otherButtonTitles:nil];
 			[alert show];
 			[alert release];
 		}
-	}	
-	CFRelease(email);
-	CFRelease(aContact);
-#endif
+	}];
+
+	[_newContactS release];
+	_newContactS = nil;
 }
-//view.displayedPerson
-
-
-#pragma mark ABPeoplePickerNavigationControllerDelegate methods
-
-- (void)peoplePickerNavigationController:(ABPeoplePickerNavigationController*)peoplePicker didSelectPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier{
-   [self peoplePickerNavigationController:peoplePicker shouldContinueAfterSelectingPerson:person property:property identifier:identifier];
-}
-
-// Displays the information of a selected person
-- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person
-{
-
-	return YES;
-}
-
 
 // Does not allow users to perform default actions such as dialing a phone number, when they select a person property.
 
@@ -1202,7 +1295,6 @@ CTContactFinder contactFinder;
 - (BOOL)personViewController:(ABPersonViewController *)personViewController shouldPerformDefaultActionForPerson:(ABRecordRef)person 
                     property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifierForValue
 {
-
 	return  [self tryCall:person property:property identifier:identifierForValue];
 }
 
@@ -1211,7 +1303,9 @@ CTContactFinder contactFinder;
 // Dismisses the new-person view controller. 
 - (void)newPersonViewController:(ABNewPersonViewController *)newPersonViewController didCompleteWithNewPerson:(ABRecordRef)person
 {
-	[self dismissViewControllerAnimated:YES completion:^(){}];
+	[newPersonViewController dismissViewControllerAnimated:YES completion:^(){}];
+	[SP_FastContactFinder needsUpdate];
+	[appDelegate forceFindName];
 }
 
 

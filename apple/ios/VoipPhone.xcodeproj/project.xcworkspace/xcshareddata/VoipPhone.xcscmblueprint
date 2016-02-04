@@ -1,0 +1,44 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "6848AC2FD6DEEBC5736B2EF02B559F05DFA2771F",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "3D679A1D13C8459F44D2BD0010941A301CB66DE2" : 0,
+    "472DF7BCB434D6E743C9A26434173B2092A82AAB" : 0,
+    "6848AC2FD6DEEBC5736B2EF02B559F05DFA2771F" : 0,
+    "55011AEBD444630C0E9DF47BD2E18FDBBDCC285D" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "C4B84CBF-C6FC-45EA-B68F-1940F2BF3A97",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "3D679A1D13C8459F44D2BD0010941A301CB66DE2" : "libs\/polar_ssl_proj\/",
+    "472DF7BCB434D6E743C9A26434173B2092A82AAB" : "libs\/werner_zrtp\/",
+    "6848AC2FD6DEEBC5736B2EF02B559F05DFA2771F" : "silentphone\/",
+    "55011AEBD444630C0E9DF47BD2E18FDBBDCC285D" : "libs\/sqlcipher\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "VoipPhone",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "apple\/ios\/VoipPhone.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "ssh:\/\/code-ssh.silentcircle.org:7999\/ven\/polarssl.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "3D679A1D13C8459F44D2BD0010941A301CB66DE2"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "ssh:\/\/code-ssh.silentcircle.org:7999\/sp\/zrtp-ios-proj.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "472DF7BCB434D6E743C9A26434173B2092A82AAB"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/sqlcipher\/sqlcipher.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "55011AEBD444630C0E9DF47BD2E18FDBBDCC285D"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "ssh:\/\/code-ssh.silentcircle.org:7999\/sp\/silentphone.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "6848AC2FD6DEEBC5736B2EF02B559F05DFA2771F"
+    }
+  ]
+}

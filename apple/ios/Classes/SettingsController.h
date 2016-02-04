@@ -26,7 +26,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
 #import <UIKit/UIKit.h>
 
 #import "UICellController.h"
@@ -46,11 +45,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    UITextField *activeTF;
    UITableView *prevTView;
    NSString *levelTitle;
+    
+    int passwordAlertState;
+    enum passWordState
+    {
+        pDone = 0,
+        pEnterPassword = 1,
+        pRepeatPassword = 2,
+        pDoneSetting = 3, // meaning password is set to on
+        pEditDelay = 4,
+    };
    
 }
 
 @property (nonatomic, retain) UITableView *prevTView;
 @property (nonatomic) CTSettingsItem *chooseItem;
+@property (nonatomic, retain) NSString *enteredPassword;
+@property (nonatomic, retain) UISwitch *lockKeySwitch;
 -(void)setLevelTitle:(NSString*)name;
 -(void)setList:(CTList *)newList;
 

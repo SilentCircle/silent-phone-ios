@@ -567,6 +567,7 @@ private:
 #endif
 void tivi_log(const char* format, ...);
 
+const char *getUserAgent();
 
 #ifndef __SYMBIAN32__
 template<class T>
@@ -661,8 +662,9 @@ typedef struct{
             "Host: %s\r\n"
             "%s"
             "%s"//lang
+            "%s\r\n"
             "Connection: close\r\n"
-            "\r\n",pMethod,pUrl,pAddr,hdrAdd,szPrefLang);
+            "\r\n",pMethod,pUrl,pAddr,hdrAdd,szPrefLang,getUserAgent());
       }
       else
       {
@@ -671,14 +673,15 @@ typedef struct{
             "Host: %s\r\n"
             "%s"
             "%s"//lang
+            "%s\r\n"
             "Content-Type: %s\r\n"
             "Content-Length: %d\r\n"
             "Connection: close\r\n"
-            "\r\n",pMethod,pUrl,pAddr,hdrAdd,szPrefLang,pContentType,iContentLen);
+            "\r\n",pMethod,pUrl,pAddr,hdrAdd,szPrefLang,getUserAgent(),pContentType,iContentLen);
       }
    //   puts(bufGet);
       ret=sock->_send(&bufGet[0],l);
-      if(iContentLen || pContent)
+      if(iContentLen || (pContent && pContent[0]))
       {
          ret=sock->_send(pContent,iContentLen?iContentLen:strlen(pContent));
       }
@@ -747,8 +750,9 @@ typedef struct{
             "Host: %s\r\n"
             "%s"//lang
             "%s"
+            "%s\r\n"
             "Connection: close\r\n"
-            "\r\n",pMethod,pUrl,pAddr,szPrefLang, hdrAdd);
+            "\r\n",pMethod,pUrl,pAddr,szPrefLang, hdrAdd,getUserAgent());
       }
       else
       {
@@ -757,14 +761,15 @@ typedef struct{
             "Host: %s\r\n"
             "%s"//lang
             "%s"
+            "%s\r\n"
             "Content-Type: %s\r\n"
             "Content-Length: %d\r\n"
             "Connection: close\r\n"
-            "\r\n",pMethod,pUrl,pAddr,szPrefLang,hdrAdd,pContentType,iContentLen);
+            "\r\n",pMethod,pUrl,pAddr,szPrefLang,hdrAdd,getUserAgent(),pContentType,iContentLen);
       }
      // puts(bufGet);
       ret=s->_send(&bufGet[0],l);
-      if(iContentLen || pContent)
+      if(iContentLen || (pContent && pContent[0]))
       {
        // puts(pContent);
          ret=s->_send(pContent,iContentLen?iContentLen:strlen(pContent));

@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _TIVI_PH_MAIN_H
 #define _TIVI_PH_MAIN_H
 
-
+#include <string.h>
 //this we will see in the SIP User-Agent as version
 #if defined(ANDROID_NDK) || defined(__APPLE__)
 const char *getVersionName();
@@ -83,10 +83,18 @@ typedef struct  {
 template<int eMaxSize>
 class STR_T{
 public:
-   STR_T(){uiLen=0;}
+   STR_T(){uiLen=0;strVal[0]=0;}
    unsigned int uiLen;
    char strVal[eMaxSize];
    inline int getMaxSize(){return eMaxSize-1;}
+   void set(const char *p, int iLen = 0){
+      if(!p)p="";
+      if(iLen<=0)uiLen = strlen(p);else uiLen = iLen;
+      if(uiLen>=eMaxSize)uiLen = eMaxSize-1;
+      strncpy(strVal, p,uiLen);
+      strVal[uiLen]=0;
+      
+   }
 };
 
 //TODO move to os.h
@@ -122,6 +130,20 @@ typedef struct{
    {
       iUserLen=0;
       pUser=NULL;
+   }
+   static const char *getUriParamsAndSplit(char *nr, char *dst, int iDstLen){
+      iDstLen--;
+      if(iDstLen<1 || !nr)return 0;
+      while(nr[0]){
+         if(nr[0]==';' && nr[1]){
+            strncpy(dst, nr + 1, iDstLen);
+            dst[iDstLen] = 0;
+            nr[0]=0;
+            return dst;
+         }
+         nr++;
+      }
+      return NULL;
    }
 }URI;
 

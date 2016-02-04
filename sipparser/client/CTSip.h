@@ -100,7 +100,7 @@ private:
    
    int parse(char *pFrom);
    
-   int parseSipUri(SIP_URI * sipUri, int j,int i);
+   int parseSipUri(SIP_URI * sipUri, int j,int i, int iIsFirstLine=0);
    int parseFirstLine();
    ///ADD to ren sipUri parse, contact params /contact 
    
@@ -172,6 +172,7 @@ private:
    
    int parseVia();
    int parseWarning();
+   int parseXSCMessageMeta();
    //int parseWWWAuthenticate();
    
    int parseUnknown();
@@ -205,6 +206,7 @@ private:
    static const  char  WWW_aut[32];
    static const char  rec_rout[32];
    static const char  p_asserted_id[32];
+   static const char p_Associated_URI[32];
    
 };
 

@@ -35,7 +35,7 @@ extern "C" {
  * Signature: (I)I
  */
 JNIEXPORT jint JNICALL Java_com_silentcircle_silentphone2_services_PhoneServiceNative_doInit
-  (JNIEnv *, jobject, jint, jstring);
+  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     com_silentcircle_silentphone2_services_PhoneServiceNative
@@ -59,7 +59,7 @@ JNIEXPORT jint JNICALL Java_com_silentcircle_silentphone2_services_PhoneServiceN
  * Signature: (II)I
  */
 JNIEXPORT jint JNICALL Java_com_silentcircle_silentphone2_services_PhoneServiceNative_initPhone
-  (JNIEnv *, jclass, jint, jint);
+  (JNIEnv *, jclass, jint, jint, jstring);
 
 /*
  * Class:     com_silentcircle_silentphone2_services_PhoneServiceNative
@@ -140,6 +140,14 @@ JNIEXPORT jint JNICALL Java_com_silentcircle_silentphone2_services_PhoneServiceN
  */
 JNIEXPORT jintArray JNICALL Java_com_silentcircle_silentphone2_services_PhoneServiceNative_getZrtpCounters
   (JNIEnv *, jclass, jint);
+
+/*
+  * Class:     com_silentcircle_silentphone2_services_PhoneServiceNative
+  * Method:    setPushToken
+  * Signature: (Ljava/lang/String;)I
+  */
+ JNIEXPORT void JNICALL Java_com_silentcircle_silentphone2_services_PhoneServiceNative_setPushToken
+   (JNIEnv *, jclass, jstring);
 
 #ifdef __cplusplus
 }

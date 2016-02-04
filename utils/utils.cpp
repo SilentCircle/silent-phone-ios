@@ -557,6 +557,65 @@ int cleanPhoneNumber(char *p, int iLen){
    return iOutLen;
 }
 
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>
+static char t_get_json_esc(unsigned char c){
+   
+//   const static char esc[]= {'\\','/','\"','\b','\f','\n','\r','\t',0};
+  // const static char esc_c[]={'\\','/','\"','b','f', 'n', 'r' ,'t',0};
+   const static char esc[]= {'\\','\"','\b','\f','\n','\r','\t',0};
+   const static char esc_c[]={'\\','\"','b','f', 'n', 'r' ,'t',0};
+
+   static char tab[256];
+   static int ok = 0;
+   
+   if(!ok){
+      ok = 1;
+      for(int j = 0; j < 256; j++){
+         
+         tab[j] = 0;//no escape
+         for(int i = 0;; i++){
+            if(esc[i] == 0)break;
+            if(j == esc[i]){tab[j] = esc_c[i]; break;}
+         }
+      }
+   }
+   
+   return tab[c];
+}
+
+int t_encode_json_string(char *out, int iMaxOut, const char *in){
+   int iLen = 0;
+   
+   iMaxOut--;
+   if(iMaxOut<1)return 0;
+   
+   for(int i = 0;; i++){
+      
+      if(iLen + 1 >= iMaxOut)break;
+      unsigned char c = (unsigned char)in[i];
+      if(c == 0)break;
+
+      
+      char is_esc = t_get_json_esc(c);
+      if(is_esc){
+         if(iLen + 2 >= iMaxOut)break;
+         out[iLen++] = '\\';
+         out[iLen++] = is_esc;
+      }
+      else if(c < 32){
+         if(iLen + 6 >= iMaxOut)break;
+         out[iLen++] = '\\';
+         sprintf(out+iLen,"u%04x",(unsigned char )c);iLen+=5;
+         continue;
+      }else
+         out[iLen++] = c;
+   }
+   out[iLen] = 0;
+   
+   return iLen;
+}
+//<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 static const unsigned int crc32_tab[] = {
    0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac,
    0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,

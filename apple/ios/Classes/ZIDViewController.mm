@@ -25,6 +25,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #import "ZIDViewController.h"
 
 #include <libzrtpcpp/ZIDCache.h>
@@ -168,7 +169,7 @@ static int iZidViewIsVisible=0;
    
    NSString *nf= a[2];
    
-   peer->zrtp_flags = strtol(nf.UTF8String, 0, 16);
+   peer->zrtp_flags = (int)strtol(nf.UTF8String, 0, 16);
    
   
    
@@ -264,7 +265,7 @@ static int iZidViewIsVisible=0;
    unsigned char h_result[128];// > SHA256_DIGEST_SIZE
    
   // int binLen = hex2BinL(&bin[0], (char *)ns.UTF8String, ns.length);
-   sha256((unsigned char *)ns.UTF8String, ns.length, h_result);
+   sha256((unsigned char *)ns.UTF8String, (unsigned int)ns.length, h_result);
    
    char result[128];
    

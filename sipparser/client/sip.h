@@ -66,7 +66,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define MIN_TOKEN_COUNT   20 //--------------jaizdomaa pareizaa veertiiba
 #define MIN_SIP_MSG_LEN   120 //--------------jaizdomaa pareizaa veertiiba
 
-#define ARRAY_SIZE         5
+#define ARRAY_SIZE         10
 
 
 #define VIAS       10
@@ -126,10 +126,13 @@ typedef struct _DSTR{
 
 
 typedef struct _SIP_URI{
+   
    DSTR dstrSipAddr;
 //   DSTR dstrTransport;
 //   DSTR dstrUser;
    //DSTR dstrPwd;
+
+   
    DSTR dstrHost;
    DSTR dstrUserName;
    //DSTR dstrTTL;
@@ -141,6 +144,8 @@ typedef struct _SIP_URI{
   // DSTR dstrLR;
    DSTR dstrPort;//New 
    int  iMethodFlag;
+   
+   DSTR dstrX_SC_DevID;
 } SIP_URI;
 
 //-------
@@ -205,7 +210,6 @@ struct HOLDER_P_A_ID{
    HDR_TO_FROM   x[ARRAY_SIZE+1];
    unsigned int          uiCount;
 };
-
 
 struct HDR_CONTACT{
    DSTR dstrFullRow; //rindas saakums un garums ieskaitot hdr_name
@@ -279,6 +283,11 @@ struct HOLDER_UNKNOWN_HDR{
    unsigned int  uiCount;
 };
 
+struct HDR_X_SC_MSG_META{
+   DSTR dstrFullRow;
+   DSTR dstr64bitID;
+};
+
 struct SIP_HDR{
    DSTR dstrFullRow; //rindas saakums un garums ieskaitot hdr_name
    DSTR dstrSipVer;   // "SIP"+"/"+#+"."+#
@@ -315,6 +324,7 @@ typedef struct _SIP_MSG
    DSTR dstrPriority;
    DSTR dstrEvent;
    DSTR dstrContEncoding;
+   
    struct SIP_HDR             sipHdr;
    struct HDR_CALL_INFO       hdrCallInfo;
    struct HDR_CONT_TYPE       hdrContType;
@@ -339,7 +349,10 @@ typedef struct _SIP_MSG
    struct HOLDER_CONTACT      hldContact;
    
    struct HOLDER_P_A_ID       hldP_Asserted_id;
-
+   HLD_ROUTE                  hldAssociated_URI;
+   
+   struct HDR_X_SC_MSG_META hdrXSCMsgMeta;
+   
    HLD_ROUTE  hldRoute;
    HLD_ROUTE  hldRecRoute;
    struct HOLDER_PROX_REQUIRE hldProxReq;
@@ -348,7 +361,7 @@ typedef struct _SIP_MSG
    HLD_SUP  hldSupprted;
    HLD_SUP  hldUnSupp;
    struct HOLDER_UNKNOWN_HDR  hldUnknownHdr;
-
+   
    unsigned int               uiAllowHdrMethodFlags;
    unsigned int               uiOffset;
    char                       rawDataBuffer[MSG_BUFFER_SIZE+MSG_BUFFER_TAIL_SIZE];

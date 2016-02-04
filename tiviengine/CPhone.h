@@ -42,9 +42,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "CSessions.h"
 #include "../utils/utils_chat.h"
 
-
-
-
 char *getDomain(char *);
 int saveCfg(void *ph, int iIndex);
 void deleteCfg(void *p, int iIndex);
@@ -97,14 +94,14 @@ public:
 
    int sendMsg(int ises, char *uri, const char *szCType, CTStrBase *e)
    {
-      return sendSipMsg(ises, "MESSAGE",uri, szCType?szCType:"text/plain",e);
+      return sendSipMsg(ises, "MESSAGE",uri,NULL, szCType?szCType:"text/plain",e);
    }
    
    int canPlayRingtone();
    
    int sendSipKA(int iForce=0, int *respCode=NULL);
    
-   int sendSipMsg(int ises, const char *szMeth, char * uri, const char *szCType,  CTStrBase *e,char *pSipParams=0, int iSipParamLen=0);
+   int sendSipMsg(int ises, const char *szMeth, char *uri, const char *uriAdd, const char *szCType,  CTStrBase *e,char *pSipParams=0, int iSipParamLen=0);
    int addRegister(char * uri=NULL);
    int remRegister(char * uri=NULL);
    void start();
@@ -134,7 +131,7 @@ public:
       return ret->ip;
    }
   
-   int getInfo(char *buf, int iMaxLen);
+   int getRegInfo(char *buf, int iMaxLen);
    void onTimer();
    void onNewIp(unsigned int ip, int iCanRecreate);
    int checkUri( char *pUriIn,int iInLen, char *pUriOut, int iMaxOutSize, URI *pUri, int iCheckDomain=1);
@@ -168,6 +165,7 @@ protected:
    int checkAddr(ADDR *addr,int iIsRegResp);
 
    void restoreServ();
+   int verifyDomainAddress();//re-resolves server dns name or proxy dns name
    
    int reRegSeq(int iStart);
 public:

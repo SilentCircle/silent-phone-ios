@@ -311,14 +311,14 @@ void CTZRTP::release_zrtp(){
    if(iSave && ws){iSave=0; saveEntropy();}
 }
 
-int CTZRTP::init_zrtp(int iCaller, char *zid_base16, int iInitVideoHash, int iInitAudioHash){
+int CTZRTP::init_zrtp(int iCaller, char *zid_base16, int callId, int iInitVideoHash, int iInitAudioHash){
    
   // mutextTest.lock();
    reset();
    
    setClientId("SC WD-zrtp");
 
-   init(1,1);
+   init(1, 1, callId);
    
    setUserCallback(this, CtZrtpSession::AudioStream);
    setUserCallback(this, CtZrtpSession::VideoStream);
@@ -398,7 +398,7 @@ int CTZRTP::decrypt(char *p, int &iLen, int iIsVideo){
    if(r==0)return eIsProtocol;
    if(r>0)return ePacketOk;
    
-   printf("[err processIncomingRtp()=%d]\n",r);
+   printf("[err processIncomingRtp()=%d]\n",r);//TODO fix: use log_zrtp
    iAuthFailCnt++;
    if(r==-1)return eAuthFailPacket;
    return eDropPacket;
