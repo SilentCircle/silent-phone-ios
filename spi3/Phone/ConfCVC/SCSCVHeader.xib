@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionReusableView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CVHeader_ID" id="GKT-07-KC4" customClass="SCSCVHeaderFooter">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="32"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="atE-XP-hdg" userLabel="mainView">
+                    <rect key="frame" x="0.0" y="0.0" width="600" height="32"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="mainViewLabel" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="J72-pB-YTG" userLabel="mainViewLabel">
+                            <rect key="frame" x="20" y="0.0" width="580" height="32"/>
+                            <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="16"/>
+                            <color key="textColor" red="0.49803921569999998" green="0.49803921569999998" blue="0.49803921569999998" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" red="0.37254901959999998" green="0.37254901959999998" blue="0.37254901959999998" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstItem="J72-pB-YTG" firstAttribute="top" secondItem="atE-XP-hdg" secondAttribute="top" id="BW6-Cz-ZfK"/>
+                        <constraint firstAttribute="bottom" secondItem="J72-pB-YTG" secondAttribute="bottom" id="X6j-wh-XPQ"/>
+                        <constraint firstItem="J72-pB-YTG" firstAttribute="leading" secondItem="atE-XP-hdg" secondAttribute="leading" constant="20" id="cxo-4Y-UVc"/>
+                        <constraint firstAttribute="trailing" secondItem="J72-pB-YTG" secondAttribute="trailing" id="e9F-9w-bKs"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <constraints>
+                <constraint firstItem="atE-XP-hdg" firstAttribute="leading" secondItem="GKT-07-KC4" secondAttribute="leading" id="85L-oE-PSg"/>
+                <constraint firstAttribute="bottom" secondItem="atE-XP-hdg" secondAttribute="bottom" id="GjS-nC-72P"/>
+                <constraint firstAttribute="trailing" secondItem="atE-XP-hdg" secondAttribute="trailing" id="aqO-tR-2BW"/>
+                <constraint firstItem="atE-XP-hdg" firstAttribute="top" secondItem="GKT-07-KC4" secondAttribute="top" id="xRa-Uj-b0a"/>
+            </constraints>
+            <connections>
+                <outlet property="mainView" destination="atE-XP-hdg" id="Vvx-Rx-3JB"/>
+                <outlet property="mainViewLabel" destination="J72-pB-YTG" id="3ea-XN-xdv"/>
+            </connections>
+            <point key="canvasLocation" x="198" y="8"/>
+        </collectionReusableView>
+    </objects>
+</document>

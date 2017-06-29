@@ -1,0 +1,33 @@
+[submodule "libs/tiviengine"]
+	path = libs/tiviengine
+	url = ../tiviengine.git
+	branch = develop
+	ignore = dirty
+[submodule "libs/polarssl"]
+	path = libs/polarssl
+	url = ../polarssl.git
+	branch = sc-mbedtls-2.4.2
+	ignore = dirty
+[submodule "libs/libzina"]
+	path = libs/libzina
+	url = ../libzina.git
+	branch = develop
+	ignore = dirty
+[submodule "libs/sqlcipher"]
+	path = libs/sqlcipher
+	url = ../sqlcipher.git
+	branch = master
+	ignore = dirty
+[submodule "libs/werner_zrtp"]
+	path = libs/werner_zrtp
+	url = ../zrtp-ios.git
+	branch = master
+	ignore = dirty
+[submodule "libs/zrtp"]
+	path = libs/zrtp
+	url = ../zrtpcpp.git
+	branch = develop
+	ignore = dirty
+[submodule "libs/cocoalumberjack"]
+	path = libs/cocoalumberjack
+	url = ../cocoalumberjack.git

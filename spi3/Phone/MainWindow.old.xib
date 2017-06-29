@@ -1,0 +1,1445 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment version="1552" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="UIApplication">
+            <connections>
+                <outlet property="delegate" destination="3" id="2P2-HD-VJ9"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <customObject id="3" customClass="AppDelegate">
+            <connections>
+                <outlet property="window" destination="2" id="DuE-go-Vmd"/>
+            </connections>
+        </customObject>
+        <window opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" visibleAtLaunch="YES" id="2">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <animations/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="rootViewController" destination="29" id="Tk3-MR-LC1"/>
+            </connections>
+            <point key="canvasLocation" x="247" y="569"/>
+        </window>
+        <tabBarController definesPresentationContext="YES" id="29" customClass="SCSRootViewController">
+            <extendedEdge key="edgesForExtendedLayout"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <tabBar key="tabBar" contentMode="scaleToFill" id="30">
+                <rect key="frame" x="0.0" y="519" width="320" height="49"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                <animations/>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                <color key="barTintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+            </tabBar>
+            <viewControllers>
+                <navigationController definesPresentationContext="YES" id="613">
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                    <tabBarItem key="tabBarItem" systemItem="favorites" id="617"/>
+                    <navigationBar key="navigationBar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translucent="NO" id="614">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
+                    </navigationBar>
+                    <viewControllers>
+                        <tableViewController id="657" customClass="Favorites">
+                            <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="58" sectionHeaderHeight="22" sectionFooterHeight="22" id="658">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                            <extendedEdge key="edgesForExtendedLayout"/>
+                            <navigationItem key="navigationItem" title="Favorites" id="661"/>
+                        </tableViewController>
+                    </viewControllers>
+                </navigationController>
+                <navigationController definesPresentationContext="YES" navigationBarHidden="YES" id="585">
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                    <tabBarItem key="tabBarItem" systemItem="recents" id="589"/>
+                    <navigationBar key="navigationBar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" barStyle="black" id="586">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
+                    </navigationBar>
+                    <viewControllers>
+                        <viewController title="QuickContactsViewController" id="395" customClass="RecentsViewController">
+                            <layoutGuides>
+                                <viewControllerLayoutGuide type="top" id="Gtd-t1-Hn7"/>
+                                <viewControllerLayoutGuide type="bottom" id="zCK-3c-HQw"/>
+                            </layoutGuides>
+                            <view key="view" contentMode="scaleToFill" id="406">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" barStyle="black" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="424">
+                                        <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                                        <animations/>
+                                        <items>
+                                            <barButtonItem title="Clear" width="54" id="432"/>
+                                            <barButtonItem style="plain" systemItem="flexibleSpace" id="433"/>
+                                            <barButtonItem style="plain" id="431">
+                                                <segmentedControl key="customView" opaque="NO" tag="301" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" segmentControlStyle="bar" selectedSegmentIndex="0" id="430">
+                                                    <rect key="frame" x="90" y="7" width="139" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <animations/>
+                                                    <segments>
+                                                        <segment title="All"/>
+                                                        <segment title="Missed"/>
+                                                    </segments>
+                                                </segmentedControl>
+                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                            </barButtonItem>
+                                            <barButtonItem style="plain" systemItem="flexibleSpace" id="428"/>
+                                            <barButtonItem title="Edit" width="54" id="425"/>
+                                        </items>
+                                    </toolbar>
+                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="409">
+                                        <rect key="frame" x="0.0" y="64" width="320" height="455"/>
+                                        <animations/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </tableView>
+                                </subviews>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
+                            <extendedEdge key="edgesForExtendedLayout"/>
+                            <tabBarItem key="tabBarItem" systemItem="recents" id="394"/>
+                            <toolbarItems/>
+                            <navigationItem key="navigationItem" title="Recents" id="605"/>
+                        </viewController>
+                    </viewControllers>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="FUj-WH-GG6">
+                        <rect key="frame" x="0.0" y="416" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
+                    </toolbar>
+                </navigationController>
+                <navigationController definesPresentationContext="YES" hidesBottomBarWhenPushed="YES" navigationBarHidden="YES" id="560" customClass="NonModalContacts">
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                    <tabBarItem key="tabBarItem" systemItem="contacts" id="564"/>
+                    <navigationBar key="navigationBar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" barStyle="black" id="561">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
+                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="barTintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                    </navigationBar>
+                    <viewControllers>
+                        <viewController id="562" userLabel="View Controller ">
+                            <layoutGuides>
+                                <viewControllerLayoutGuide type="top" id="o4y-Ko-h3h"/>
+                                <viewControllerLayoutGuide type="bottom" id="lHb-Cg-SF4"/>
+                            </layoutGuides>
+                            <view key="view" contentMode="scaleToFill" id="572" userLabel="c_View">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
+                            <extendedEdge key="edgesForExtendedLayout"/>
+                            <navigationItem key="navigationItem" title="sd" id="570"/>
+                        </viewController>
+                    </viewControllers>
+                </navigationController>
+                <viewController id="32" customClass="MainDialPadVC">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="N58-cH-OTm"/>
+                        <viewControllerLayoutGuide type="bottom" id="Vs6-ee-v2x"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="98" userLabel="dialPadView">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="609" userLabel="btnAccounts">
+                                <rect key="frame" x="0.0" y="20" width="164" height="36"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="164" id="f5c-n9-MDm"/>
+                                    <constraint firstAttribute="height" constant="36" id="iR2-ON-lHd"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <state key="normal">
+                                    <color key="titleColor" red="0.0" green="0.60706097150000005" blue="4.9787810379999999e-05" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="handleChooseAccounts:" destination="32" eventType="touchUpInside" id="NjP-V1-kfQ"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="693" userLabel="lblCurAccount">
+                                <rect key="frame" x="8" y="21" width="222" height="32"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="32" id="6PF-sX-JVd"/>
+                                    <constraint firstAttribute="width" constant="222" id="lue-cP-Fl2"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button hidden="YES" opaque="NO" alpha="0.69999998807907104" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="577" userLabel="btnBackToCall">
+                                <rect key="frame" x="134" y="19" width="142" height="32"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="142" id="Vvf-vA-IVz"/>
+                                    <constraint firstAttribute="height" constant="32" id="xKI-34-VYv"/>
+                                </constraints>
+                                <state key="normal" title="Back to Call" backgroundImage="bt_gray.png">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="handleBackToCall:" destination="32" eventType="touchUpInside" id="YZM-Hn-dfC"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="101" userLabel="btnSettings">
+                                <rect key="frame" x="279" y="20" width="41" height="36"/>
+                                <animations/>
+                                <accessibility key="accessibilityConfiguration" label="Settings"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="36" id="1Er-uT-txg"/>
+                                    <constraint firstAttribute="width" constant="41" id="QFE-Fs-vRd"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" size="button"/>
+                                <state key="normal" image="bt_settings.png">
+                                    <color key="titleColor" red="0.1960784314" green="0.30980392159999998" blue="0.52156862749999999" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="handleShowSettings:" destination="32" eventType="touchUpInside" id="f5r-Hx-uxn"/>
+                                </connections>
+                            </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1204" userLabel="InputContainerView">
+                                <rect key="frame" x="0.0" y="54" width="320" height="63"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="682" userLabel="imgvFlag UIImageView">
+                                        <rect key="frame" x="6" y="8" width="51" height="37"/>
+                                        <animations/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="37" id="4dA-um-zEG"/>
+                                            <constraint firstAttribute="width" constant="51" id="oVg-vq-Nct"/>
+                                        </constraints>
+                                    </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="689" userLabel="btnFlag">
+                                        <rect key="frame" x="7" y="0.0" width="48" height="54"/>
+                                        <animations/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="54" id="O0t-A9-b4k"/>
+                                            <constraint firstAttribute="width" constant="48" id="eBu-VW-a0O"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                        <state key="normal">
+                                            <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="handleFlagTap:" destination="32" eventType="touchUpInside" id="RPG-NZ-DLt"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="686" userLabel="lblCountryID">
+                                        <rect key="frame" x="25" y="45" width="170" height="16"/>
+                                        <animations/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="16" id="hpb-U2-GRd"/>
+                                            <constraint firstAttribute="width" constant="170" id="uTH-wH-dPF"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" text="+1(555)123-4567" textAlignment="center" minimumFontSize="5" translatesAutoresizingMaskIntoConstraints="NO" id="99" userLabel="txtCallInput - +1(555)123-4567">
+                                        <rect key="frame" x="57" y="8" width="222" height="37"/>
+                                        <animations/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="222" id="CsQ-Vz-SwE"/>
+                                            <constraint firstAttribute="height" constant="37" id="DH6-BJ-xXi"/>
+                                        </constraints>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="37"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="URL" returnKeyType="go" enablesReturnKeyAutomatically="YES"/>
+                                        <connections>
+                                            <action selector="callInputTextChanged" destination="32" eventType="editingChanged" id="FE7-pF-6hz"/>
+                                            <action selector="callInputTextChanged" destination="32" eventType="valueChanged" id="kpT-bX-97p"/>
+                                            <action selector="textFieldReturn:" destination="32" eventType="editingDidEnd" id="m1A-57-Dfs"/>
+                                        </connections>
+                                    </textField>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Jon Doe" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="8" translatesAutoresizingMaskIntoConstraints="NO" id="678" userLabel="lblInputDetails">
+                                        <rect key="frame" x="74" y="46" width="172" height="16"/>
+                                        <animations/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="16" id="7Ut-ji-5NF"/>
+                                            <constraint firstAttribute="width" constant="172" id="iZx-88-CyW"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1209" userLabel="btnShowDialPad">
+                                        <rect key="frame" x="274" y="2" width="46" height="50"/>
+                                        <animations/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="46" id="25K-Om-pZX"/>
+                                            <constraint firstAttribute="height" constant="50.5" id="GSe-sr-Ioz"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <state key="normal" image="ico_dpad_keyboard.png">
+                                            <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="showDialPad:" destination="32" eventType="touchDown" id="MBz-N7-abS"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1205" userLabel="btnShowQwerty">
+                                        <rect key="frame" x="274" y="-1" width="46" height="56"/>
+                                        <animations/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="56" id="HSA-qV-Wnm"/>
+                                            <constraint firstAttribute="width" constant="46" id="Ksa-Cn-woj"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <state key="normal" image="ico_qwerty_keyboard.png">
+                                            <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="showQwertyKeypad:" destination="32" eventType="touchUpInside" id="iEz-N9-6E5"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <animations/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="1205" secondAttribute="trailing" id="33j-Cg-Zt1"/>
+                                    <constraint firstItem="689" firstAttribute="centerY" secondItem="682" secondAttribute="centerY" constant="0.5" id="6TZ-6I-M6y"/>
+                                    <constraint firstItem="1209" firstAttribute="centerY" secondItem="682" secondAttribute="centerY" constant="0.25" id="8bb-mq-vd3"/>
+                                    <constraint firstItem="99" firstAttribute="leading" secondItem="682" secondAttribute="trailing" id="CqA-3h-EHJ"/>
+                                    <constraint firstAttribute="centerX" secondItem="678" secondAttribute="centerX" id="Fnj-br-crp"/>
+                                    <constraint firstItem="689" firstAttribute="centerX" secondItem="682" secondAttribute="centerX" constant="-0.5" id="IAf-Xh-W72"/>
+                                    <constraint firstItem="686" firstAttribute="top" secondItem="99" secondAttribute="bottom" id="LdG-TF-c3J"/>
+                                    <constraint firstItem="686" firstAttribute="leading" secondItem="1204" secondAttribute="leading" constant="25" id="TgR-Kg-LvU"/>
+                                    <constraint firstAttribute="trailing" secondItem="1209" secondAttribute="trailing" id="WiH-aT-Yqf"/>
+                                    <constraint firstItem="682" firstAttribute="centerY" secondItem="1205" secondAttribute="centerY" constant="-0.5" id="dd8-TT-S4e"/>
+                                    <constraint firstItem="99" firstAttribute="centerY" secondItem="689" secondAttribute="centerY" constant="-0.5" id="ka4-01-jnj"/>
+                                    <constraint firstItem="682" firstAttribute="leading" secondItem="1204" secondAttribute="leading" constant="6" id="s2N-Pa-xaO"/>
+                                    <constraint firstAttribute="height" constant="62.5" id="slu-iG-ze1"/>
+                                    <constraint firstItem="682" firstAttribute="top" secondItem="1204" secondAttribute="top" constant="8" id="z1Y-CM-gIO"/>
+                                    <constraint firstItem="678" firstAttribute="top" secondItem="99" secondAttribute="bottom" constant="0.5" id="z2E-P3-dGj"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="472" userLabel="dialPadView">
+                                <rect key="frame" x="0.0" y="123" width="320" height="316"/>
+                                <subviews>
+                                    <button opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H9z-XS-8ZJ" userLabel="btn 1">
+                                        <rect key="frame" x="25" y="0.0" width="74" height="74"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration" label="1">
+                                            <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                                        </accessibility>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="74" id="UmR-QK-sTc"/>
+                                            <constraint firstAttribute="width" constant="74" id="d37-WZ-28v"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                                        <state key="normal" title="1" backgroundImage="bt_dial_up.png">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" backgroundImage="bt_dial_down.png"/>
+                                        <connections>
+                                            <action selector="dialButtonDown:" destination="32" eventType="touchDown" id="08P-ac-kpK"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchDragOutside" id="H9q-sl-8zN"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpOutside" id="NBG-hR-rAV"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpInside" id="fqE-xO-rNT"/>
+                                            <action selector="textFieldReturn:" destination="32" eventType="touchDown" id="wdx-eL-PQx"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" clipsSubviews="YES" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qJM-Ec-Oqu" userLabel="btn 2">
+                                        <rect key="frame" x="123" y="0.0" width="74" height="74"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration" label="2">
+                                            <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                                        </accessibility>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="74" id="L7q-pQ-rzv"/>
+                                            <constraint firstAttribute="width" constant="74" id="lUh-0v-RXt"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                                        <state key="normal" title="2" backgroundImage="bt_dial_up.png">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" backgroundImage="bt_dial_down.png"/>
+                                        <connections>
+                                            <action selector="dialButtonDown:" destination="32" eventType="touchDown" id="4ok-Rz-CcX"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpInside" id="KJt-2G-chY"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpOutside" id="TLq-Nw-Itg"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchDragOutside" id="sID-KS-pi7"/>
+                                            <action selector="textFieldReturn:" destination="32" eventType="touchDown" id="TLe-2W-cbc"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" clipsSubviews="YES" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cQc-Rv-i7q" userLabel="btn 3">
+                                        <rect key="frame" x="221" y="0.0" width="74" height="74"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration" label="3">
+                                            <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                                        </accessibility>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="74" id="uAH-sp-aXi"/>
+                                            <constraint firstAttribute="height" constant="74" id="xo1-ep-V4E"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                                        <state key="normal" title="3" backgroundImage="bt_dial_up.png">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" backgroundImage="bt_dial_down.png"/>
+                                        <connections>
+                                            <action selector="dialButtonDown:" destination="32" eventType="touchDown" id="YMu-bt-aY1"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpOutside" id="Dkb-RX-xy8"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpInside" id="f0v-j2-9I4"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchDragOutside" id="mDD-TS-Ha9"/>
+                                            <action selector="textFieldReturn:" destination="32" eventType="touchDown" id="Qua-IW-dIw"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" clipsSubviews="YES" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="r1D-3L-Qx9" userLabel="btn 4">
+                                        <rect key="frame" x="25" y="79" width="74" height="74"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration" label="4">
+                                            <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                                        </accessibility>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="74" id="95q-8M-knf"/>
+                                            <constraint firstAttribute="height" constant="74" id="y1Z-Ci-7rz"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                                        <state key="normal" title="4" backgroundImage="bt_dial_up.png">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" backgroundImage="bt_dial_down.png"/>
+                                        <connections>
+                                            <action selector="dialButtonDown:" destination="32" eventType="touchDown" id="ozM-wl-Zxh"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpOutside" id="ECd-Fh-Cjb"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpInside" id="P0S-CY-YtZ"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchDragOutside" id="xUO-XA-XNE"/>
+                                            <action selector="textFieldReturn:" destination="32" eventType="touchDown" id="eQT-qa-bG6"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" clipsSubviews="YES" tag="5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NCx-hC-Zil" userLabel="btn 5">
+                                        <rect key="frame" x="123" y="79" width="74" height="74"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration" label="5">
+                                            <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                                        </accessibility>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="74" id="PZD-x2-fDG"/>
+                                            <constraint firstAttribute="height" constant="74" id="c6j-Lc-rQE"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                                        <state key="normal" title="5" backgroundImage="bt_dial_up.png">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" backgroundImage="bt_dial_down.png"/>
+                                        <connections>
+                                            <action selector="dialButtonDown:" destination="32" eventType="touchDown" id="ynC-3M-YXT"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpOutside" id="XMq-OI-ysZ"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchDragOutside" id="cK6-QW-xXF"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpInside" id="d8b-y8-veR"/>
+                                            <action selector="textFieldReturn:" destination="32" eventType="touchDown" id="wkn-jp-dSu"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" clipsSubviews="YES" tag="6" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w1c-5X-X3w" userLabel="btn 6">
+                                        <rect key="frame" x="221" y="79" width="74" height="74"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration" label="6">
+                                            <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                                        </accessibility>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="74" id="ZvF-ZP-iiO"/>
+                                            <constraint firstAttribute="width" constant="74" id="deX-pR-uPN"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                                        <state key="normal" title="6" backgroundImage="bt_dial_up.png">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" backgroundImage="bt_dial_down.png"/>
+                                        <connections>
+                                            <action selector="dialButtonDown:" destination="32" eventType="touchDown" id="5O5-I8-gSs"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpInside" id="4DW-oY-APD"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpOutside" id="XWD-tc-MTh"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchDragOutside" id="m9l-XV-OtD"/>
+                                            <action selector="textFieldReturn:" destination="32" eventType="touchDown" id="5pT-UW-XQw"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" clipsSubviews="YES" tag="7" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DGR-tv-IuW" userLabel="btn 7">
+                                        <rect key="frame" x="25" y="158" width="74" height="74"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration" label="7">
+                                            <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                                        </accessibility>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="74" id="3B7-KR-JKX"/>
+                                            <constraint firstAttribute="height" constant="74" id="3O0-T5-fvW"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                                        <state key="normal" title="7" backgroundImage="bt_dial_up.png">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" backgroundImage="bt_dial_down.png"/>
+                                        <connections>
+                                            <action selector="dialButtonDown:" destination="32" eventType="touchDown" id="Jz3-Iy-gn7"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchDragOutside" id="YSs-NV-Np4"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpInside" id="m9k-Uo-Xz7"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpOutside" id="xg1-ab-R7H"/>
+                                            <action selector="textFieldReturn:" destination="32" eventType="touchDown" id="cB5-z4-t0h"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" clipsSubviews="YES" tag="8" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sNC-H9-Qfj" userLabel="btn 8">
+                                        <rect key="frame" x="123" y="158" width="74" height="74"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration" label="8">
+                                            <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                                        </accessibility>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="74" id="0lt-ti-5zM"/>
+                                            <constraint firstAttribute="height" constant="74" id="SAH-sl-byn"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                                        <state key="normal" title="8" backgroundImage="bt_dial_up.png">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" backgroundImage="bt_dial_down.png"/>
+                                        <connections>
+                                            <action selector="dialButtonDown:" destination="32" eventType="touchDown" id="KBS-3K-vHM"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpInside" id="7TS-D6-PyH"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpOutside" id="Emj-gp-k6O"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchDragOutside" id="Ra0-4F-VTS"/>
+                                            <action selector="textFieldReturn:" destination="32" eventType="touchDown" id="YBu-OB-bBM"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" clipsSubviews="YES" tag="9" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qgh-dI-qCK" userLabel="btn 9">
+                                        <rect key="frame" x="221" y="158" width="74" height="74"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration" label="9">
+                                            <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                                        </accessibility>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="74" id="CI3-3W-1JG"/>
+                                            <constraint firstAttribute="height" constant="74" id="pH7-Hn-CYT"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                                        <state key="normal" title="9" backgroundImage="bt_dial_up.png">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" backgroundImage="bt_dial_down.png"/>
+                                        <connections>
+                                            <action selector="dialButtonDown:" destination="32" eventType="touchDown" id="G9t-HT-Utc"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpOutside" id="Bem-XG-tVd"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchDragOutside" id="dSU-WP-AyN"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpInside" id="vsB-uI-4ac"/>
+                                            <action selector="textFieldReturn:" destination="32" eventType="touchDown" id="QiR-aR-vGx"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" clipsSubviews="YES" tag="10" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rxa-ar-1gO" userLabel="btn *">
+                                        <rect key="frame" x="25" y="237" width="74" height="74"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration" label="*">
+                                            <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                                        </accessibility>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="74" id="8XQ-2b-NcE"/>
+                                            <constraint firstAttribute="width" constant="74" id="HND-si-ehN"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="48"/>
+                                        <state key="normal" title="*" backgroundImage="bt_dial_up.png">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" backgroundImage="bt_dial_down.png"/>
+                                        <connections>
+                                            <action selector="dialButtonDown:" destination="32" eventType="touchDown" id="986-2w-WrQ"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpInside" id="GiW-aR-C8p"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchDragOutside" id="JPP-FT-CO1"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpOutside" id="O4i-se-Fek"/>
+                                            <action selector="textFieldReturn:" destination="32" eventType="touchDown" id="qXc-fT-Oqv"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fbk-bz-nkt" userLabel="btn 0">
+                                        <rect key="frame" x="123" y="237" width="74" height="74"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration" label="0">
+                                            <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                                        </accessibility>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="74" id="4UW-T6-Jko"/>
+                                            <constraint firstAttribute="height" constant="74" id="yVo-o9-n6c"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                                        <state key="normal" title="0" backgroundImage="bt_dial_up.png">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" backgroundImage="bt_dial_down.png"/>
+                                        <connections>
+                                            <action selector="dialButtonDown:" destination="32" eventType="touchDown" id="Vhf-EX-eB0"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpOutside" id="DfS-EW-hx8"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpInside" id="Otq-Vr-sIE"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchDragOutside" id="XMK-If-tGA"/>
+                                            <action selector="textFieldReturn:" destination="32" eventType="touchDown" id="90d-E9-rOb"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" clipsSubviews="YES" tag="11" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KWg-mg-bJn" userLabel="btn #">
+                                        <rect key="frame" x="221" y="237" width="74" height="74"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration" label="#">
+                                            <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                                        </accessibility>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="74" id="IWn-qb-XY0"/>
+                                            <constraint firstAttribute="width" constant="74" id="vFz-HJ-NrO"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
+                                        <state key="normal" title="#" backgroundImage="bt_dial_up.png">
+                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" backgroundImage="bt_dial_down.png"/>
+                                        <connections>
+                                            <action selector="dialButtonDown:" destination="32" eventType="touchDown" id="dSM-TG-vXB"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchDragOutside" id="2V8-yh-Thj"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpOutside" id="VV3-w5-WaF"/>
+                                            <action selector="dialButtonUp:" destination="32" eventType="touchUpInside" id="Y6J-I3-QwE"/>
+                                            <action selector="textFieldReturn:" destination="32" eventType="touchDown" id="e2h-mt-cag"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <animations/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="centerY" secondItem="w1c-5X-X3w" secondAttribute="centerY" constant="42" id="17n-XT-mFn"/>
+                                    <constraint firstAttribute="centerY" secondItem="KWg-mg-bJn" secondAttribute="centerY" constant="-116" id="1XG-za-zWl"/>
+                                    <constraint firstAttribute="centerY" secondItem="NCx-hC-Zil" secondAttribute="centerY" constant="42" id="367-6X-JHk"/>
+                                    <constraint firstAttribute="centerX" secondItem="rxa-ar-1gO" secondAttribute="centerX" constant="98" id="3ch-EN-JbG"/>
+                                    <constraint firstAttribute="centerY" secondItem="Fbk-bz-nkt" secondAttribute="centerY" constant="-116" id="5fD-Ci-TKm"/>
+                                    <constraint firstAttribute="centerX" secondItem="qgh-dI-qCK" secondAttribute="centerX" constant="-98" id="7Pv-Rx-2Gz"/>
+                                    <constraint firstAttribute="centerX" secondItem="KWg-mg-bJn" secondAttribute="centerX" constant="-98" id="9DL-Re-8rS"/>
+                                    <constraint firstAttribute="centerY" secondItem="r1D-3L-Qx9" secondAttribute="centerY" constant="42" id="BUN-it-X8H"/>
+                                    <constraint firstAttribute="centerX" secondItem="r1D-3L-Qx9" secondAttribute="centerX" constant="98" id="Jgy-mW-St9"/>
+                                    <constraint firstAttribute="centerX" secondItem="H9z-XS-8ZJ" secondAttribute="centerX" constant="98" id="KWI-f2-vAo"/>
+                                    <constraint firstAttribute="centerY" secondItem="rxa-ar-1gO" secondAttribute="centerY" constant="-116" id="LcA-0Y-ffd"/>
+                                    <constraint firstAttribute="centerX" secondItem="Fbk-bz-nkt" secondAttribute="centerX" id="N5T-eS-Hme"/>
+                                    <constraint firstAttribute="centerX" secondItem="w1c-5X-X3w" secondAttribute="centerX" constant="-98" id="PZU-cd-pHT"/>
+                                    <constraint firstAttribute="centerX" secondItem="NCx-hC-Zil" secondAttribute="centerX" id="V3R-KR-P8o"/>
+                                    <constraint firstAttribute="centerY" secondItem="cQc-Rv-i7q" secondAttribute="centerY" constant="121" id="YDh-an-HBG"/>
+                                    <constraint firstAttribute="centerX" secondItem="DGR-tv-IuW" secondAttribute="centerX" constant="98" id="dT4-KU-txm"/>
+                                    <constraint firstAttribute="centerY" secondItem="sNC-H9-Qfj" secondAttribute="centerY" constant="-37" id="fvL-9f-KmI"/>
+                                    <constraint firstAttribute="centerY" secondItem="DGR-tv-IuW" secondAttribute="centerY" constant="-37" id="gjr-Q9-rcX"/>
+                                    <constraint firstAttribute="centerY" secondItem="qJM-Ec-Oqu" secondAttribute="centerY" constant="121" id="nx0-fZ-2gG"/>
+                                    <constraint firstAttribute="centerY" secondItem="qgh-dI-qCK" secondAttribute="centerY" constant="-37" id="pio-bQ-Mbf"/>
+                                    <constraint firstAttribute="centerX" secondItem="qJM-Ec-Oqu" secondAttribute="centerX" id="qX2-Dg-Bsf"/>
+                                    <constraint firstAttribute="centerY" secondItem="H9z-XS-8ZJ" secondAttribute="centerY" constant="121" id="uF2-XP-mdX"/>
+                                    <constraint firstAttribute="centerX" secondItem="sNC-H9-Qfj" secondAttribute="centerX" id="vFg-7F-XQQ"/>
+                                    <constraint firstAttribute="centerX" secondItem="cQc-Rv-i7q" secondAttribute="centerX" constant="-98" id="xjO-Nu-iMW"/>
+                                </constraints>
+                            </view>
+                            <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="102" userLabel="btnCall">
+                                <rect key="frame" x="123" y="438" width="74" height="74"/>
+                                <animations/>
+                                <accessibility key="accessibilityConfiguration" label="Call">
+                                    <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                                </accessibility>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="74" id="lkv-X2-iPP"/>
+                                    <constraint firstAttribute="width" constant="74" id="pFg-I1-NmD"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="28"/>
+                                <state key="normal" image="bt_call_up.png">
+                                    <color key="titleColor" red="0.0" green="0.60706097150000005" blue="4.9787810379999999e-05" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted" image="bt_call_down.png">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="handleCallTap:" destination="32" eventType="touchUpInside" id="SyY-2O-efN"/>
+                                    <action selector="textFieldReturn:" destination="32" eventType="touchDown" id="1ld-ym-WvA"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="292" userLabel="btnAddContact">
+                                <rect key="frame" x="25" y="436" width="74" height="74"/>
+                                <animations/>
+                                <accessibility key="accessibilityConfiguration" label="Add contact">
+                                    <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                                </accessibility>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="74" id="7SO-wX-PBz"/>
+                                    <constraint firstAttribute="height" constant="74" id="zfn-Q2-Fpf"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" image="bt_dial_contact.png">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="handleAddContact:" destination="32" eventType="touchUpInside" id="m3B-Fn-Fjg"/>
+                                    <action selector="textFieldReturn:" destination="32" eventType="touchDown" id="M2U-sA-22Q"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="149" userLabel="btnBackspace">
+                                <rect key="frame" x="221" y="436" width="74" height="74"/>
+                                <animations/>
+                                <accessibility key="accessibilityConfiguration" label="Backspace">
+                                    <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                                </accessibility>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="74" id="Li2-3k-aH7"/>
+                                    <constraint firstAttribute="width" constant="74" id="Q64-rU-6Rv"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" size="button"/>
+                                <state key="normal" image="bt_dial_backspace.png">
+                                    <color key="titleColor" red="0.1960784314" green="0.30980392159999998" blue="0.52156862749999999" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="clearEdit" destination="32" eventType="touchDown" id="GnH-2Y-Dk7"/>
+                                    <action selector="handleBackspace:" destination="32" eventType="touchUpInside" id="R2J-4A-ElK"/>
+                                    <action selector="handleBackspace:" destination="32" eventType="touchUpOutside" id="gtS-7d-fGb"/>
+                                    <action selector="textFieldReturn:" destination="32" eventType="touchDown" id="wKs-fq-6Wb"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" red="0.20386633211678831" green="0.20101505474452555" blue="0.23146669708029197" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="149" firstAttribute="leading" secondItem="102" secondAttribute="trailing" constant="24" id="0Bt-RX-98V"/>
+                            <constraint firstItem="472" firstAttribute="leading" secondItem="98" secondAttribute="leading" id="1Ga-nk-OKF"/>
+                            <constraint firstAttribute="trailing" secondItem="1204" secondAttribute="trailing" id="1Yg-I2-7dM"/>
+                            <constraint firstItem="609" firstAttribute="leading" secondItem="98" secondAttribute="leading" id="3UQ-5D-ZXp"/>
+                            <constraint firstAttribute="trailing" secondItem="472" secondAttribute="trailing" id="6h1-Sv-hPs"/>
+                            <constraint firstItem="102" firstAttribute="leading" secondItem="292" secondAttribute="trailing" constant="24" id="AVK-Sj-w4p"/>
+                            <constraint firstItem="Vs6-ee-v2x" firstAttribute="top" secondItem="102" secondAttribute="bottom" constant="7" id="CP0-JQ-fCn"/>
+                            <constraint firstItem="693" firstAttribute="leading" secondItem="98" secondAttribute="leading" constant="8" id="HRV-RR-GxB"/>
+                            <constraint firstItem="Vs6-ee-v2x" firstAttribute="top" secondItem="472" secondAttribute="bottom" constant="80" id="JEW-JM-rLw"/>
+                            <constraint firstItem="693" firstAttribute="top" secondItem="N58-cH-OTm" secondAttribute="bottom" constant="1" id="M0P-X2-5d9"/>
+                            <constraint firstItem="472" firstAttribute="top" secondItem="1204" secondAttribute="bottom" constant="5.5" id="MqG-jl-wdg"/>
+                            <constraint firstItem="102" firstAttribute="centerY" secondItem="292" secondAttribute="centerY" constant="2" id="SIM-kB-UFW"/>
+                            <constraint firstItem="1204" firstAttribute="leading" secondItem="98" secondAttribute="leading" id="Wm1-Ja-YAb"/>
+                            <constraint firstItem="101" firstAttribute="top" secondItem="N58-cH-OTm" secondAttribute="bottom" id="ZwU-3W-mJX"/>
+                            <constraint firstItem="609" firstAttribute="top" secondItem="N58-cH-OTm" secondAttribute="bottom" id="f67-pu-UbE"/>
+                            <constraint firstAttribute="trailing" secondItem="101" secondAttribute="trailing" id="f97-61-kmZ"/>
+                            <constraint firstItem="101" firstAttribute="leading" secondItem="577" secondAttribute="trailing" constant="3" id="hNl-rj-Qja"/>
+                            <constraint firstItem="577" firstAttribute="centerY" secondItem="101" secondAttribute="centerY" constant="-3" id="jlG-tg-bxx"/>
+                            <constraint firstAttribute="centerX" secondItem="102" secondAttribute="centerX" id="rFl-gy-WqA"/>
+                            <constraint firstItem="102" firstAttribute="centerY" secondItem="149" secondAttribute="centerY" constant="2" id="sBE-qq-0sO"/>
+                            <constraint firstItem="1204" firstAttribute="top" secondItem="N58-cH-OTm" secondAttribute="bottom" constant="34" id="vmL-D5-sZ9"/>
+                        </constraints>
+                    </view>
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                    <tabBarItem key="tabBarItem" title="Keypad" image="tabitem_keypad.png" id="103" userLabel="keypadItem - TabBarItem"/>
+                    <toolbarItems/>
+                    <connections>
+                        <outlet property="btnAccounts" destination="609" id="8I9-68-gC6"/>
+                        <outlet property="btnAddContact" destination="292" id="jSY-vq-bx9"/>
+                        <outlet property="btnBackToCall" destination="577" id="Hbc-Pu-Vt6"/>
+                        <outlet property="btnBackspace" destination="149" id="L2o-jk-s5x"/>
+                        <outlet property="btnCall" destination="102" id="wYq-ic-OBJ"/>
+                        <outlet property="btnFlag" destination="689" id="WPB-PE-3cC"/>
+                        <outlet property="btnSettings" destination="101" id="t3S-15-wic"/>
+                        <outlet property="btnShowDialPad" destination="1209" id="uD2-DB-l4P"/>
+                        <outlet property="btnShowQwerty" destination="1205" id="Ccv-dZ-kCq"/>
+                        <outlet property="dialPadView" destination="472" id="XtS-lf-oWs"/>
+                        <outlet property="imgvFlag" destination="682" id="ebU-sh-ogt"/>
+                        <outlet property="lblCountryID" destination="686" id="UxX-TW-WAt"/>
+                        <outlet property="lblCurAccount" destination="693" id="FEU-eN-vSi"/>
+                        <outlet property="lblInputDetails" destination="678" id="7fk-IV-nhS"/>
+                        <outlet property="txtCallInput" destination="99" id="Rl5-FF-qaj"/>
+                    </connections>
+                </viewController>
+                <viewController id="313">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="feh-hB-nCz"/>
+                        <viewControllerLayoutGuide type="bottom" id="8h0-Oy-bY3"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="718">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="719" userLabel="log - Text View">
+                                <rect key="frame" x="0.0" y="20" width="320" height="500"/>
+                                <animations/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <button opaque="NO" alpha="0.80000001192092896" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="722" userLabel="Refresh - TabBarItem">
+                                <rect key="frame" x="224" y="9" width="91" height="29"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="boldSystem" size="button"/>
+                                <state key="normal" title="Refresh">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                    <tabBarItem key="tabBarItem" title="Log" id="312"/>
+                    <toolbarItems/>
+                </viewController>
+            </viewControllers>
+            <point key="canvasLocation" x="-229" y="108.5"/>
+        </tabBarController>
+        <navigationController definesPresentationContext="YES" modalTransitionStyle="flipHorizontal" navigationBarHidden="YES" id="529">
+            <extendedEdge key="edgesForExtendedLayout"/>
+            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
+            <navigationBar key="navigationBar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" barStyle="black" translucent="NO" id="530">
+                <autoresizingMask key="autoresizingMask"/>
+                <animations/>
+            </navigationBar>
+            <viewControllers>
+                <viewController id="531" customClass="CallScreenVC">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Sn7-yT-tLf"/>
+                        <viewControllerLayoutGuide type="bottom" id="hph-f5-QAz"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="130">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" fixedFrame="YES" image="bg_main.png" translatesAutoresizingMaskIntoConstraints="NO" id="487">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="523"/>
+                                <animations/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </imageView>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="698" userLabel="viewCSMiddle">
+                                <rect key="frame" x="-1" y="103" width="321" height="381"/>
+                                <subviews>
+                                    <view contentMode="scaleAspectFit" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="522" userLabel="keyPadInCall">
+                                        <rect key="frame" x="10" y="30" width="300" height="280"/>
+                                        <animations/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    </view>
+                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="490" userLabel="infoPanel">
+                                        <rect key="frame" x="0.0" y="-6" width="321" height="315"/>
+                                        <subviews>
+                                            <view opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="488" userLabel="zrtpPanel">
+                                                <rect key="frame" x="0.0" y="18" width="321" height="157"/>
+                                                <subviews>
+                                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" fixedFrame="YES" text="GOING SECURE" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="496">
+                                                        <rect key="frame" x="11" y="15" width="299" height="46"/>
+                                                        <animations/>
+                                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="36"/>
+                                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                                        <nil key="highlightedColor"/>
+                                                        <color key="shadowColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <size key="shadowOffset" width="1" height="1"/>
+                                                    </label>
+                                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="700">
+                                                        <rect key="frame" x="11" y="19" width="299" height="46"/>
+                                                        <animations/>
+                                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                        <state key="normal">
+                                                            <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                        </state>
+                                                        <state key="highlighted">
+                                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        </state>
+                                                    </button>
+                                                    <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" image="bt_white_border.png" translatesAutoresizingMaskIntoConstraints="NO" id="673">
+                                                        <rect key="frame" x="147" y="111" width="171" height="26"/>
+                                                        <animations/>
+                                                        <accessibility key="accessibilityConfiguration">
+                                                            <accessibilityTraits key="traits" none="YES"/>
+                                                        </accessibility>
+                                                    </imageView>
+                                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" fixedFrame="YES" text="John Doe" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="495">
+                                                        <rect key="frame" x="150" y="105" width="139" height="35"/>
+                                                        <animations/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="494">
+                                                        <rect key="frame" x="283" y="94" width="38" height="56"/>
+                                                        <animations/>
+                                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                        <state key="normal" image="ico_pencil.png"/>
+                                                    </button>
+                                                    <button clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="top" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="497" userLabel="button-sas">
+                                                        <rect key="frame" x="51" y="61" width="224" height="49"/>
+                                                        <animations/>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                        <fontDescription key="fontDescription" name="CourierNewPSMT" family="Courier New" pointSize="17"/>
+                                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <state key="normal" backgroundImage="bt_white.png">
+                                                            <string key="title">aardvark	adroitness</string>
+                                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                        </state>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="top" buttonType="roundedRect" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="384">
+                                                        <rect key="frame" x="52.5" y="82" width="221" height="27"/>
+                                                        <animations/>
+                                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
+                                                        <state key="normal" title="Verify" backgroundImage="bt_blue.png">
+                                                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                        </state>
+                                                        <state key="disabled" backgroundImage="bt_gray.png"/>
+                                                    </button>
+                                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="691">
+                                                        <rect key="frame" x="43" y="50" width="235" height="18"/>
+                                                        <animations/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                                <animations/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            </view>
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" text="Ringing..." textAlignment="center" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="143" userLabel="uiCallInfo">
+                                                <rect key="frame" x="11" y="20" width="299" height="158"/>
+                                                <animations/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="28"/>
+                                                <color key="textColor" red="0.2272727273" green="0.6384603955" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                                <size key="shadowOffset" width="0.0" height="0.0"/>
+                                            </label>
+                                        </subviews>
+                                        <animations/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    </view>
+                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="520" userLabel="fPadView">
+                                        <rect key="frame" x="0.0" y="152" width="321" height="236"/>
+                                        <subviews>
+                                            <view clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="469" userLabel="view6pad">
+                                                <rect key="frame" x="20" y="6" width="278" height="180"/>
+                                                <subviews>
+                                                    <button contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="322" userLabel="switchSpktBt">
+                                                        <rect key="frame" x="194" y="-5" width="81" height="81"/>
+                                                        <animations/>
+                                                        <accessibility key="accessibilityConfiguration">
+                                                            <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                                                        </accessibility>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                        <color key="tintColor" red="0.2272727273" green="0.6384603955" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <state key="normal" image="ico_speaker.png" backgroundImage="bt_dial_up.png">
+                                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                        </state>
+                                                        <state key="highlighted" backgroundImage="bt_dial_down.png">
+                                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        </state>
+                                                    </button>
+                                                    <button opaque="NO" tag="4402" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="462" userLabel="videoBT">
+                                                        <rect key="frame" x="102" y="73" width="81" height="81"/>
+                                                        <animations/>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                        <fontDescription key="fontDescription" type="boldSystem" size="button"/>
+                                                        <state key="normal" image="ico_video_call.png" backgroundImage="bt_dial_up.png">
+                                                            <color key="titleColor" red="0.1960784314" green="0.30980392159999998" blue="0.52156862749999999" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                        </state>
+                                                        <state key="highlighted" backgroundImage="bt_dial_down.png">
+                                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        </state>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="477" userLabel="muteBT">
+                                                        <rect key="frame" x="8" y="-5" width="81" height="81"/>
+                                                        <animations/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                        <state key="normal" image="ico_mute.png" backgroundImage="bt_dial_up.png">
+                                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        </state>
+                                                        <state key="highlighted" backgroundImage="bt_dial_down.png">
+                                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        </state>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="514" userLabel="showInCallKeyPad(App)">
+                                                        <rect key="frame" x="102.5" y="-5" width="81" height="81"/>
+                                                        <animations/>
+                                                        <accessibility key="accessibilityConfiguration" label="keypad"/>
+                                                        <fontDescription key="fontDescription" type="boldSystem" size="button"/>
+                                                        <color key="tintColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <state key="normal" image="ico_keypad.png" backgroundImage="bt_dial_up.png">
+                                                            <color key="titleColor" red="0.1960784314" green="0.30980392159999998" blue="0.52156862749999999" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                        </state>
+                                                        <state key="highlighted" backgroundImage="bt_dial_down.png">
+                                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        </state>
+                                                    </button>
+                                                    <button opaque="NO" tag="4403" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="wordWrap" translatesAutoresizingMaskIntoConstraints="NO" id="527" userLabel="btCM">
+                                                        <rect key="frame" x="194" y="73" width="81" height="81"/>
+                                                        <animations/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                        <state key="normal" title="Call Manager" backgroundImage="bt_dial_up.png"/>
+                                                        <state key="highlighted" backgroundImage="bt_dial_down.png"/>
+                                                    </button>
+                                                    <button opaque="NO" tag="4401" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="575" userLabel="switchAddCall(App)">
+                                                        <rect key="frame" x="8" y="73" width="81" height="81"/>
+                                                        <animations/>
+                                                        <accessibility key="accessibilityConfiguration" label="add call"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                        <state key="normal" image="ico_add_call.png" backgroundImage="bt_dial_up.png">
+                                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                        </state>
+                                                        <state key="highlighted" backgroundImage="bt_dial_down.png">
+                                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        </state>
+                                                    </button>
+                                                </subviews>
+                                                <animations/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            </view>
+                                        </subviews>
+                                        <animations/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    </view>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.40000000596046448" contentMode="left" fixedFrame="YES" text="Volume is too low" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="726" userLabel="lblVolumeWarning">
+                                        <rect key="frame" x="60" y="166" width="200" height="30"/>
+                                        <animations/>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <animations/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="316" userLabel="answer - Button">
+                                <rect key="frame" x="165" y="425" width="134" height="48"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="boldSystem" size="button"/>
+                                <inset key="imageEdgeInsets" minX="-15" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                <size key="titleShadowOffset" width="0.0" height="-1"/>
+                                <state key="normal" title="Answer" backgroundImage="bt_green.png">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="131" userLabel="endCallBT">
+                                <rect key="frame" x="20" y="425" width="135" height="48"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="boldSystem" size="button"/>
+                                <size key="titleShadowOffset" width="0.0" height="-1"/>
+                                <state key="normal" title="End Call" backgroundImage="bt_red.png">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="75d-sp-8Bw" userLabel="top user name/num View">
+                                <rect key="frame" x="0.0" y="20" width="320" height="113"/>
+                                <subviews>
+                                    <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.80000001192092896" contentMode="center" fixedFrame="YES" image="panel_call_topbar.png" translatesAutoresizingMaskIntoConstraints="NO" id="668">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="113"/>
+                                        <animations/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <accessibility key="accessibilityConfiguration">
+                                            <accessibilityTraits key="traits" none="YES"/>
+                                        </accessibility>
+                                    </imageView>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="475" userLabel="peerPB_img">
+                                        <rect key="frame" x="212" y="4" width="106" height="106"/>
+                                        <animations/>
+                                    </imageView>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" fixedFrame="YES" text="John Carter" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="144" userLabel="lblDstName">
+                                        <rect key="frame" x="6" y="0.0" width="203" height="46"/>
+                                        <animations/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="36"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                        <color key="shadowColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        <size key="shadowOffset" width="1" height="1"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" fixedFrame="YES" text="+1(555)123-4567" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="476" userLabel="lblDST - +1(555)123-4567">
+                                        <rect key="frame" x="37.5" y="33" width="170.5" height="40"/>
+                                        <animations/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    </label>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" fixedFrame="YES" image="bg_time.png" translatesAutoresizingMaskIntoConstraints="NO" id="677">
+                                        <rect key="frame" x="5" y="86" width="83" height="26"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration">
+                                            <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
+                                        </accessibility>
+                                    </imageView>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" fixedFrame="YES" text="01:59" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="6" translatesAutoresizingMaskIntoConstraints="NO" id="506" userLabel="uiDur - Label 01:59">
+                                        <rect key="frame" x="5" y="88" width="83" height="21"/>
+                                        <animations/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <accessibility key="accessibilityConfiguration">
+                                            <accessibilityTraits key="traits" staticText="YES" updatesFrequently="YES"/>
+                                        </accessibility>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" fixedFrame="YES" text="15 0.1s 0.0% loss G722/GSM" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="8" translatesAutoresizingMaskIntoConstraints="NO" id="508" userLabel="uiMediaInfo - 15 0.1s 0.0% loss G722/GSM">
+                                        <rect key="frame" x="46" y="65" width="162" height="26"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration">
+                                            <accessibilityTraits key="traits" staticText="YES" updatesFrequently="YES"/>
+                                        </accessibility>
+                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" fixedFrame="YES" text="fs-devel.silentcircle.org" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="8" translatesAutoresizingMaskIntoConstraints="NO" id="669" userLabel="uiServ - fs-devel.silentcircle.org">
+                                        <rect key="frame" x="90" y="90" width="118" height="21"/>
+                                        <animations/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="highlightedColor" red="0.43529411764705883" green="0.44313725490196076" blue="0.47450980392156861" alpha="1" colorSpace="calibratedRGB"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="670" userLabel="btAntena">
+                                        <rect key="frame" x="5" y="67" width="24" height="16"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration" label="antenna"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <state key="normal" image="ico_antena_4.png">
+                                            <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <imageView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="684" userLabel="callScreenFlag - Image View">
+                                        <rect key="frame" x="5" y="46" width="30" height="18"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration">
+                                            <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
+                                        </accessibility>
+                                    </imageView>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="703" userLabel="askZRTP_cache_name_top(App)">
+                                        <rect key="frame" x="-11" y="0.0" width="219" height="46"/>
+                                        <animations/>
+                                        <accessibility key="accessibilityConfiguration">
+                                            <bool key="isElement" value="NO"/>
+                                        </accessibility>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
+                                        <state key="normal">
+                                            <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1201" userLabel="iwLed - Image View">
+                                        <rect key="frame" x="35" y="70" width="7" height="12"/>
+                                        <animations/>
+                                        <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <accessibility key="accessibilityConfiguration">
+                                            <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
+                                        </accessibility>
+                                    </imageView>
+                                </subviews>
+                                <animations/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </view>
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                    <navigationItem key="navigationItem" id="532"/>
+                </viewController>
+            </viewControllers>
+            <point key="canvasLocation" x="-84" y="-577"/>
+        </navigationController>
+        <navigationController definesPresentationContext="YES" modalTransitionStyle="flipHorizontal" id="261">
+            <extendedEdge key="edgesForExtendedLayout"/>
+            <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+            <navigationBar key="navigationBar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="262">
+                <autoresizingMask key="autoresizingMask"/>
+                <animations/>
+            </navigationBar>
+            <viewControllers>
+                <tableViewController id="327" customClass="SettingsController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="328">
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
+                        <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
+                        <connections>
+                            <outlet property="dataSource" destination="327" id="330"/>
+                            <outlet property="delegate" destination="327" id="329"/>
+                        </connections>
+                    </tableView>
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                    <navigationItem key="navigationItem" title="Settings" id="331" userLabel="Settings - NavItem">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="345"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="338"/>
+                    </navigationItem>
+                </tableViewController>
+            </viewControllers>
+            <point key="canvasLocation" x="335" y="-72"/>
+        </navigationController>
+        <viewController id="UFt-KK-KtR" userLabel="Keypad_Original" customClass="DialPadViewController">
+            <layoutGuides>
+                <viewControllerLayoutGuide type="top" id="zeM-Yh-roF"/>
+                <viewControllerLayoutGuide type="bottom" id="4je-KV-If2"/>
+            </layoutGuides>
+            <view key="view" contentMode="scaleToFill" id="VHz-3a-4BO" userLabel="dialPadView">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QYz-py-DSH" userLabel="(App)curService">
+                        <rect key="frame" x="0.0" y="20" width="164" height="36"/>
+                        <animations/>
+                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                        <state key="normal">
+                            <color key="titleColor" red="0.0" green="0.60706097150000005" blue="4.9787810379999999e-05" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                        <state key="highlighted">
+                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                    </button>
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" fixedFrame="YES" text="" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="eJI-I6-CgC" userLabel="curServiceLB">
+                        <rect key="frame" x="8" y="21" width="222" height="32"/>
+                        <animations/>
+                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lBT-EC-HnD" userLabel="cfgBT">
+                        <rect key="frame" x="279" y="20" width="41" height="36"/>
+                        <animations/>
+                        <accessibility key="accessibilityConfiguration" label="Settings"/>
+                        <fontDescription key="fontDescription" type="boldSystem" size="button"/>
+                        <state key="normal" image="bt_settings.png">
+                            <color key="titleColor" red="0.1960784314" green="0.30980392159999998" blue="0.52156862749999999" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                        <state key="highlighted">
+                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                    </button>
+                    <button opaque="NO" alpha="0.69999998807907104" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kEj-eA-UGZ" userLabel="backToCallBT">
+                        <rect key="frame" x="134" y="19" width="142" height="32"/>
+                        <animations/>
+                        <state key="normal" title="Back to Call" backgroundImage="bt_gray.png">
+                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                    </button>
+                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lBR-9E-ChE">
+                        <rect key="frame" x="0.0" y="54" width="320" height="69"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" text="+1(555)123-4567" textAlignment="center" minimumFontSize="5" translatesAutoresizingMaskIntoConstraints="NO" id="OO5-ZM-k0Y" userLabel="nr - +1(555)123-4567">
+                                <rect key="frame" x="54" y="-20" width="222" height="101"/>
+                                <animations/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="37"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="URL" returnKeyType="go" enablesReturnKeyAutomatically="YES"/>
+                            </textField>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" fixedFrame="YES" text="Jon Doe" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="8" translatesAutoresizingMaskIntoConstraints="NO" id="sNW-3C-981" userLabel="lblNRFieldName">
+                                <rect key="frame" x="74" y="51" width="172" height="16"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Z5v-uX-T5g" userLabel="nrflag UIImageView">
+                                <rect key="frame" x="6" y="10.5" width="51" height="37"/>
+                                <animations/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dog-oo-WHs" userLabel="onFlagClick(App)">
+                                <rect key="frame" x="7" y="30" width="48" height="54"/>
+                                <animations/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <state key="normal">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" fixedFrame="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="S0u-T5-aIG" userLabel="countryID">
+                                <rect key="frame" x="25" y="53" width="170" height="16"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="REY-1F-dBH" userLabel="btQwerty">
+                                <rect key="frame" x="274" y="0.0" width="46" height="56"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" image="ico_qwerty_keyboard.png">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="utu-Eh-LWc" userLabel="btShowCSTPad">
+                                <rect key="frame" x="274" y="4" width="46" height="50.5"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" image="ico_dpad_keyboard.png">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </view>
+                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="w5B-2g-oyH" userLabel="dialPadBTView">
+                        <rect key="frame" x="0.0" y="136" width="320" height="352"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jpf-BG-2Mi">
+                                <rect key="frame" x="42" y="150" width="236" height="52"/>
+                                <animations/>
+                                <string key="text">Original 
+DialPadViewController</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </view>
+                    <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KKo-Za-Cqh" userLabel="chooseCallType">
+                        <rect key="frame" x="123" y="487" width="74" height="74"/>
+                        <animations/>
+                        <accessibility key="accessibilityConfiguration" label="Call">
+                            <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                        </accessibility>
+                        <fontDescription key="fontDescription" type="boldSystem" pointSize="28"/>
+                        <state key="normal" image="bt_call_up.png">
+                            <color key="titleColor" red="0.0" green="0.60706097150000005" blue="4.9787810379999999e-05" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                        <state key="highlighted" image="bt_call_down.png">
+                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                    </button>
+                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h2e-It-FiE" userLabel="backspaceBT">
+                        <rect key="frame" x="216" y="486" width="78" height="78"/>
+                        <animations/>
+                        <accessibility key="accessibilityConfiguration" label="Backspace">
+                            <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                        </accessibility>
+                        <fontDescription key="fontDescription" type="boldSystem" size="button"/>
+                        <state key="normal" image="bt_dial_backspace.png">
+                            <color key="titleColor" red="0.1960784314" green="0.30980392159999998" blue="0.52156862749999999" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                        <state key="highlighted">
+                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                    </button>
+                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="akT-Ol-hgl" userLabel="pickerButton">
+                        <rect key="frame" x="28" y="485" width="78" height="78"/>
+                        <animations/>
+                        <accessibility key="accessibilityConfiguration" label="Add contact">
+                            <accessibilityTraits key="traits" button="YES" keyboardKey="YES"/>
+                        </accessibility>
+                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                        <state key="normal" image="bt_dial_contact.png">
+                            <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                        <state key="highlighted">
+                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                    </button>
+                </subviews>
+                <animations/>
+                <color key="backgroundColor" red="0.20386633209999999" green="0.2010150547" blue="0.23146669710000001" alpha="1" colorSpace="calibratedRGB"/>
+            </view>
+            <extendedEdge key="edgesForExtendedLayout"/>
+            <tabBarItem key="tabBarItem" title="Keypad" image="tabitem_keypad.png" id="qes-qU-zYI" userLabel="keypadItem - TabBarItem"/>
+            <toolbarItems/>
+        </viewController>
+    </objects>
+    <resources>
+        <image name="bg_main.png" width="320" height="568"/>
+        <image name="bg_time.png" width="76" height="18"/>
+        <image name="bt_blue.png" width="140" height="48"/>
+        <image name="bt_call_down.png" width="78" height="78"/>
+        <image name="bt_call_up.png" width="78" height="78"/>
+        <image name="bt_dial_backspace.png" width="78" height="78"/>
+        <image name="bt_dial_contact.png" width="78" height="78"/>
+        <image name="bt_dial_down.png" width="91" height="91"/>
+        <image name="bt_dial_up.png" width="91" height="91"/>
+        <image name="bt_gray.png" width="140" height="48"/>
+        <image name="bt_green.png" width="140" height="48"/>
+        <image name="bt_red.png" width="140" height="48"/>
+        <image name="bt_settings.png" width="26" height="26"/>
+        <image name="bt_white.png" width="140" height="48"/>
+        <image name="bt_white_border.png" width="141" height="49"/>
+        <image name="ico_add_call.png" width="31" height="31"/>
+        <image name="ico_antena_4.png" width="24" height="16"/>
+        <image name="ico_dpad_keyboard.png" width="25" height="35"/>
+        <image name="ico_keypad.png" width="23" height="31"/>
+        <image name="ico_mute.png" width="28" height="35"/>
+        <image name="ico_pencil.png" width="10" height="12"/>
+        <image name="ico_qwerty_keyboard.png" width="24" height="14"/>
+        <image name="ico_speaker.png" width="31" height="27"/>
+        <image name="ico_video_call.png" width="35" height="22"/>
+        <image name="panel_call_topbar.png" width="375" height="113"/>
+        <image name="tabitem_keypad.png" width="27" height="27"/>
+    </resources>
+</document>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionReusableView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CVAltHeader_ID" id="PBO-af-m9Z" userLabel="Alt Header" customClass="SCSCVHeaderFooter">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yiM-dv-VRa" userLabel="mainView">
+                    <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="mainViewLabel" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="it4-Rx-meA" userLabel="mainViewLabel">
+                            <rect key="frame" x="20" y="0.0" width="580" height="36"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="36" id="NwI-jr-ol6"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="16"/>
+                            <color key="textColor" red="0.92941176469999998" green="0.90980392160000001" blue="0.87058823529999996" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xet-ow-YdZ" userLabel="altBottomView">
+                            <rect key="frame" x="0.0" y="36" width="600" height="28"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="altBottomLabel" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2i2-v0-4tw" userLabel="altBottomLabel">
+                                    <rect key="frame" x="20" y="0.0" width="580" height="28"/>
+                                    <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="14"/>
+                                    <color key="textColor" red="0.49803921569999998" green="0.49803921569999998" blue="0.49803921569999998" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <color key="backgroundColor" red="0.20000000000000001" green="0.20392156859999999" blue="0.23137254900000001" alpha="1" colorSpace="calibratedRGB"/>
+                            <constraints>
+                                <constraint firstItem="2i2-v0-4tw" firstAttribute="top" secondItem="xet-ow-YdZ" secondAttribute="top" id="4vk-OU-nU6"/>
+                                <constraint firstAttribute="bottom" secondItem="2i2-v0-4tw" secondAttribute="bottom" id="LuI-fl-un1"/>
+                                <constraint firstItem="2i2-v0-4tw" firstAttribute="leading" secondItem="xet-ow-YdZ" secondAttribute="leading" constant="20" id="Qag-3f-Dmh"/>
+                                <constraint firstAttribute="trailing" secondItem="2i2-v0-4tw" secondAttribute="trailing" id="ut6-ad-MR9"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" red="0.37254901959999998" green="0.37254901959999998" blue="0.37254901959999998" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstItem="xet-ow-YdZ" firstAttribute="leading" secondItem="yiM-dv-VRa" secondAttribute="leading" id="7hp-fW-2eq"/>
+                        <constraint firstAttribute="trailing" secondItem="it4-Rx-meA" secondAttribute="trailing" id="POt-Zr-0Wv"/>
+                        <constraint firstAttribute="trailing" secondItem="xet-ow-YdZ" secondAttribute="trailing" id="TsD-3O-R81"/>
+                        <constraint firstItem="xet-ow-YdZ" firstAttribute="top" secondItem="it4-Rx-meA" secondAttribute="bottom" id="n4X-FZ-T0j"/>
+                        <constraint firstItem="it4-Rx-meA" firstAttribute="leading" secondItem="yiM-dv-VRa" secondAttribute="leading" constant="20" id="oUN-D6-xCX"/>
+                        <constraint firstItem="xet-ow-YdZ" firstAttribute="top" secondItem="it4-Rx-meA" secondAttribute="bottom" id="tRj-2N-dzX"/>
+                        <constraint firstItem="it4-Rx-meA" firstAttribute="top" secondItem="yiM-dv-VRa" secondAttribute="top" id="x5b-9T-qd0"/>
+                        <constraint firstAttribute="bottom" secondItem="xet-ow-YdZ" secondAttribute="bottom" id="zOW-JW-agx"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <constraints>
+                <constraint firstItem="yiM-dv-VRa" firstAttribute="top" secondItem="PBO-af-m9Z" secondAttribute="top" id="AdI-F8-tvb"/>
+                <constraint firstAttribute="trailing" secondItem="yiM-dv-VRa" secondAttribute="trailing" id="PF0-9B-ciM"/>
+                <constraint firstItem="yiM-dv-VRa" firstAttribute="leading" secondItem="PBO-af-m9Z" secondAttribute="leading" id="imO-8z-nAT"/>
+                <constraint firstAttribute="bottom" secondItem="yiM-dv-VRa" secondAttribute="bottom" id="s7P-iD-8t1"/>
+            </constraints>
+            <connections>
+                <outlet property="altBottomLabel" destination="2i2-v0-4tw" id="htZ-Vx-E9N"/>
+                <outlet property="altBottomView" destination="xet-ow-YdZ" id="7AN-K7-I6E"/>
+                <outlet property="mainView" destination="yiM-dv-VRa" id="isd-DI-6aN"/>
+                <outlet property="mainViewLabel" destination="it4-Rx-meA" id="AcE-ya-T9Q"/>
+            </connections>
+            <point key="canvasLocation" x="218" y="-60"/>
+        </collectionReusableView>
+    </objects>
+</document>

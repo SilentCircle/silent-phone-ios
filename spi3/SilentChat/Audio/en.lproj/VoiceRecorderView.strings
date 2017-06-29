@@ -1,0 +1,21 @@
+
+/* Class = "UIButton"; accessibilityLabel = "Send"; ObjectID = "203"; */
+"203.accessibilityLabel" = "Send";
+
+/* Class = "UIButton"; normalTitle = "Send"; ObjectID = "203"; */
+"203.normalTitle" = "Send";
+
+/* Class = "UIImageView"; accessibilityLabel = "Record"; ObjectID = "215"; */
+"215.accessibilityLabel" = "Record";
+
+/* Class = "UIButton"; accessibilityLabel = "Cancel"; ObjectID = "219"; */
+"219.accessibilityLabel" = "Cancel";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "219"; */
+"219.normalTitle" = "Cancel";
+
+/* Class = "UIImageView"; accessibilityLabel = "Playback"; ObjectID = "235"; */
+"235.accessibilityLabel" = "Playback";
+
+/* Class = "UILabel"; text = "0:00 / 3:00"; ObjectID = "242"; */
+"242.text" = "0:00 / 3:00";

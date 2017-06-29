@@ -1,0 +1,11 @@
+CHANGELOG.md
+doc/pager-invariants.txt
+doc/vfs-shm.txt
+ext/async/README.txt
+ext/fts1/README.txt
+ext/fts2/README.txt
+ext/fts3/README.txt
+ext/icu/README.txt
+ext/README.txt
+ext/userauth/user-auth.txt
+README.md

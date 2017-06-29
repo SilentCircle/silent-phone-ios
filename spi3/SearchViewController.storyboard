@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="wjH-z1-u27">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Conversations-->
+        <scene sceneID="IDh-N1-0I3">
+            <objects>
+                <viewController title="Conversations" useStoryboardIdentifierAsRestorationIdentifier="YES" id="wjH-z1-u27" userLabel="Conversations" customClass="SCSSearchViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="fA1-fy-MPw"/>
+                        <viewControllerLayoutGuide type="bottom" id="IQp-YP-2Sf"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="lBU-Tp-abt">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="Te4-AK-z3e">
+                                <rect key="frame" x="0.0" y="52" width="375" height="615"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                            </tableView>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8a6-Fk-eOt" userLabel="Data Retention Warning View" customClass="SCDRWarningView">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="20"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sls-ua-vBY" userLabel="DR Button">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="20"/>
+                                        <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="14"/>
+                                        <inset key="imageEdgeInsets" minX="-8" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        <state key="normal" title="Data retention ON" image="DataRetentionIcon"/>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstItem="sls-ua-vBY" firstAttribute="centerX" secondItem="8a6-Fk-eOt" secondAttribute="centerX" id="7gz-Nw-nE9"/>
+                                    <constraint firstAttribute="height" constant="20" id="LFQ-RA-8ee"/>
+                                    <constraint firstItem="sls-ua-vBY" firstAttribute="width" secondItem="8a6-Fk-eOt" secondAttribute="width" id="MmN-Cv-CeQ"/>
+                                    <constraint firstItem="sls-ua-vBY" firstAttribute="centerY" secondItem="8a6-Fk-eOt" secondAttribute="centerY" id="WIC-5L-EtV"/>
+                                    <constraint firstAttribute="trailing" secondItem="sls-ua-vBY" secondAttribute="trailing" id="ZJ4-gF-7Yt"/>
+                                    <constraint firstItem="sls-ua-vBY" firstAttribute="height" secondItem="8a6-Fk-eOt" secondAttribute="height" id="i5h-De-Zez"/>
+                                    <constraint firstItem="sls-ua-vBY" firstAttribute="leading" secondItem="8a6-Fk-eOt" secondAttribute="leading" id="jvd-95-oOK"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="drButton" destination="sls-ua-vBY" id="YOf-z9-XId"/>
+                                    <outlet property="warningViewTopConstant" destination="lid-kV-I3L" id="U1t-xq-hKt"/>
+                                </connections>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8mE-gR-dcy" userLabel="SCSSearchBarView" customClass="SCSSearchBarView">
+                                <rect key="frame" x="0.0" y="20" width="375" height="52"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="52" id="5SI-cn-JId"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="52" id="YhL-kN-JjX"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="8mE-gR-dcy" secondAttribute="trailing" id="EI3-9D-Mbh"/>
+                            <constraint firstItem="8mE-gR-dcy" firstAttribute="leading" secondItem="lBU-Tp-abt" secondAttribute="leading" id="FBR-Xp-SeV"/>
+                            <constraint firstItem="Te4-AK-z3e" firstAttribute="leading" secondItem="lBU-Tp-abt" secondAttribute="leading" id="Jqu-aw-l3A"/>
+                            <constraint firstItem="Te4-AK-z3e" firstAttribute="top" secondItem="lBU-Tp-abt" secondAttribute="top" constant="52" id="Riw-bE-GCp"/>
+                            <constraint firstAttribute="trailing" secondItem="Te4-AK-z3e" secondAttribute="trailing" id="agr-vA-bTR"/>
+                            <constraint firstItem="8mE-gR-dcy" firstAttribute="top" secondItem="fA1-fy-MPw" secondAttribute="bottom" id="dIw-NZ-Vhv"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="8a6-Fk-eOt" secondAttribute="trailing" constant="-16" id="eCB-9i-Cvf"/>
+                            <constraint firstItem="8a6-Fk-eOt" firstAttribute="leading" secondItem="lBU-Tp-abt" secondAttribute="leadingMargin" constant="-16" id="jK1-cU-Yqr"/>
+                            <constraint firstItem="IQp-YP-2Sf" firstAttribute="top" secondItem="Te4-AK-z3e" secondAttribute="bottom" id="k5L-4F-tYD"/>
+                            <constraint firstItem="8a6-Fk-eOt" firstAttribute="top" secondItem="lBU-Tp-abt" secondAttribute="topMargin" id="lid-kV-I3L"/>
+                        </constraints>
+                    </view>
+                    <extendedEdge key="edgesForExtendedLayout" top="YES"/>
+                    <navigationItem key="navigationItem" title="New Conversation" id="p1z-OK-5wW"/>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
+                    <connections>
+                        <outlet property="groupChatButtonView" destination="Psw-Y0-nLa" id="x8y-H4-5Rp"/>
+                        <outlet property="tableView" destination="Te4-AK-z3e" id="HJl-wW-lqI"/>
+                    </connections>
+                </viewController>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Psw-Y0-nLa" userLabel="groupConversationView" customClass="SCSNewGroupChatView">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="80"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VNM-Pf-m4q">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="80"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </view>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="startGroupChatRed" translatesAutoresizingMaskIntoConstraints="NO" id="imj-41-0WZ" userLabel="startGroupChatIcon">
+                            <rect key="frame" x="19" y="19" width="42" height="42"/>
+                            <accessibility key="accessibilityConfiguration">
+                                <accessibilityTraits key="traits" none="YES"/>
+                            </accessibility>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New group conversation" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="jfr-L9-Oed">
+                            <rect key="frame" x="76" y="30" width="197" height="21"/>
+                            <accessibility key="accessibilityConfiguration">
+                                <accessibilityTraits key="traits" none="YES"/>
+                                <bool key="isElement" value="NO"/>
+                            </accessibility>
+                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="meu-94-Enp" userLabel="NewGroupChatButton">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="80"/>
+                            <accessibility key="accessibilityConfiguration" label="New group conversation"/>
+                            <connections>
+                                <action selector="groupChatButtonTouchDown:" destination="Psw-Y0-nLa" eventType="touchDown" id="hbq-li-7qb"/>
+                                <action selector="groupChatButtonTouchUpInside:" destination="Psw-Y0-nLa" eventType="touchUpInside" id="5aY-PM-lbR"/>
+                                <action selector="groupChatButtonTouchUpOutside:" destination="Psw-Y0-nLa" eventType="touchUpOutside" id="JtH-cO-Zbz"/>
+                            </connections>
+                        </button>
+                        <view alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cV3-3A-lDo" userLabel="seperatorView">
+                            <rect key="frame" x="0.0" y="79" width="375" height="1"/>
+                            <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="1" id="KBD-hO-kOf"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <accessibility key="accessibilityConfiguration" label="New group chat ">
+                        <bool key="isElement" value="NO"/>
+                    </accessibility>
+                    <constraints>
+                        <constraint firstItem="imj-41-0WZ" firstAttribute="leading" secondItem="Psw-Y0-nLa" secondAttribute="leading" constant="19" id="1eH-Za-T7P"/>
+                        <constraint firstAttribute="trailing" secondItem="cV3-3A-lDo" secondAttribute="trailing" id="3Fj-9J-XMx"/>
+                        <constraint firstItem="jfr-L9-Oed" firstAttribute="centerY" secondItem="Psw-Y0-nLa" secondAttribute="centerY" id="3yX-XB-v8Z"/>
+                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="jfr-L9-Oed" secondAttribute="trailing" constant="10" id="6K7-YW-9hd"/>
+                        <constraint firstItem="meu-94-Enp" firstAttribute="leading" secondItem="Psw-Y0-nLa" secondAttribute="leading" id="BxP-Om-thH"/>
+                        <constraint firstAttribute="trailing" secondItem="VNM-Pf-m4q" secondAttribute="trailing" id="DsS-P3-Th9"/>
+                        <constraint firstAttribute="bottom" secondItem="cV3-3A-lDo" secondAttribute="bottom" id="KA1-Br-5SA"/>
+                        <constraint firstAttribute="bottom" secondItem="meu-94-Enp" secondAttribute="bottom" id="SSa-jy-tXI"/>
+                        <constraint firstItem="cV3-3A-lDo" firstAttribute="leading" secondItem="Psw-Y0-nLa" secondAttribute="leading" id="X2c-fP-yVD"/>
+                        <constraint firstAttribute="trailing" secondItem="meu-94-Enp" secondAttribute="trailing" id="XbP-Zd-oqS"/>
+                        <constraint firstAttribute="bottom" secondItem="VNM-Pf-m4q" secondAttribute="bottom" id="bZz-lj-xcG"/>
+                        <constraint firstItem="meu-94-Enp" firstAttribute="top" secondItem="Psw-Y0-nLa" secondAttribute="top" id="fcV-20-aWT"/>
+                        <constraint firstItem="imj-41-0WZ" firstAttribute="centerY" secondItem="Psw-Y0-nLa" secondAttribute="centerY" id="fkS-Ow-2RO"/>
+                        <constraint firstItem="jfr-L9-Oed" firstAttribute="leading" secondItem="imj-41-0WZ" secondAttribute="trailing" constant="15" id="gYY-Ip-E0E"/>
+                        <constraint firstItem="VNM-Pf-m4q" firstAttribute="top" secondItem="Psw-Y0-nLa" secondAttribute="top" id="mD5-lP-vSr"/>
+                        <constraint firstItem="VNM-Pf-m4q" firstAttribute="leading" secondItem="Psw-Y0-nLa" secondAttribute="leading" id="piy-Hu-xdb"/>
+                    </constraints>
+                    <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
+                    <connections>
+                        <outlet property="backgroundView" destination="VNM-Pf-m4q" id="Wl8-UJ-0i4"/>
+                    </connections>
+                </view>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2j2-UC-wDm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2101.5999999999999" y="1902.9985007496252"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="DataRetentionIcon" width="16" height="16"/>
+        <image name="startGroupChatRed" width="42" height="42"/>
+    </resources>
+</document>

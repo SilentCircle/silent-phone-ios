@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IntentPhrases</key>
+	<array>
+        <!--
+		<dict>
+			<key>IntentName</key>
+			<string>INSendMessageIntent</string>
+			<key>IntentExamples</key>
+			<array>
+				<string>Send a Silent Phone message to Alice saying I&apos;ll be there in 15 minutes</string>
+				<string>Send a message to Bob on Silent Phone saying On my way</string>
+			</array>
+		</dict>
+         -->
+		<dict>
+			<key>IntentName</key>
+			<string>INStartVideoCallIntent</string>
+			<key>IntentExamples</key>
+			<array>
+				<string>Video Call Frank on Silent Phone</string>
+				<string>Use Silent Phone to video call Lauren</string>
+				<string>Video Call John with Silent Phone</string>
+				<string>Tell Silent Phone to video call Julia</string>
+			</array>
+		</dict>
+		<dict>
+			<key>IntentName</key>
+			<string>INStartAudioCallIntent</string>
+			<key>IntentExamples</key>
+			<array>
+				<string>Call Frank on Silent Phone</string>
+				<string>Use Silent Phone to call Lauren</string>
+				<string>Call John with Silent Phone</string>
+				<string>Tell Silent Phone to call Julia</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

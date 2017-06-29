@@ -1,0 +1,29 @@
+//
+//  SPi-Prefix.pch
+//  SPi3
+//
+//  Created by Rong Li on 5/31/16.
+//  Copyright © 2016 Silent Circle. All rights reserved.
+//
+
+#ifndef SPi_Prefix_pch
+#define SPi_Prefix_pch
+
+#ifdef __OBJC__
+
+
+#import <CocoaLumberjack/CocoaLumberjack.h>
+#import "SCLoggingManager.h"
+#ifdef DEBUG
+static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
+#else
+static const DDLogLevel ddLogLevel = DDLogLevelOff;
+#endif
+#define LOG_LEVEL_DEF ddLogLevel
+
+#endif
+
+// Data Retention Switch
+#define HAS_DATA_RETENTION  0
+
+#endif /* SPi_Prefix_pch */

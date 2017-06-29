@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SCSSearchBarView"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="oQZ-97-IGU" userLabel="SCSSearchView" customClass="SCSSearchBarView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="52"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Search" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="urH-yX-FHz">
+                    <rect key="frame" x="80" y="16" width="247" height="21"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <nil key="textColor"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
+                    <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="emailAddress" keyboardAppearance="alert"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="color" keyPath="_placeholderLabel.textColor">
+                            <color key="value" red="0.52549019610000003" green="0.52549019610000003" blue="0.52549019610000003" alpha="1" colorSpace="calibratedRGB"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <outlet property="delegate" destination="oQZ-97-IGU" id="wJj-av-WwY"/>
+                    </connections>
+                </textField>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Search" translatesAutoresizingMaskIntoConstraints="NO" id="rIu-8M-loX">
+                    <rect key="frame" x="30" y="16" width="21" height="21"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </imageView>
+                <imageView userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="clear" translatesAutoresizingMaskIntoConstraints="NO" id="lb4-1i-7MX">
+                    <rect key="frame" x="337" y="18" width="16" height="16"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="16" id="4Rq-LZ-V9i"/>
+                        <constraint firstAttribute="height" constant="16" id="fCh-GQ-Pbb"/>
+                    </constraints>
+                </imageView>
+                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R0c-0W-T3s" userLabel="clearButton">
+                    <rect key="frame" x="325" y="6" width="40" height="40"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <connections>
+                        <action selector="clearButtonTap:" destination="oQZ-97-IGU" eventType="touchUpInside" id="Wl9-Z4-2rb"/>
+                    </connections>
+                </button>
+                <view alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gyk-Dg-b63" userLabel="seperatorView">
+                    <rect key="frame" x="0.0" y="51" width="375" height="1"/>
+                    <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="niS-XK-ZKz"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="Gyk-Dg-b63" secondAttribute="trailing" id="1Ju-ou-FsB"/>
+                <constraint firstItem="lb4-1i-7MX" firstAttribute="leading" secondItem="urH-yX-FHz" secondAttribute="trailing" constant="10" id="5jm-ao-ORd"/>
+                <constraint firstItem="lb4-1i-7MX" firstAttribute="centerY" secondItem="oQZ-97-IGU" secondAttribute="centerY" id="IKQ-EW-Dhy"/>
+                <constraint firstAttribute="trailing" secondItem="lb4-1i-7MX" secondAttribute="trailing" constant="22" id="OJg-bt-KEH"/>
+                <constraint firstItem="R0c-0W-T3s" firstAttribute="width" secondItem="lb4-1i-7MX" secondAttribute="width" multiplier="2.5" id="Og4-3m-gwE"/>
+                <constraint firstAttribute="bottom" secondItem="Gyk-Dg-b63" secondAttribute="bottom" id="SjF-tC-iOK"/>
+                <constraint firstItem="rIu-8M-loX" firstAttribute="leading" secondItem="oQZ-97-IGU" secondAttribute="leading" constant="30" id="UGm-78-asL"/>
+                <constraint firstItem="R0c-0W-T3s" firstAttribute="centerX" secondItem="lb4-1i-7MX" secondAttribute="centerX" id="WNS-aZ-0s3"/>
+                <constraint firstItem="urH-yX-FHz" firstAttribute="leading" secondItem="rIu-8M-loX" secondAttribute="trailing" constant="29" id="Z2n-7y-2tU"/>
+                <constraint firstItem="R0c-0W-T3s" firstAttribute="centerY" secondItem="lb4-1i-7MX" secondAttribute="centerY" id="Zj1-qb-azE"/>
+                <constraint firstItem="urH-yX-FHz" firstAttribute="centerY" secondItem="oQZ-97-IGU" secondAttribute="centerY" id="cYy-i0-LYk"/>
+                <constraint firstItem="R0c-0W-T3s" firstAttribute="height" secondItem="lb4-1i-7MX" secondAttribute="height" multiplier="2.5" id="rPH-F4-d1t"/>
+                <constraint firstItem="Gyk-Dg-b63" firstAttribute="leading" secondItem="oQZ-97-IGU" secondAttribute="leading" id="t6e-wa-aza"/>
+                <constraint firstItem="rIu-8M-loX" firstAttribute="centerY" secondItem="oQZ-97-IGU" secondAttribute="centerY" id="yyI-sW-1ZI"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="clearButton" destination="R0c-0W-T3s" id="5yo-7B-6o9"/>
+                <outlet property="clearImageView" destination="lb4-1i-7MX" id="5Kj-0K-qlC"/>
+                <outlet property="searchTextField" destination="urH-yX-FHz" id="vhd-Kr-dhK"/>
+            </connections>
+        </view>
+    </objects>
+    <resources>
+        <image name="Search" width="21" height="21"/>
+        <image name="clear" width="13" height="13"/>
+    </resources>
+</document>

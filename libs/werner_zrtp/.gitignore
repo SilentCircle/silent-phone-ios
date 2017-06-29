@@ -1,0 +1,92 @@
+autoconf/
+doc/html/
+configure
+Makefile
+Makefile.in
+aclocal.m4
+obj/
+.kdev*
+*.o
+*.lo
+*.la
+*.authors
+*.kdev4
+*.deps
+*.libs
+*.pc
+*.spec
+*~
+.DS_Store
+._.DS_Store
+._buildmac
+.directory
+
+# Android generated files #
+###########################
+android.keystore
+local.properties
+bin/
+gen/
+obj/
+libs/
+
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# Backup files
+##################
+*~
+
+# Ignore Ron's build script artefacts #
+######################################
+*.log
+support/
+errorCount.txt
+
+# Eclipse generated files #
+###########################
+.settings/org.eclipse.jdt.core.prefs
+
+# Android Studio/IntelliJ and gradle directories
+##################
+out/
+build/
+.gradle/
+gradle.properties
+*.iml
+.idea/
+
+# Xcode
+##################
+[Bb]uild
+DerivedData
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+*.moved-aside
+*.hmap
+*.ipa
+xcuserdata
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+
+# Carthage
+#
+# Add this line if you want to avoid checking in source code from Carthage dependencies.
+# These are the fetched repos from which binaries are built.
+# Carthage/Checkouts
+
+# Add this line to check in the built binaries (generally not recommended)
+# Carthage/Build
+
+

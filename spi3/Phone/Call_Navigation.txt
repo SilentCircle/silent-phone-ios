@@ -1,0 +1,102 @@
+
+------------------------------------------------------------------------
+11/13/15 call meeting: MUST HAVE FEATURES
+------------------------------------------------------------------------
+SSO
+Freemium:
+* disable video button in callscreen
+* disable drag handles in conference
+* prevent sending attachments
+  - hide audio record/pic in options
+------------------------------------------------------------------------
+
+
+
+View transition scenarios:
+
+------------------------------------------------------------------------
+#### Outgoing
+------------------------------------------------------------------------
+- Dialpad -> CallScreen
+    - outgoing audio
+- Dialpad -> VideoScreen
+    - outgoing video
+
+
+- Chat -> CallScreen
+    - outgoing audio
+- Chat -> VideoScreen
+    - outgoing video
+
+
+- Contacts -> CallScreen
+    - outgoing audio
+- Contacts -> VideoScreen
+    - outgoing video
+
+
+
+------------------------------------------------------------------------
+#### Incoming
+------------------------------------------------------------------------
+- Dialpad -> CallScreen (before dialing out)
+    - incoming audio
+- Dialpad -> VideoScreen
+    - incoming video
+
+
+- Chat -> CallScreen
+    - incoming audio
+- Chat -> VideoScreen
+    - incoming video
+
+
+- Contacts -> CallScreen
+    - incoming audio
+- Contacts -> VideoScreen
+    - incoming video
+
+
+- inCallDialpad -> CallScreen
+    - incoming audio
+- inCallDialpad -> VideoScreen
+    - incoming video
+
+
+------------------------------------------------------------------------
+#### Outgoing + Incoming
+------------------------------------------------------------------------
+
+- CallScreen -> ConfScreen (incoming audio call with current audio call)
+
+- CallScreen -> VideoScreen (switch from audio call to video)
+
+- ConfScreen -> VideoScreen (incoming video call with active audio call(s))
+
+- addDialpad -> ConfScreen
+via ConfScreen (active call(s)) -> CallScreen -> addDialPad (dial out) -> ConfScreen
+
+
+------------------------------------------------------------------------
+#### CallScreen transitions
+------------------------------------------------------------------------
+
+- CallScreen -> inCallDialpad
+CallScreen <- inCallDialpad
+
+- CallScreen -> addCall screen (Dialpad)
+CallScreen <- back to call (Dialpad)
+
+- CallScreen -> ConfScreen (single call)
+CallScreen <- ConfScreen (with selected call)
+
+
+------------------------------------------------------------------------
+??? scenario ???
+------------------------------------------------------------------------
+Chat -> (outgoing call) -> CallScreen -> addDialPad -> Contacts(tap to call) ->
+... outgoing call setting up / transitioning
+(incoming video call) -> ???
+
+
+

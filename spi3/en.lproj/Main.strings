@@ -1,0 +1,177 @@
+
+/* Class = "UILabel"; accessibilityHint = "Time of last phone or text conversation"; ObjectID = "09P-5s-3Nq"; */
+"09P-5s-3Nq.accessibilityHint" = "Time of last phone or text conversation";
+
+/* Class = "UILabel"; accessibilityLabel = "timestamp"; ObjectID = "09P-5s-3Nq"; */
+"09P-5s-3Nq.accessibilityLabel" = "timestamp";
+
+/* Class = "UILabel"; text = "00:00 AM"; ObjectID = "09P-5s-3Nq"; */
+"09P-5s-3Nq.text" = "00:00 AM";
+
+/* Class = "UIButton"; normalTitle = "All"; ObjectID = "2ha-Bv-Deh"; */
+"2ha-Bv-Deh.normalTitle" = "All";
+
+/* Class = "UIButton"; normalTitle = "Messages"; ObjectID = "34F-dq-YDX"; */
+"34F-dq-YDX.normalTitle" = "Messages";
+
+/* Class = "UILabel"; text = "Header"; ObjectID = "3eQ-dE-k8Q"; */
+"3eQ-dE-k8Q.text" = "Header";
+
+/* Class = "UILabel"; text = "teksts"; ObjectID = "47A-IE-zaB"; */
+"47A-IE-zaB.text" = "teksts";
+
+/* Class = "UILabel"; text = "December 1, 2015"; ObjectID = "7Ky-fe-5kY"; */
+"7Ky-fe-5kY.text" = "December 1, 2015";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "8hy-8R-tTN"; */
+"8hy-8R-tTN.text" = "Detail";
+
+/* Class = "UINavigationItem"; title = "Conversations"; ObjectID = "8pb-qs-1F7"; */
+"8pb-qs-1F7.title" = "Conversations";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "BSQ-Nx-w4H"; */
+"BSQ-Nx-w4H.text" = "Label";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "Bjf-cY-foy"; */
+"Bjf-cY-foy.text" = "Label";
+
+/* Class = "UITableViewController"; title = "App Settings"; ObjectID = "Bjp-Vt-reZ"; */
+"Bjp-Vt-reZ.title" = "App Settings";
+
+/* Class = "UILabel"; text = "12:21"; ObjectID = "CWd-PS-zSI"; */
+"CWd-PS-zSI.text" = "12:21";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "D4K-6L-MXg"; */
+"D4K-6L-MXg.text" = "Detail";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "E3L-2i-YcB"; */
+"E3L-2i-YcB.normalTitle" = "Button";
+
+/* Class = "UIButton"; accessibilityLabel = "new conversation"; ObjectID = "FRu-Wn-Vn0"; */
+"FRu-Wn-Vn0.accessibilityLabel" = "new conversation";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "HNe-Kv-nN3"; */
+"HNe-Kv-nN3.text" = "Title";
+
+/* Class = "UINavigationItem"; title = "Contacts"; ObjectID = "Hnp-CM-x5D"; */
+"Hnp-CM-x5D.title" = "Contacts";
+
+/* Class = "UILabel"; text = "Outgoing call (No answer )"; ObjectID = "IEw-SG-soh"; */
+"IEw-SG-soh.text" = "Outgoing call (No answer )";
+
+/* Class = "UITabBarItem"; title = "Conversations"; ObjectID = "KJa-lR-C5G"; */
+"KJa-lR-C5G.title" = "Conversations";
+
+/* Class = "UILabel"; text = "99"; ObjectID = "LQc-JE-8qo"; */
+"LQc-JE-8qo.text" = "99";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "MoR-JL-xIn"; */
+"MoR-JL-xIn.text" = "Title";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "OyE-UT-bVJ"; */
+"OyE-UT-bVJ.text" = "Title";
+
+/* Class = "UILabel"; text = "No conversations yet"; ObjectID = "Ua1-BQ-Kw7"; */
+"Ua1-BQ-Kw7.text" = "Start a conversation";
+
+/* Class = "UIImageView"; accessibilityLabel = "flag image"; ObjectID = "Ujq-UQ-BuP"; */
+"Ujq-UQ-BuP.accessibilityLabel" = "flag image";
+
+/* Class = "UIButton"; accessibilityLabel = "Profile picture"; ObjectID = "W9z-OU-Oqq"; */
+"W9z-OU-Oqq.accessibilityLabel" = "Profile picture";
+
+/* Class = "UINavigationItem"; title = "Profile"; ObjectID = "XAD-Ao-7dt"; */
+"XAD-Ao-7dt.title" = "Profile";
+
+/* Class = "UIButton"; accessibilityHint = "tap to add to favorites"; ObjectID = "Z8m-Yp-MaW"; */
+"Z8m-Yp-MaW.accessibilityHint" = "tap to add to favorites";
+
+/* Class = "UIButton"; accessibilityLabel = "favorites"; ObjectID = "Z8m-Yp-MaW"; */
+"Z8m-Yp-MaW.accessibilityLabel" = "favorites";
+
+/* Class = "UIBarButtonItem"; title = "Back"; ObjectID = "Zru-f2-Tch"; */
+"Zru-f2-Tch.title" = "Back";
+
+/* Class = "UILabel"; text = "Text"; ObjectID = "bXt-ic-vGH"; */
+"bXt-ic-vGH.text" = "Text";
+
+/* Class = "UILabel"; text = "Outgoing call (No answer)"; ObjectID = "c9H-rE-dBy"; */
+"c9H-rE-dBy.text" = "Outgoing call (No answer)";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "dRW-yW-3NU"; */
+"dRW-yW-3NU.text" = "Label";
+
+/* Class = "UILabel"; text = "Field name"; ObjectID = "da7-Pz-x8E"; */
+"da7-Pz-x8E.text" = "Field name";
+
+/* Class = "UITabBarItem"; title = "Profile"; ObjectID = "dsp-gs-Sxb"; */
+"dsp-gs-Sxb.title" = "Profile";
+
+/* Class = "UILabel"; text = "Offline"; ObjectID = "fr2-d8-t0Z"; */
+"fr2-d8-t0Z.text" = "Offline";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "hjI-3s-2Mh"; */
+"hjI-3s-2Mh.text" = "Detail";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "iN4-D3-4C9"; */
+"iN4-D3-4C9.text" = "Label";
+
+/* Class = "UILabel"; text = "Detail"; ObjectID = "iTb-RY-yvu"; */
+"iTb-RY-yvu.text" = "Detail";
+
+/* Class = "UILabel"; text = "14:57"; ObjectID = "jAi-bt-Rww"; */
+"jAi-bt-Rww.text" = "14:57";
+
+/* Class = "UIButton"; accessibilityHint = "tap to make call"; ObjectID = "oUH-so-xiJ"; */
+"oUH-so-xiJ.accessibilityHint" = "tap to make call";
+
+/* Class = "UIButton"; accessibilityLabel = "call"; ObjectID = "oUH-so-xiJ"; */
+"oUH-so-xiJ.accessibilityLabel" = "call";
+
+/* Class = "UILabel"; text = "Name surname"; ObjectID = "oV8-9r-GFH"; */
+"oV8-9r-GFH.text" = "Name surname";
+
+/* Class = "UIViewController"; title = "Conversations"; ObjectID = "pfz-Cz-XcS"; */
+"pfz-Cz-XcS.title" = "Conversations";
+
+/* Class = "UILabel"; text = "No Results"; ObjectID = "pkX-9l-nj1"; */
+"pkX-9l-nj1.text" = "No Results";
+
+/* Class = "UIButton"; normalTitle = "Calls"; ObjectID = "r2P-95-sqQ"; */
+"r2P-95-sqQ.normalTitle" = "Calls";
+
+/* Class = "UILabel"; text = "12:21"; ObjectID = "tBp-WO-q4I"; */
+"tBp-WO-q4I.text" = "12:21";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "tOM-Jd-Mk8"; */
+"tOM-Jd-Mk8.text" = "Label";
+
+/* Class = "UILabel"; text = "Value"; ObjectID = "tlC-fB-c3T"; */
+"tlC-fB-c3T.text" = "Value";
+
+/* Class = "UIViewController"; title = "Profile"; ObjectID = "trZ-Ui-kgw"; */
+"trZ-Ui-kgw.title" = "Profile";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "ury-js-uYg"; */
+"ury-js-uYg.text" = "Label";
+
+/* Class = "UIButton"; accessibilityHint = "tap to go to or start new message"; ObjectID = "vfe-eV-rXO"; */
+"vfe-eV-rXO.accessibilityHint" = "tap to go to or start new message";
+
+/* Class = "UIButton"; accessibilityLabel = "message"; ObjectID = "vfe-eV-rXO"; */
+"vfe-eV-rXO.accessibilityLabel" = "message";
+
+/* Class = "UITabBarItem"; title = "Contacts"; ObjectID = "vp5-tM-WlH"; */
+"vp5-tM-WlH.title" = "Contacts";
+
+/* Class = "UIButton"; accessibilityLabel = "new conversation"; ObjectID = "xwL-xV-Ux3"; */
+"xwL-xV-Ux3.accessibilityLabel" = "new conversation";
+
+/* Class = "UILabel"; text = "teksts"; ObjectID = "yra-xi-Ncg"; */
+"yra-xi-Ncg.text" = "teksts";
+
+/* Class = "UITextField"; accessibilityHint = "phone number or username text input field"; ObjectID = "zEb-n1-20b"; */
+"zEb-n1-20b.accessibilityHint" = "phone number or username text input field";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "zff-Ot-h6O"; */
+"zff-Ot-h6O.text" = "Title";

@@ -1,0 +1,30 @@
+
+/* Class = "UIImageView"; accessibilityLabel = "verified"; ObjectID = "APf-J0-zpl"; */
+"APf-J0-zpl.accessibilityLabel" = "verified";
+
+/* Class = "UIButton"; accessibilityLabel = "end call"; ObjectID = "Eav-hM-yv3"; */
+"Eav-hM-yv3.accessibilityLabel" = "end call";
+
+/* Class = "UILabel"; text = "Verify?"; ObjectID = "EcA-HK-fd3"; */
+"EcA-HK-fd3.text" = "Verify?";
+
+/* Class = "UILabel"; text = "SAS Phrase"; ObjectID = "Fa7-W1-mVx"; */
+"Fa7-W1-mVx.text" = "SAS Phrase";
+
+/* Class = "UILabel"; text = "+1(555)-1234 4567"; ObjectID = "HTC-im-h7s"; */
+"HTC-im-h7s.text" = "+1(555)-1234 4567";
+
+/* Class = "UIView"; accessibilityLabel = "contact image"; ObjectID = "LeJ-h0-HyU"; */
+"LeJ-h0-HyU.accessibilityLabel" = "contact image";
+
+/* Class = "UIButton"; accessibilityLabel = "answer call"; ObjectID = "TeC-1K-813"; */
+"TeC-1K-813.accessibilityLabel" = "answer call";
+
+/* Class = "UILabel"; text = "01:59"; ObjectID = "XMh-Bs-OEY"; */
+"XMh-Bs-OEY.text" = "01:59";
+
+/* Class = "UILabel"; text = "SECURE"; ObjectID = "j4y-fK-zKH"; */
+"j4y-fK-zKH.text" = "SECURE";
+
+/* Class = "UILabel"; text = "John Carter"; ObjectID = "m3u-6z-hlU"; */
+"m3u-6z-hlU.text" = "John Carter";

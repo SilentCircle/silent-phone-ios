@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="SCSConfHeaderFooterView">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="38"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wvc-qc-x2t" userLabel="mainView">
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SSa-mS-EEL" userLabel="mainViewLabel">
+                            <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="14"/>
+                            <color key="textColor" red="0.49803921569999998" green="0.49803921569999998" blue="0.49803921569999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" red="0.20000000000000001" green="0.20392156859999999" blue="0.23137254900000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstItem="SSa-mS-EEL" firstAttribute="leading" secondItem="wvc-qc-x2t" secondAttribute="leading" constant="20" id="7zd-lS-UFf"/>
+                        <constraint firstItem="SSa-mS-EEL" firstAttribute="centerY" secondItem="wvc-qc-x2t" secondAttribute="centerY" id="MUi-fc-CQu"/>
+                        <constraint firstAttribute="trailing" secondItem="SSa-mS-EEL" secondAttribute="trailing" constant="8" id="r40-7g-mO2"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="wvc-qc-x2t" secondAttribute="trailing" id="J3B-ys-4Wx"/>
+                <constraint firstItem="wvc-qc-x2t" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="RTg-27-9pQ"/>
+                <constraint firstAttribute="bottom" secondItem="wvc-qc-x2t" secondAttribute="bottom" id="Soh-1b-H9T"/>
+                <constraint firstItem="wvc-qc-x2t" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="guc-Mv-j5M"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="mainView" destination="wvc-qc-x2t" id="8m0-Dg-19O"/>
+                <outlet property="mainViewLabel" destination="SSa-mS-EEL" id="DS2-to-YfS"/>
+            </connections>
+        </view>
+    </objects>
+</document>

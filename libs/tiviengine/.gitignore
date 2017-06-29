@@ -1,0 +1,60 @@
+# Android generated files #
+###########################
+android.keystore
+local.properties
+bin/
+gen/
+obj/
+libs/
+
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# Eclipse generated files #
+###########################
+.settings/org.eclipse.jdt.core.prefs
+
+# Backup files
+##################
+*~
+
+# Android Studio/IntelliJ and gradle directories
+##################
+out/
+build*/
+.gradle/
+gradle.properties
+*.iml
+.idea/
+cmake-build-*/
+
+# Xcode
+##################
+[Bb]uild
+DerivedData
+/*.log
+/support
+/errorCount.txt
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.xcuserstate
+*.xcscmblueprint
+
+# kdev
+###################
+*.kdev*

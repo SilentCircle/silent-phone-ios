@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="jEs-Ky-7vX" customClass="SCSConfHeaderFooterView">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="68"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pKm-BZ-id3" userLabel="mainView">
+                    <rect key="frame" x="0.0" y="0.0" width="600" height="68"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="mainViewLabel" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3KF-6h-5P8" userLabel="mainViewLabel">
+                            <rect key="frame" x="20" y="0.0" width="580" height="30"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="30" id="bOt-Dz-uZT"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="14"/>
+                            <color key="textColor" red="0.92941176469999998" green="0.90980392160000001" blue="0.87058823529999996" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="y3o-xt-AbM" userLabel="altBottomView">
+                            <rect key="frame" x="0.0" y="30" width="600" height="38"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="altBottomLabel" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nmS-UO-eE8" userLabel="altBottomLabel">
+                                    <rect key="frame" x="20" y="0.0" width="580" height="38"/>
+                                    <fontDescription key="fontDescription" name="ArialMT" family="Arial" pointSize="14"/>
+                                    <color key="textColor" red="0.49803921569999998" green="0.49803921569999998" blue="0.49803921569999998" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <color key="backgroundColor" red="0.20000000000000001" green="0.20392156859999999" blue="0.23137254900000001" alpha="1" colorSpace="calibratedRGB"/>
+                            <constraints>
+                                <constraint firstItem="nmS-UO-eE8" firstAttribute="top" secondItem="y3o-xt-AbM" secondAttribute="top" id="24t-HM-npT"/>
+                                <constraint firstAttribute="bottom" secondItem="nmS-UO-eE8" secondAttribute="bottom" id="Bso-37-wyd"/>
+                                <constraint firstItem="nmS-UO-eE8" firstAttribute="leading" secondItem="y3o-xt-AbM" secondAttribute="leading" constant="20" id="Vvr-jw-Cpp"/>
+                                <constraint firstAttribute="trailing" secondItem="nmS-UO-eE8" secondAttribute="trailing" id="bGU-oR-syd"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" red="0.37254901959999998" green="0.37254901959999998" blue="0.37254901959999998" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="y3o-xt-AbM" secondAttribute="trailing" id="Atr-tg-8ZR"/>
+                        <constraint firstItem="y3o-xt-AbM" firstAttribute="leading" secondItem="pKm-BZ-id3" secondAttribute="leading" id="PKD-7h-xtn"/>
+                        <constraint firstItem="y3o-xt-AbM" firstAttribute="top" secondItem="3KF-6h-5P8" secondAttribute="bottom" id="kT2-il-tTP"/>
+                        <constraint firstItem="3KF-6h-5P8" firstAttribute="top" secondItem="pKm-BZ-id3" secondAttribute="top" id="ofA-PI-z5I"/>
+                        <constraint firstAttribute="trailing" secondItem="3KF-6h-5P8" secondAttribute="trailing" id="vnR-ck-LnD"/>
+                        <constraint firstAttribute="bottom" secondItem="y3o-xt-AbM" secondAttribute="bottom" id="w1R-by-LgQ"/>
+                        <constraint firstItem="3KF-6h-5P8" firstAttribute="leading" secondItem="pKm-BZ-id3" secondAttribute="leading" constant="20" id="w9X-4s-HTd"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="pKm-BZ-id3" secondAttribute="bottom" id="4LP-iA-esF"/>
+                <constraint firstAttribute="trailing" secondItem="pKm-BZ-id3" secondAttribute="trailing" id="gib-ce-ldm"/>
+                <constraint firstItem="pKm-BZ-id3" firstAttribute="leading" secondItem="jEs-Ky-7vX" secondAttribute="leading" id="hRd-uz-8WI"/>
+                <constraint firstItem="pKm-BZ-id3" firstAttribute="top" secondItem="jEs-Ky-7vX" secondAttribute="top" id="wuY-pv-FT6"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="altBottomLabel" destination="nmS-UO-eE8" id="tEs-1c-aD9"/>
+                <outlet property="altBottomView" destination="y3o-xt-AbM" id="8Jz-P0-wfv"/>
+                <outlet property="mainView" destination="pKm-BZ-id3" id="LyK-dg-c2x"/>
+                <outlet property="mainViewLabel" destination="3KF-6h-5P8" id="dXo-28-v6w"/>
+            </connections>
+            <point key="canvasLocation" x="311" y="187"/>
+        </view>
+    </objects>
+</document>

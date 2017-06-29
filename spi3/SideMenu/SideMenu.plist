@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>section_title</key>
+		<string></string>
+		<key>items</key>
+		<array>
+			<dict>
+				<key>title</key>
+				<string>Account Details</string>
+				<key>vc_id</key>
+				<string>ProfileVC</string>
+			</dict>
+			<dict>
+				<key>title</key>
+				<string>Settings</string>
+				<key>vc_id</key>
+				<string>SettingsViewController</string>
+			</dict>
+			<dict>
+				<key>title</key>
+				<string>Help &amp; Support</string>
+				<key>url</key>
+				<string>https://www.silentcircle.com/support/</string>
+			</dict>
+			<dict>
+				<key>title</key>
+				<string>Terms of Service</string>
+				<key>url</key>
+				<string>https://accounts.silentcircle.com/terms/</string>
+			</dict>
+			<dict>
+				<key>title</key>
+				<string>Privacy Statement</string>
+				<key>url</key>
+				<string>https://accounts.silentcircle.com/privacy-policy</string>
+			</dict>
+			<dict>
+				<key>title</key>
+				<string>Wipe Silent Phone</string>
+				<key>*wipe</key>
+				<string></string>
+			</dict>
+		</array>
+	</dict>
+</array>
+</plist>

@@ -1,0 +1,126 @@
+
+/* Class = "UIView"; accessibilityHint = "login process progress"; ObjectID = "0Vq-Pi-zLb"; */
+"0Vq-Pi-zLb.accessibilityHint" = "login process progress";
+
+/* Class = "UIView"; accessibilityLabel = "progress"; ObjectID = "0Vq-Pi-zLb"; */
+"0Vq-Pi-zLb.accessibilityLabel" = "progress";
+
+/* Class = "UILabel"; text = "Private, encrypted communication and secure file transfer on any device, for everyone in your enterprise. \n"; ObjectID = "1dq-oc-VqN"; */
+"1dq-oc-VqN.text" = "Private, encrypted communication and secure file transfer on any device, for everyone in your enterprise. \n";
+
+/* Class = "UITextField"; text = "Enter Last name"; ObjectID = "1j0-ht-Hft"; */
+"1j0-ht-Hft.text" = "Enter Last name";
+
+/* Class = "UITextField"; text = "Enter First name"; ObjectID = "2s2-Vd-x7U"; */
+"2s2-Vd-x7U.text" = "Enter First name";
+
+/* Class = "UILabel"; text = "Search for partners in your contact list, by email address or full name."; ObjectID = "31D-yF-mPL"; */
+"31D-yF-mPL.text" = "Search for partners in your contact list, by email address or full name.";
+
+/* Class = "UITextView"; text = "By creating an account, you are agreeing to our terms of service & privacy policy"; ObjectID = "4vg-xS-c8x"; */
+"4vg-xS-c8x.text" = "By creating an account, you are agreeing to our terms of service & privacy policy";
+
+/* Class = "UITextField"; text = "Enter Device description"; ObjectID = "6E2-fA-uki"; */
+"6E2-fA-uki.text" = "Enter Device description";
+
+/* Class = "UILabel"; text = "Silent Circle is a secure communications company offering mobile devices,\nsoftware applications, and communication management services to the Enterprise.\n"; ObjectID = "Ejv-Hb-Ws6"; */
+"Ejv-Hb-Ws6.text" = "Silent Circle is a secure communications company offering mobile devices,\nsoftware applications, and communication management services to the Enterprise.\n";
+
+/* Class = "UIButton"; accessibilityLabel = "sign in"; ObjectID = "FwX-3L-fBq"; */
+"FwX-3L-fBq.accessibilityLabel" = "sign in";
+
+/* Class = "UIButton"; normalTitle = "LOGIN"; ObjectID = "FwX-3L-fBq"; */
+"FwX-3L-fBq.normalTitle" = "LOGIN";
+
+/* Class = "UILabel"; text = "Connecting..."; ObjectID = "T2a-QK-97v"; */
+"T2a-QK-97v.text" = "Connecting...";
+
+/* Class = "UIButton"; accessibilityLabel = "sign in"; ObjectID = "T5H-GF-w0c"; */
+"T5H-GF-w0c.accessibilityLabel" = "sign in";
+
+/* Class = "UIButton"; normalTitle = "CREATE ACCOUNT"; ObjectID = "T5H-GF-w0c"; */
+"T5H-GF-w0c.normalTitle" = "CREATE ACCOUNT";
+
+/* Class = "UILabel"; text = "Connect with people securely"; ObjectID = "UHn-nH-94E"; */
+"UHn-nH-94E.text" = "Connect with people securely";
+
+/* Class = "UILabel"; text = "Account Creation"; ObjectID = "aj8-df-bAh"; */
+"aj8-df-bAh.text" = "Account Creation";
+
+/* Class = "UITextField"; text = "Password"; ObjectID = "btD-fk-ff4"; */
+"btD-fk-ff4.text" = "Password";
+
+/* Class = "UIButton"; normalTitle = "CANCEL"; ObjectID = "cwn-89-0u1"; */
+"cwn-89-0u1.normalTitle" = "CANCEL";
+
+/* Class = "UITextField"; text = "Enter Password"; ObjectID = "fCM-Nn-4O3"; */
+"fCM-Nn-4O3.text" = "Enter Password";
+
+/* Class = "UILabel"; text = "Let's get started!"; ObjectID = "fv0-bz-DJi"; */
+"fv0-bz-DJi.text" = "Let's get started!";
+
+/* Class = "UIButton"; normalTitle = "Log In"; ObjectID = "gCQ-fN-XlZ"; */
+"gCQ-fN-XlZ.normalTitle" = "Log In";
+
+/* Class = "UIView"; accessibilityHint = "login process progress"; ObjectID = "i4r-al-Lkg"; */
+"i4r-al-Lkg.accessibilityHint" = "login process progress";
+
+/* Class = "UIView"; accessibilityLabel = "progress"; ObjectID = "i4r-al-Lkg"; */
+"i4r-al-Lkg.accessibilityLabel" = "progress";
+
+/* Class = "UILabel"; text = "Show password"; ObjectID = "lMZ-ru-V7f"; */
+"lMZ-ru-V7f.text" = "Show password";
+
+/* Class = "UIButton"; normalTitle = "Sign Up"; ObjectID = "lhu-90-WVp"; */
+"lhu-90-WVp.normalTitle" = "Sign Up";
+
+/* Class = "UITextField"; placeholder = "Username"; ObjectID = "o3d-K2-QoT"; */
+"o3d-K2-QoT.placeholder" = "Username";
+
+/* Class = "UITextField"; text = "Username"; ObjectID = "o3d-K2-QoT"; */
+"o3d-K2-QoT.text" = "Username";
+
+/* Class = "UILabel"; text = "(Device description)"; ObjectID = "oj5-6N-Un0"; */
+"oj5-6N-Un0.text" = "(Device description)";
+
+/* Class = "UITextView"; text = "By logging in, you are agreeing to our \nterms of service & privacy policy"; ObjectID = "p0b-dE-qEO"; */
+"p0b-dE-qEO.text" = "By logging in, you are agreeing to our \nterms of service & privacy policy";
+
+/* Class = "UILabel"; text = "An email address is necessary to receive important\nupdates and information regarding your account."; ObjectID = "pdc-XR-5Lr"; */
+"pdc-XR-5Lr.text" = "An email address is necessary to receive important\nupdates and information regarding your account.";
+
+/* Class = "UILabel"; text = "Enterprise Privacy Platform"; ObjectID = "qDp-us-wYF"; */
+"qDp-us-wYF.text" = "Enterprise Privacy Platform";
+
+/* Class = "UITextField"; placeholder = "Username"; ObjectID = "qP4-mJ-8VO"; */
+"qP4-mJ-8VO.placeholder" = "Username";
+
+/* Class = "UITextField"; text = "E-mail address"; ObjectID = "qP4-mJ-8VO"; */
+"qP4-mJ-8VO.text" = "E-mail address";
+
+/* Class = "UIButton"; normalTitle = "CREATE"; ObjectID = "rYA-KF-hGA"; */
+"rYA-KF-hGA.normalTitle" = "CREATE";
+
+/* Class = "UIView"; accessibilityLabel = "show password checkbox"; ObjectID = "rje-Wv-MEb"; */
+"rje-Wv-MEb.accessibilityLabel" = "show password checkbox";
+
+/* Class = "UILabel"; text = "Show password"; ObjectID = "sn9-7j-PVB"; */
+"sn9-7j-PVB.text" = "Show password";
+
+/* Class = "UITextField"; placeholder = "Username"; ObjectID = "txv-3U-okN"; */
+"txv-3U-okN.placeholder" = "Username";
+
+/* Class = "UITextField"; text = "Username"; ObjectID = "txv-3U-okN"; */
+"txv-3U-okN.text" = "Username";
+
+/* Class = "UIButton"; accessibilityLabel = "forgot password"; ObjectID = "vIK-Rs-BI3"; */
+"vIK-Rs-BI3.accessibilityLabel" = "forgot password";
+
+/* Class = "UIButton"; normalTitle = "I forgot my password"; ObjectID = "vIK-Rs-BI3"; */
+"vIK-Rs-BI3.normalTitle" = "I forgot my password";
+
+/* Class = "UILabel"; text = "version 3.4.0"; ObjectID = "vJd-oT-BjS"; */
+"vJd-oT-BjS.text" = "version 3.4.0";
+
+/* Class = "UIView"; accessibilityLabel = "show password checkbox"; ObjectID = "yyv-hD-gLi"; */
+"yyv-hD-gLi.accessibilityLabel" = "show password checkbox";

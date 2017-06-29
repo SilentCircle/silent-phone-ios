@@ -1,0 +1,109 @@
+build*/
+autoconf/
+doc/html/
+configure
+Makefile
+Makefile.in
+aclocal.m4
+libs/
+obj/
+.kdev*
+*.o
+*.lo
+*.la
+*.authors
+*.kdev4
+*.deps
+*.libs
+*.pc
+*.spec
+*~
+.DS_Store
+._.DS_Store
+._buildmac
+.directory
+
+# Android generated files #
+###########################
+android.keystore
+local.properties
+bin/
+gen/
+obj/
+libs/
+
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# Backup files
+##################
+*~
+
+# Ignore Ron's build script artefacts #
+######################################
+*.log
+support/
+errorCount.txt
+*.xcarchive/
+# Ensure this doesn't sneak in; it breaks the build system
+sp1source/
+
+# Eclipse generated files #
+###########################
+.settings/org.eclipse.jdt.core.prefs
+
+# Android Studio/IntelliJ and gradle directories
+##################
+out/
+build/
+.gradle/
+gradle.properties
+*.iml
+.idea/
+
+# Xcode
+##################
+[Bb]uild
+build/
+DerivedData
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.xcuserstate
+*.xcscmblueprint
+
+# CocoaLumberjack
+# We don't want these in the repo: they are generated 
+# for the individual developer by a Build Phase script
+LumberjackUser.h
+LumberjackUser.temp.h
+
+# Carthage
+#
+# Add this line if you want to avoid checking in source code from Carthage dependencies.
+Carthage/Checkouts
+
+# Comment this line to check in the build binaries (generally not recommended)
+# ET: commented temporarily until automated build system supports carthage.
+Carthage/Build
+Carthage/Checkouts
+
+# Build Phase file for collecting debug info at build time
+BuildInfo.plist 
+
+#Comments are appreciated
+.*.sw?

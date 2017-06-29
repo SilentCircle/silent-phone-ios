@@ -1,0 +1,16 @@
+diff --git a/spi3/main.mm b/spi3/main.mm
+index 0219190..88a512d 100644
+--- a/spi3/main.mm
++++ b/spi3/main.mm
+@@ -21,6 +21,11 @@
+ 
+ 
+ int main(int argc, char * argv[]) {
++
++    void setProvisioningToDevelop();
++#warning REMOVE THIS not using Production
++    setProvisioningToDevelop();
++
+ //    set_zina_log_cb((void *)1, zina_logs_here);
+    
+     @autoreleasepool {
